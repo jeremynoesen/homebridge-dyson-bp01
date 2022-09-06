@@ -11,6 +11,20 @@
     "test": "echo \"Error: no test specified\" && exit 0"
   },
   "author": "Jeremy Noesen <mail@jeremynoesen.xyz>",
+  "funding": [
+    {
+      "type": "kofi",
+      "url": "https://ko-fi.com/jeremynoesen"
+    },
+    {
+      "type": "paypal",
+      "url": "https://paypal.me/jeremynoesen"
+    },
+    {
+      "type": "github",
+      "url": "https://github.com/jeremynoesen"
+    }
+  ],
   "engines": {
     "homebridge": ">=1.0.0"
   },
@@ -19,7 +33,9 @@
   ],
   "files": [
     "LICENSE",
-    "dist"
+    "README.md",
+    "package.json",
+    "dist/**/*"
   ],
   "repository": {
     "type": "git",

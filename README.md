@@ -22,12 +22,17 @@ This plugin is designed to be used with the following devices:
 2. Turn off oscillation.
 3. Turn off the fan itself.
 
+## Building
+You can build the project by doing the following:
+1. Clone or download this repository.
+2. run `npm run build` in the folder of the repository through the Homebridge terminal.
+
 ## Installation
 There are three ways to install this plugin:
 
 1. Search for `homebridge-dyson-bp01` on the Homebridge plugins page, then click `Install` on this plugin.
 2. Run `npm install homebridge-dyson-bp01` through the Homebridge terminal.
-3. Clone or download this repository, then run `npm install path/to/repo` through the Homebridge terminal.
+3. If you manually built the project, run `npm install` through the Homebridge terminal.
 
 After any of these, restart Homebridge.
 

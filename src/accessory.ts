@@ -11,10 +11,9 @@ import {
     Service
 } from "homebridge";
 
-let hap: HAP;
-
 import * as fs from "fs";
 
+let hap: HAP;
 const broadlink = require("./broadlink.js");
 
 export = (api: API) => {
@@ -115,22 +114,6 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * not used
-     */
-    identify(): void {
-    }
-
-    /**
-     * get the services for this accessory
-     */
-    getServices(): Service[] {
-        return [
-            this.informationService,
-            this.fanService,
-        ];
-    }
-
-    /**
      * start the loop for updating this accessory properly
      */
     async loop(): Promise<void> {
@@ -157,5 +140,21 @@ class DysonBP01 implements AccessoryPlugin {
 
             fs.writeFileSync(this.name + ".txt", this.currentPower + "\n" + this.currentSpeed + "\n" + this.currentOscillation);
         }, 750);
+    }
+
+    /**
+     * get the services for this accessory
+     */
+    getServices(): Service[] {
+        return [
+            this.informationService,
+            this.fanService,
+        ];
+    }
+
+    /**
+     * not used
+     */
+    identify(): void {
     }
 }

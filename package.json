@@ -8,7 +8,7 @@
     "build": "rimraf ./dist && tsc",
     "prepublishOnly": "npm run build",
     "postpublish": "npm run clean",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 0"
   },
   "author": "Jeremy Noesen <mail@jeremynoesen.xyz>",
   "engines": {
@@ -23,7 +23,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/jeremynoesen/homebridge-dyson-bp01.git"
+    "url": "https://github.com/jeremynoesen/homebridge-dyson-bp01.git"
   },
   "bugs": {
     "url": "https://github.com/jeremynoesen/homebridge-dyson-bp01/issues"
@@ -36,5 +36,7 @@
   },
   "dependencies": {
     "kiwicam-broadlinkjs-rm": "^0.9.18"
-  }
+  },
+  "homepage": "https://github.com/jeremynoesen/homebridge-dyson-bp01",
+  "license": "GPL-3.0"
 }

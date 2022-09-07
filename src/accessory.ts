@@ -27,6 +27,8 @@ class DysonBP01 implements AccessoryPlugin {
     private readonly fanService: Service;
     private readonly informationService: Service;
     private readonly storagePath: string;
+    private readonly dataPath: string;
+    private readonly interval: number;
 
     private device: any;
     private currentPower: boolean;
@@ -35,7 +37,6 @@ class DysonBP01 implements AccessoryPlugin {
     private targetPower: boolean;
     private targetSpeed: number;
     private targetOscillation: number;
-    private readonly interval: number;
 
     /**
      * initialize this accessory
@@ -44,18 +45,18 @@ class DysonBP01 implements AccessoryPlugin {
         this.log = log;
         this.name = config.name;
         this.storagePath = api.user.storagePath() + "/homebridge-dyson-bp01/";
+        this.dataPath = this.storagePath + this.name + ".txt";
 
-        try {
-            fs.mkdirSync(this.storagePath);
-        } catch (e) {
+        if (!fs.existsSync(this.storagePath)) {
+            fs.mkdirSync(this.storagePath)
         }
 
-        try {
-            let data = fs.readFileSync(this.storagePath + this.name + ".txt").toString().split("\n");
+        if (fs.existsSync(this.dataPath)) {
+            let data = fs.readFileSync(this.dataPath).toString().split("\n");
             this.currentPower = this.targetPower = data[0] == "true";
             this.currentSpeed = this.targetSpeed = parseInt(data[1]);
             this.currentOscillation = this.targetOscillation = parseInt(data[2]);
-        } catch (e) {
+        } else {
             this.currentPower = this.targetPower = false;
             this.currentSpeed = this.targetSpeed = 1;
             this.currentOscillation = this.targetOscillation = 0;
@@ -157,7 +158,7 @@ class DysonBP01 implements AccessoryPlugin {
 
             if (oscillationSkip > 0) oscillationSkip--;
 
-            fs.writeFileSync(this.storagePath + this.name + ".txt", this.currentPower + "\n" + this.currentSpeed + "\n" + this.currentOscillation);
+            fs.writeFileSync(this.dataPath, this.currentPower + "\n" + this.currentSpeed + "\n" + this.currentOscillation);
         }, this.interval);
     }
 

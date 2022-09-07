@@ -26,6 +26,7 @@ class DysonBP01 implements AccessoryPlugin {
     private readonly name: string;
     private readonly fanService: Service;
     private readonly informationService: Service;
+    private readonly storagePath: string;
 
     private device: any;
     private currentPower: boolean;
@@ -42,9 +43,15 @@ class DysonBP01 implements AccessoryPlugin {
     constructor(log: Logging, config: AccessoryConfig, api: API) {
         this.log = log;
         this.name = config.name;
+        this.storagePath = api.user.storagePath() + "/homebridge-dyson-bp01/";
 
         try {
-            let data = fs.readFileSync(this.name + ".txt").toString().split("\n");
+            fs.mkdirSync(this.storagePath);
+        } catch (e) {
+        }
+
+        try {
+            let data = fs.readFileSync(this.storagePath + this.name + ".txt").toString().split("\n");
             this.currentPower = this.targetPower = data[0] == "true";
             this.currentSpeed = this.targetSpeed = parseInt(data[1]);
             this.currentOscillation = this.targetOscillation = parseInt(data[2]);
@@ -150,7 +157,7 @@ class DysonBP01 implements AccessoryPlugin {
 
             if (oscillationSkip > 0) oscillationSkip--;
 
-            fs.writeFileSync(this.name + ".txt", this.currentPower + "\n" + this.currentSpeed + "\n" + this.currentOscillation);
+            fs.writeFileSync(this.storagePath + this.name + ".txt", this.currentPower + "\n" + this.currentSpeed + "\n" + this.currentOscillation);
         }, this.interval);
     }
 

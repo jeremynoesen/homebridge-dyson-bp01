@@ -34,6 +34,7 @@ class DysonBP01 implements AccessoryPlugin {
     private targetPower: boolean;
     private targetSpeed: number;
     private targetOscillation: number;
+    private readonly interval: number;
 
     /**
      * initialize this accessory
@@ -100,6 +101,12 @@ class DysonBP01 implements AccessoryPlugin {
             .setCharacteristic(hap.Characteristic.Manufacturer, "Dyson")
             .setCharacteristic(hap.Characteristic.Model, "BP01");
 
+        if (config.interval) {
+            this.interval = config.interval;
+        } else {
+            this.interval = 650;
+        }
+
         broadlink.discover();
 
         // @ts-ignore
@@ -138,13 +145,13 @@ class DysonBP01 implements AccessoryPlugin {
             } else if (this.currentOscillation != this.targetOscillation && this.currentPower) {
                 this.device.sendData(Buffer.from("2600580048181819171918181830181918181818181818311819171918301830181917191830173118181a2e1819171918000692491818301800068d471918301800068d481818311800068e471818311900068c4818193018000d05", "hex"));
                 this.currentOscillation = this.targetOscillation;
-                oscillationSkip = 5;
+                oscillationSkip = Math.ceil(3000 / this.interval);
             }
 
             if (oscillationSkip > 0) oscillationSkip--;
 
             fs.writeFileSync(this.name + ".txt", this.currentPower + "\n" + this.currentSpeed + "\n" + this.currentOscillation);
-        }, 650);
+        }, this.interval);
     }
 
     /**

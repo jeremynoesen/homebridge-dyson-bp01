@@ -43,7 +43,8 @@ To add the device to Homebridge, add the following to your accessories in the Ho
 {
   "accessory": "DysonBP01",
   "name": "Dyson Pure Cool Me",
-  "host": "127.0.0.1"
+  "host": "127.0.0.1",
+  "interval": 650
 }
 ```
-The `host` option is optional, but recommended if you have multiple Broadlink RM devices. After adding this, restart Homebridge for your changes to take effect. You should then see and be able to control your Dyson Pure Cool Me with HomeKit.
+The `host` option is optional, but recommended if you have multiple Broadlink RM devices. The `interval` option is also optional, and it allows you to change the delay in milliseconds between each IR signal. It is recommended that you do not set this value any lower to prevent lost signals. After adding this, restart Homebridge for your changes to take effect. You should then see and be able to control your Dyson Pure Cool Me with HomeKit.

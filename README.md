@@ -24,15 +24,16 @@ This plugin is designed to be used with the following devices:
 
 ## Building
 You can build the project by doing the following:
-1. Clone or download this repository.
-2. run `npm run build` in the folder of the repository through the Homebridge terminal.
+- Clone or download this repository.
+- run `npm run build` in the folder of the repository through the Homebridge terminal.
 
 ## Installation
-There are three ways to install this plugin:
+There are multiple ways to install this plugin:
 
-1. Search for `homebridge-dyson-bp01` on the Homebridge plugins page, then click `Install` on this plugin.
-2. Run `npm install homebridge-dyson-bp01` through the Homebridge terminal.
-3. If you manually built the project, run `npm install` through the Homebridge terminal.
+- Search for `homebridge-dyson-bp01` on the Homebridge plugins page, then click `Install` on this plugin.
+- Run `hb-service add homebridge-dyson-bp01` through the Homebridge terminal.
+- Run `npm install homebridge-dyson-bp01` through the Homebridge terminal.
+- If you manually built the project, run `npm install path/to/project` through the Homebridge terminal.
 
 After any of these, restart Homebridge.
 
@@ -41,7 +42,8 @@ To add the device to Homebridge, add the following to your accessories in the Ho
 ```json
 {
   "accessory": "DysonBP01",
-  "name": "Dyson Pure Cool Me"
+  "name": "Dyson Pure Cool Me",
+  "host": "127.0.0.1"
 }
 ```
-Restart Homebridge for your changes to take effect. After that, you should see and be able to control your Dyson Pure Cool Me within HomeKit.
+The `host` option is optional, but recommended if you have multiple Broadlink RM devices. After adding this, restart Homebridge for your changes to take effect. You should then see and be able to control your Dyson Pure Cool Me with HomeKit.

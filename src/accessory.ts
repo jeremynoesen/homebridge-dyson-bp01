@@ -10,8 +10,7 @@ import {
     Logging,
     Service
 } from "homebridge";
-
-import * as fs from "fs";
+import fs from "fs";
 
 let hap: HAP;
 const broadlink = require("./broadlink.js");
@@ -25,19 +24,16 @@ class DysonBP01 implements AccessoryPlugin {
 
     private readonly log: Logging;
     private readonly name: string;
+    private readonly fanService: Service;
+    private readonly informationService: Service;
 
     private device: any;
-
     private currentPower: boolean;
     private currentSpeed: number;
     private currentOscillation: number;
-
     private targetPower: boolean;
     private targetSpeed: number;
     private targetOscillation: number;
-
-    private readonly fanService: Service;
-    private readonly informationService: Service;
 
     /**
      * initialize this accessory
@@ -45,10 +41,6 @@ class DysonBP01 implements AccessoryPlugin {
     constructor(log: Logging, config: AccessoryConfig, api: API) {
         this.log = log;
         this.name = config.name;
-
-        broadlink.discover();
-        // @ts-ignore
-        broadlink.on("deviceReady", device => this.device = device);
 
         try {
             let data = fs.readFileSync(this.name + ".txt").toString().split("\n");
@@ -108,9 +100,22 @@ class DysonBP01 implements AccessoryPlugin {
             .setCharacteristic(hap.Characteristic.Manufacturer, "Dyson")
             .setCharacteristic(hap.Characteristic.Model, "BP01");
 
-        this.loop();
+        broadlink.discover();
 
-        log.info(this.name + " initialized!");
+        // @ts-ignore
+        broadlink.on("deviceReady", device => {
+            if (config.host && this.device == null) {
+                if (device.host.address.toString() == config.host) {
+                    this.device = device;
+                    this.loop()
+                    log.info(this.name + " discovered manually on " + device.host.address.toString());
+                }
+            } else if (this.device == null) {
+                this.device = device;
+                this.loop()
+                log.info(this.name + " discovered automatically on " + device.host.address.toString());
+            }
+        });
     }
 
     /**
@@ -153,8 +158,9 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * not used
+     * called when identifying the accessory in HomeKit
      */
     identify(): void {
+        this.log.info(this.name + " identified!");
     }
 }

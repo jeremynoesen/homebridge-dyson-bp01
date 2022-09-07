@@ -140,7 +140,7 @@ class DysonBP01 implements AccessoryPlugin {
 
         setInterval(() => {
 
-            if (this.currentPower != this.targetPower && oscillationSkip == 0) {
+            if (this.currentPower != this.targetPower) {
                 this.device.sendData(Buffer.from("260050004a1618191719181819301719181818181819173118191818181919171818181818191917183018181819183018000699481818311900068c471918301800068e481817321900068c4719183018000d050000000000000000", "hex"));
                 this.currentPower = this.targetPower;
             } else if (this.currentSpeed < this.targetSpeed && this.currentPower && oscillationSkip == 0) {

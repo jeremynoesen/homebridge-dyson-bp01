@@ -110,17 +110,18 @@ class DysonBP01 implements AccessoryPlugin {
         this.log.info("Oscillation is " + (this.currentOscillation == 1 ? "ON" : "OFF"));
 
         broadlink.discover();
-        this.log.info("Searching for Broadlink RM...");
+        this.log.info("Searching for BroadLink RM...");
+        
         broadlink.on("deviceReady", device => {
             if (this.mac && this.device == null) {
                 if (device.mac.toString("hex") == this.mac.split(":").join("")) {
                     this.device = device;
-                    this.log.info("Broadlink RM discovered manually!");
+                    this.log.info("BroadLink RM discovered manually!");
                     this.loop();
                 }
             } else if (this.device == null) {
                 this.device = device;
-                this.log.info("Broadlink RM discovered automatically!");
+                this.log.info("BroadLink RM discovered automatically!");
                 this.loop();
             }
         });

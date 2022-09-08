@@ -1,19 +1,19 @@
 # homebridge-dyson-bp01
 
 ## About
-This Homebridge plugin adds a Dyson BP01 fan to HomeKit in conjuntion with a Broadlink RM device.
+This Homebridge plugin adds a Dyson BP01 fan to HomeKit in conjuntion with a BroadLink RM device.
 
 ## Purpose
-There are currently plugins that can control a Broadlink RM device to control many other devices; however, they would break if you try to change more than one state of the accessory at once. This plugin solves that specifically for the Dyson Pure Cool Me.
+There are currently plugins that can control a BroadLink RM device to control many other devices; however, they would break if you try to change more than one state of the accessory at once. This plugin solves that specifically for the Dyson Pure Cool Me.
 
 ## Required Devices
 This plugin is designed to be used with the following devices:
-- A Broadlink RM device supported by [this library](https://github.com/kiwi-cam/broadlinkjs-rm)
+- A BroadLink RM device supported by [this library](https://github.com/kiwi-cam/broadlinkjs-rm)
 - A Dyson Pure Cool Me (BP01)
 
 ## Device Setup
-### Broadlink RM Setup
-1. Set up your Broadlink RM device with the Broadlink app.
+### BroadLink RM Setup
+1. Set up your BroadLink RM device with the BroadLink app.
 2. In device properties, disable `Lock device`.
 3. Place the device within line-of-sight of the Dyson's display.
 
@@ -47,4 +47,4 @@ To add the device to Homebridge, add the following to your accessories in the Ho
   "interval": 650
 }
 ```
-The `mac` option is optional, but recommended if you have multiple Broadlink RM devices. The `interval` option is also optional, and it allows you to change the delay in milliseconds between each IR signal. It is recommended that you do not set this value any lower to prevent lost signals. After adding this, restart Homebridge for your changes to take effect. You should then see and be able to control your Dyson Pure Cool Me with HomeKit.
+The `mac` option is optional, but recommended if you have multiple BroadLink RM devices. The `interval` option is also optional, and it allows you to change the delay in milliseconds between each IR signal. It is recommended that you do not set this value any lower to prevent lost signals. After adding this, restart Homebridge for your changes to take effect. You should then see and be able to control your Dyson Pure Cool Me with HomeKit.

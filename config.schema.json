@@ -11,7 +11,7 @@
         "required": true
       },
       "mac": {
-        "title": "Broadlink RM MAC Address - leave blank for auto discovery",
+        "title": "BroadLink RM MAC Address - leave blank for auto discovery",
         "type": "string",
         "required": false
       },

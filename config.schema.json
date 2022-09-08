@@ -10,8 +10,8 @@
         "type": "string",
         "required": true
       },
-      "host": {
-        "title": "Broadlink RM IPv4 Address - leave blank for auto discovery",
+      "mac": {
+        "title": "Broadlink RM MAC Address - leave blank for auto discovery",
         "type": "string",
         "required": false
       },

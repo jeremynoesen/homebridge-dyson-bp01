@@ -24,7 +24,7 @@ class DysonBP01 implements AccessoryPlugin {
 
     private readonly log: Logging;
     private readonly name: string;
-    private readonly host: string;
+    private readonly mac: string;
     private readonly interval: number;
     private readonly fanService: Service;
     private readonly informationService: Service;
@@ -45,7 +45,7 @@ class DysonBP01 implements AccessoryPlugin {
         this.log = log;
 
         this.name = config.name;
-        this.host = config.host;
+        this.mac = config.mac;
         this.interval = config.interval || 650;
 
         this.storage = storage.create();
@@ -113,16 +113,16 @@ class DysonBP01 implements AccessoryPlugin {
         this.log.info("Searching for Broadlink RM device...");
         // @ts-ignore
         broadlink.on("deviceReady", device => {
-            if (this.host && this.device == null) {
-                if (device.host.address.toString() == this.host) {
+            if (this.mac && this.device == null) {
+                if (device.mac.toString("hex") == this.mac.split(":").join("")) {
                     this.device = device;
-                    this.loop()
-                    this.log.info("Broadlink RM discovered manually on " + device.host.address.toString());
+                    this.log.info("Broadlink RM discovered manually!");
+                    this.loop();
                 }
             } else if (this.device == null) {
                 this.device = device;
-                this.loop()
-                this.log.info("Broadlink RM discovered automatically on " + device.host.address.toString());
+                this.log.info("Broadlink RM discovered automatically!");
+                this.loop();
             }
         });
     }
@@ -136,19 +136,19 @@ class DysonBP01 implements AccessoryPlugin {
             if (this.currentPower != this.targetPower) {
                 this.device.sendData(Buffer.from("260050004a1618191719181819301719181818181819173118191818181919171818181818191917183018181819183018000699481818311900068c471918301800068e481817321900068c4719183018000d050000000000000000", "hex"));
                 this.currentPower = this.targetPower;
-                await this.storage.setItem(this.name + " power", this.currentPower)
+                await this.storage.setItem(this.name + " power", this.currentPower);
             } else if (this.currentSpeed < this.targetSpeed && this.currentPower && oscillationSkip == 0) {
                 this.device.sendData(Buffer.from("260050004719171a1718181818311818181818191917183018181a2e19181830171a17301b2e1831171918301731181917000685471917311800068d481818311a00068c481818311800068d4719183018000d050000000000000000", "hex"));
                 this.currentSpeed += 1;
-                await this.storage.setItem(this.name + " speed", this.currentSpeed)
+                await this.storage.setItem(this.name + " speed", this.currentSpeed);
             } else if (this.currentSpeed > this.targetSpeed && this.currentPower && oscillationSkip == 0) {
                 this.device.sendData(Buffer.from("26005800481818191818171918301819191718181917183118181830181917311830171a17191a2e18181819183018311700069d471917311800068e481818311700068f471818311800068e491818301800068e4719183018000d05", "hex"));
                 this.currentSpeed -= 1;
-                await this.storage.setItem(this.name + " speed", this.currentSpeed)
+                await this.storage.setItem(this.name + " speed", this.currentSpeed);
             } else if (this.currentOscillation != this.targetOscillation && this.currentPower) {
                 this.device.sendData(Buffer.from("2600580048181819171918181830181918181818181818311819171918301830181917191830173118181a2e1819171918000692491818301800068d471918301800068d481818311800068e471818311900068c4818193018000d05", "hex"));
                 this.currentOscillation = this.targetOscillation;
-                await this.storage.setItem(this.name + " oscillation", this.currentOscillation)
+                await this.storage.setItem(this.name + " oscillation", this.currentOscillation);
                 oscillationSkip = Math.ceil(3000 / this.interval);
             }
             if (oscillationSkip > 0) oscillationSkip--;

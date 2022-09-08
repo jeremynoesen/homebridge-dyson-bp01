@@ -1,6 +1,6 @@
 {
   "name": "homebridge-dyson-bp01",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Homebridge plugin to add a Dyson BP01 to HomeKit using a Broadlink RM device",
   "main": "dist/accessory.js",
   "scripts": {
@@ -46,12 +46,14 @@
   },
   "devDependencies": {
     "@types/node": "10.17.19",
+    "@types/node-persist": "^3.1.2",
     "homebridge": "^1.0.4",
     "rimraf": "^3.0.2",
     "typescript": "^3.8.3"
   },
   "dependencies": {
-    "kiwicam-broadlinkjs-rm": "^0.9.18"
+    "kiwicam-broadlinkjs-rm": "^0.9.18",
+    "node-persist": "^3.1.0"
   },
   "homepage": "https://github.com/jeremynoesen/homebridge-dyson-bp01",
   "license": "GPL-3.0"

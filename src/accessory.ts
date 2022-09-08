@@ -77,6 +77,7 @@ class DysonBP01 implements AccessoryPlugin {
                 log.info(this.name + " power set to " + (this.targetPower ? "ON" : "OFF"));
                 callback();
             });
+
         this.fanService.getCharacteristic(hap.Characteristic.Active)
             .on(CharacteristicEventTypes.GET, (callback: CharacteristicGetCallback) => {
                 callback(undefined, this.currentPower);
@@ -90,9 +91,12 @@ class DysonBP01 implements AccessoryPlugin {
                 callback(undefined, this.currentSpeed * 10);
             })
             .on(CharacteristicEventTypes.SET, (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
-                this.targetSpeed = Math.ceil((value as number) / 10);
+                this.targetSpeed = (value as number) / 10;
                 log.info(this.name + " speed set to " + this.targetSpeed);
                 callback();
+            })
+            .setProps({
+                minStep: 10
             });
 
         this.fanService.getCharacteristic(hap.Characteristic.SwingMode)

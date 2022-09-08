@@ -111,7 +111,6 @@ class DysonBP01 implements AccessoryPlugin {
 
         broadlink.discover();
         this.log.info("Searching for Broadlink RM...");
-        // @ts-ignore
         broadlink.on("deviceReady", device => {
             if (this.mac && this.device == null) {
                 if (device.mac.toString("hex") == this.mac.split(":").join("")) {

@@ -1,0 +1,25 @@
+{
+  "pluginAlias": "DysonBP01",
+  "pluginType": "accessory",
+  "singular": false,
+  "schema": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "title": "Accessory Name",
+        "type": "string",
+        "required": true
+      },
+      "host": {
+        "title": "Broadlink RM IPv4 Address - leave blank for auto discovery",
+        "type": "string",
+        "required": false
+      },
+      "interval": {
+        "title": "Signal Interval (ms) - leave blank to use default interval",
+        "type": "number",
+        "required": false
+      }
+    }
+  }
+}

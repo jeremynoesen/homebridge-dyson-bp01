@@ -30,7 +30,11 @@
     "homebridge": ">=1.0.0"
   },
   "keywords": [
-    "homebridge-plugin"
+    "homebridge-plugin",
+    "dyson",
+    "bp01",
+    "pure cool me",
+    "broadlink rm"
   ],
   "files": [
     "LICENSE",

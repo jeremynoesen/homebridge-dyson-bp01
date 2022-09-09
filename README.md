@@ -22,6 +22,10 @@ This plugin is designed to be used with the following devices:
 2. Turn off oscillation.
 3. Turn off the fan itself.
 
+## Required Software
+- Node.JS v14 or greater
+- Homebridge 1.0.0 or greater
+
 ## Building
 You can build the project by doing the following:
 - Clone or download this repository.

@@ -1,7 +1,7 @@
 # homebridge-dyson-bp01
 
 ## About
-This Homebridge plugin adds a Dyson BP01 fan to HomeKit in conjuntion with a BroadLink RM device.
+This Homebridge plugin adds a Dyson BP01 fan to HomeKit in conjunction with a BroadLink RM device.
 
 ## Purpose
 There are currently plugins that can control a BroadLink RM device to control many other devices; however, they would break if you try to change more than one state of the accessory at once. This plugin solves that specifically for the Dyson Pure Cool Me.

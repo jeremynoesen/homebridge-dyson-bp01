@@ -51,8 +51,8 @@ To add the device to Homebridge, add the following to your accessories in the Ho
   "interval": 650
 }
 ```
-- The `mac` option is optional, but recommended if you have multiple BroadLink RM devices.
-- The `interval` option is also optional, and it allows you to change the delay in milliseconds between each IR signal. It is recommended that you do not set this value any lower to prevent lost signals. 
+- The `mac` option is optional, but recommended if you have multiple BroadLink RM devices. This will ensure the correct device is selected to control your fan.
+- The `interval` option is also optional, and it allows you to change the delay in milliseconds between each IR signal. It is recommended that you do not set this value any lower to prevent lost signals. You may need to raise this depending on the positioning of your BroadLink RM device.
 
 After adding this, restart Homebridge for your changes to take effect.
 - If no BroadLink RM device is found, the accessory will not be able to change states, and will not send signals to your Dyson Pure Cool Me.

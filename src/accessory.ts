@@ -25,7 +25,6 @@ export = (api: API) => {
  * @author Jeremy Noesen
  */
 class DysonBP01 implements AccessoryPlugin {
-    private readonly log: Logging;
     private readonly fanService: Service;
     private readonly informationService: Service;
 
@@ -33,12 +32,6 @@ class DysonBP01 implements AccessoryPlugin {
      * Create the DysonBP01 accessory
      */
     constructor(log: Logging, config: AccessoryConfig, api: API) {
-        // initialize instance variables
-        this.log = log;
-        this.fanService = new hap.Service.Fanv2(config.name);
-        this.informationService = new hap.Service.AccessoryInformation()
-            .setCharacteristic(hap.Characteristic.Manufacturer, "Dyson")
-            .setCharacteristic(hap.Characteristic.Model, "BP01");
 
         // initialize node-persist storage
         const persist = storage.create();
@@ -52,14 +45,18 @@ class DysonBP01 implements AccessoryPlugin {
         let targetSpeed = 1;
         let targetOscillation = 0;
 
-        // setup homebridge fan service
+        // setup homebridge services
+        this.informationService = new hap.Service.AccessoryInformation()
+            .setCharacteristic(hap.Characteristic.Manufacturer, "Dyson")
+            .setCharacteristic(hap.Characteristic.Model, "BP01");
+        this.fanService = new hap.Service.Fanv2(config.name);
         this.fanService.getCharacteristic(hap.Characteristic.On)
             .on(CharacteristicEventTypes.GET, (callback: CharacteristicGetCallback) => {
                 callback(undefined, currentPower);
             })
             .on(CharacteristicEventTypes.SET, (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
                 targetPower = value as boolean;
-                this.log.info("Power set to " + (targetPower ? "ON" : "OFF"));
+                log.info("Power set to " + (targetPower ? "ON" : "OFF"));
                 callback();
             });
         this.fanService.getCharacteristic(hap.Characteristic.Active)
@@ -75,7 +72,7 @@ class DysonBP01 implements AccessoryPlugin {
             })
             .on(CharacteristicEventTypes.SET, (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
                 targetSpeed = (value as number) / 10;
-                this.log.info("Speed set to " + targetSpeed);
+                log.info("Speed set to " + targetSpeed);
                 callback();
             })
             .setProps({
@@ -87,7 +84,7 @@ class DysonBP01 implements AccessoryPlugin {
             })
             .on(CharacteristicEventTypes.SET, (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
                 targetOscillation = value as number;
-                this.log.info("Oscillation set to " + (targetOscillation == 1 ? "ON" : "OFF"));
+                log.info("Oscillation set to " + (targetOscillation == 1 ? "ON" : "OFF"));
                 callback();
             });
 
@@ -96,17 +93,17 @@ class DysonBP01 implements AccessoryPlugin {
             currentPower = targetPower = await persist.getItem(config.name + " power") || false;
             currentSpeed = targetSpeed = await persist.getItem(config.name + " speed") || 1;
             currentOscillation = targetOscillation = await persist.getItem(config.name + " oscillation") || 0;
-            this.log.info("Power is " + (currentPower ? "ON" : "OFF"));
-            this.log.info("Speed is " + currentSpeed);
-            this.log.info("Oscillation is " + (currentOscillation == 1 ? "ON" : "OFF"));
+            log.info("Power is " + (currentPower ? "ON" : "OFF"));
+            log.info("Speed is " + currentSpeed);
+            log.info("Oscillation is " + (currentOscillation == 1 ? "ON" : "OFF"));
         }, 0);
 
         // discover broadlink rm device
         broadlink.discover();
-        this.log.info("Searching for BroadLink RM...");
+        log.info("Searching for BroadLink RM...");
         broadlink.on("deviceReady", device => {
             if (!config.mac || device.mac.toString("hex") == config.mac.split(":").join("")) {
-                this.log.info("BroadLink RM discovered!");
+                log.info("BroadLink RM discovered!");
 
                 // update accessory states
                 let oscillationSkip = 0;
@@ -136,13 +133,6 @@ class DysonBP01 implements AccessoryPlugin {
                 }, (config.interval || 650));
             }
         });
-    }
-
-    /**
-     * Identify the accessory
-     */
-    identify(): void {
-        this.log.info("Identified!");
     }
 
     /**

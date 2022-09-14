@@ -22,6 +22,7 @@ export = (api: API) => {
 
 /**
  * Dyson BP01 accessory for Homebridge
+ *
  * @author Jeremy Noesen
  */
 class DysonBP01 implements AccessoryPlugin {
@@ -89,14 +90,14 @@ class DysonBP01 implements AccessoryPlugin {
             });
 
         // load previous state from storage
-        setTimeout(async () => {
+        (async () => {
             currentPower = targetPower = await persist.getItem(config.name + " power") || false;
             currentSpeed = targetSpeed = await persist.getItem(config.name + " speed") || 1;
             currentOscillation = targetOscillation = await persist.getItem(config.name + " oscillation") || 0;
             log.info("Power is " + (currentPower ? "ON" : "OFF"));
             log.info("Speed is " + currentSpeed);
             log.info("Oscillation is " + (currentOscillation == 1 ? "ON" : "OFF"));
-        }, 0);
+        })();
 
         // discover broadlink rm device
         broadlink.discover();

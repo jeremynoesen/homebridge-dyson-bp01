@@ -284,20 +284,30 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Connect to a BroadLink RM
+     * Search for a BroadLink RM
      * @private
      */
     private initRemote() {
         broadlink.discover();
-        this.log.info("Searching for BroadLink RM...");
-
         broadlink.on("deviceReady", device => {
-            if (!this.mac || device.mac.toString("hex") == this.mac.split(":").join("")) {
-                this.device = device;
-                this.log.info("BroadLink RM discovered!");
-                this.initLoop();
-            }
+            this.setRemote(device);
         });
+
+        this.log.info("Searching for BroadLink RM...");
+    }
+
+    /**
+     * Set the remote to the found BroadLink RM
+     * @param device device found to set as remote
+     * @private
+     */
+    private setRemote(device: any) {
+        if (this.remote == null && (!this.mac || device.mac.toString("hex").toUpperCase() == this.mac.split(":").join("").toUpperCase())) {
+            this.remote = device;
+            this.initLoop();
+
+            this.log.info("BroadLink RM discovered!");
+        }
     }
 
     /**

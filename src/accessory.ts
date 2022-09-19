@@ -73,7 +73,7 @@ class DysonBP01 implements AccessoryPlugin {
      * BroadLink RM device
      * @private
      */
-    private device: any;
+    private remote: any;
 
     /**
      * Current power state of the fan
@@ -121,35 +121,47 @@ class DysonBP01 implements AccessoryPlugin {
      * Create the DysonBP01 accessory
      */
     constructor(log: Logging, config: AccessoryConfig, api: API) {
-        this.informationService = new hap.Service.AccessoryInformation();
-        this.fanService = new hap.Service.Fanv2(config.name);
         this.log = log;
+
         this.name = config.name;
         this.mac = config.mac;
         this.interval = config.interval || 650;
-        this.device = null;
+
+        this.remote = null;
         this.currentPower = this.targetPower = false;
         this.currentSpeed = this.targetSpeed = 1;
         this.currentOscillation = this.targetOscillation = 0;
         this.oscillationSkip = 0;
+
         this.storage = storage.create();
         this.storage.init({dir: api.user.persistPath(), forgiveParseErrors: true});
 
-        this.initServices();
+        this.informationService = new hap.Service.AccessoryInformation();
+        this.initInfoService();
+
+        this.fanService = new hap.Service.Fanv2(config.name);
+        this.initFanService();
+
         this.initStates().then(() => {
             this.initRemote();
         });
     }
 
     /**
-     * Initialize the services for this accessory
+     * Initialize the information service for this accessory
      * @private
      */
-    private initServices() {
+    private initInfoService() {
         this.informationService
             .setCharacteristic(hap.Characteristic.Manufacturer, "Dyson")
             .setCharacteristic(hap.Characteristic.Model, "BP01");
+    }
 
+    /**
+     * Initialize the fan service for this accessory
+     * @private
+     */
+    private initFanService() {
         this.fanService.getCharacteristic(hap.Characteristic.On)
             .on(CharacteristicEventTypes.GET, (callback: CharacteristicGetCallback) => {
                 callback(undefined, this.currentPower);
@@ -190,16 +202,84 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Initialize the previous or initial states of the accessory
+     * Set the target power state
+     *
+     * @param value value received from Homebridge
+     * @private
+     */
+    private setTargetPower(value: CharacteristicValue) {
+        this.targetPower = value as boolean;
+
+        if (this.targetPower != this.currentPower) {
+            this.log.info("Power set to " + (this.targetPower ? "ON" : "OFF"));
+        }
+    }
+
+    /**
+     * Set the target fan speed
+     *
+     * @param value value received from Homebridge
+     * @private
+     */
+    private setTargetSpeed(value: CharacteristicValue) {
+        this.targetSpeed = (value as number) / 10;
+
+        if (this.targetSpeed != this.currentSpeed) {
+            this.log.info("Speed set to " + this.targetSpeed);
+        }
+    }
+
+    /**
+     * Set the target oscillation state
+     *
+     * @param value value received from Homebridge
+     * @private
+     */
+    private setTargetOscillation(value: CharacteristicValue) {
+        this.targetOscillation = value as number;
+
+        if (this.targetOscillation != this.currentOscillation) {
+            this.log.info("Oscillation set to " + (this.targetOscillation == 1 ? "ON" : "OFF"));
+        }
+    }
+
+    /**
+     * Load the previous or initial states of the accessory
      * @private
      */
     private async initStates() {
+        await this.initPower();
+        await this.initSpeed();
+        await this.initOscillation();
+    }
+
+    /**
+     * Initialize the power state, either for the first time or from the last known state
+     * @private
+     */
+    private async initPower() {
         this.currentPower = this.targetPower = await this.storage.getItem(this.name + " power") || false;
-        this.currentSpeed = this.targetSpeed = await this.storage.getItem(this.name + " speed") || 1;
-        this.currentOscillation = this.targetOscillation = await this.storage.getItem(this.name + " oscillation") || 0;
 
         this.log.info("Power is " + (this.currentPower ? "ON" : "OFF"));
+    }
+
+    /**
+     * Initialize the fan speed, either for the first time or from the last known state
+     * @private
+     */
+    private async initSpeed() {
+        this.currentSpeed = this.targetSpeed = await this.storage.getItem(this.name + " speed") || 1;
+
         this.log.info("Speed is " + this.currentSpeed);
+    }
+
+    /**
+     * Initialize the oscillation state, either for the first time or from the last known state
+     * @private
+     */
+    private async initOscillation() {
+        this.currentOscillation = this.targetOscillation = await this.storage.getItem(this.name + " oscillation") || 0;
+
         this.log.info("Oscillation is " + (this.currentOscillation == 1 ? "ON" : "OFF"));
     }
 
@@ -241,35 +321,13 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Set the target power state
-     *
-     * @param value value received from Homebridge
-     * @private
-     */
-    private setTargetPower(value: CharacteristicValue) {
-        this.targetPower = value as boolean;
-        this.log.info("Power set to " + (this.targetPower ? "ON" : "OFF"));
-    }
-
-    /**
      * Update current power based on the target power
      * @private
      */
     private async updateCurrentPower() {
-        this.device.sendData(Buffer.from("260050004a1618191719181819301719181818181819173118191818181919171818181818191917183018181819183018000699481818311900068c471918301800068e481817321900068c4719183018000d050000000000000000", "hex"));
+        this.remote.sendData(Buffer.from("260050004a1618191719181819301719181818181819173118191818181919171818181818191917183018181819183018000699481818311900068c471918301800068e481817321900068c4719183018000d050000000000000000", "hex"));
         this.currentPower = this.targetPower;
         await this.storage.setItem(this.name + " power", this.currentPower);
-    }
-
-    /**
-     * Set the target fan speed
-     *
-     * @param value value received from Homebridge
-     * @private
-     */
-    private setTargetSpeed(value: CharacteristicValue) {
-        this.targetSpeed = (value as number) / 10;
-        this.log.info("Speed set to " + this.targetSpeed);
     }
 
     /**
@@ -277,7 +335,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async increaseCurrentSpeed() {
-        this.device.sendData(Buffer.from("260050004719171a1718181818311818181818191917183018181a2e19181830171a17301b2e1831171918301731181917000685471917311800068d481818311a00068c481818311800068d4719183018000d050000000000000000", "hex"));
+        this.remote.sendData(Buffer.from("260050004719171a1718181818311818181818191917183018181a2e19181830171a17301b2e1831171918301731181917000685471917311800068d481818311a00068c481818311800068d4719183018000d050000000000000000", "hex"));
         this.currentSpeed += 1;
         await this.storage.setItem(this.name + " speed", this.currentSpeed);
     }
@@ -287,20 +345,9 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async decreaseCurrentSpeed() {
-        this.device.sendData(Buffer.from("26005800481818191818171918301819191718181917183118181830181917311830171a17191a2e18181819183018311700069d471917311800068e481818311700068f471818311800068e491818301800068e4719183018000d05", "hex"));
+        this.remote.sendData(Buffer.from("26005800481818191818171918301819191718181917183118181830181917311830171a17191a2e18181819183018311700069d471917311800068e481818311700068f471818311800068e491818301800068e4719183018000d05", "hex"));
         this.currentSpeed -= 1;
         await this.storage.setItem(this.name + " speed", this.currentSpeed);
-    }
-
-    /**
-     * Set the target oscillation state
-     *
-     * @param value value received from Homebridge
-     * @private
-     */
-    private setTargetOscillation(value: CharacteristicValue) {
-        this.targetOscillation = value as number;
-        this.log.info("Oscillation set to " + (this.targetOscillation == 1 ? "ON" : "OFF"));
     }
 
     /**
@@ -308,7 +355,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async updateCurrentOscillation() {
-        this.device.sendData(Buffer.from("2600580048181819171918181830181918181818181818311819171918301830181917191830173118181a2e1819171918000692491818301800068d471918301800068d481818311800068e471818311900068c4818193018000d05", "hex"));
+        this.remote.sendData(Buffer.from("2600580048181819171918181830181918181818181818311819171918301830181917191830173118181a2e1819171918000692491818301800068d471918301800068d481818311800068e471818311900068c4818193018000d05", "hex"));
         this.currentOscillation = this.targetOscillation;
         await this.storage.setItem(this.name + " oscillation", this.currentOscillation);
     }

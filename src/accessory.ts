@@ -154,7 +154,8 @@ class DysonBP01 implements AccessoryPlugin {
     private initInfoService() {
         this.informationService
             .setCharacteristic(hap.Characteristic.Manufacturer, "Dyson")
-            .setCharacteristic(hap.Characteristic.Model, "BP01");
+            .setCharacteristic(hap.Characteristic.Model, "BP01")
+            .setCharacteristic(hap.Characteristic.SerialNumber, "Printed on device");
     }
 
     /**

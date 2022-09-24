@@ -79,7 +79,7 @@ class DysonBP01 implements AccessoryPlugin {
      * Current power state of the fan
      * @private
      */
-    private currentPower: boolean;
+    private currentPower: number;
 
     /**
      * Current fan speed
@@ -97,7 +97,7 @@ class DysonBP01 implements AccessoryPlugin {
      * Target power state to set the fan to
      * @private
      */
-    private targetPower: boolean;
+    private targetPower: number;
 
     /**
      * Target speed to set the fan to
@@ -128,7 +128,7 @@ class DysonBP01 implements AccessoryPlugin {
         this.interval = config.interval || 650;
 
         this.remote = null;
-        this.currentPower = this.targetPower = false;
+        this.currentPower = this.targetPower = 0;
         this.currentSpeed = this.targetSpeed = 1;
         this.currentOscillation = this.targetOscillation = 0;
         this.oscillationSkip = 0;
@@ -163,20 +163,12 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private initFanService() {
-        this.fanService.getCharacteristic(hap.Characteristic.On)
-            .on(CharacteristicEventTypes.GET, (callback: CharacteristicGetCallback) => {
-                callback(undefined, this.currentPower);
-            })
-            .on(CharacteristicEventTypes.SET, (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
-                this.setTargetPower(value);
-                callback();
-            });
-
         this.fanService.getCharacteristic(hap.Characteristic.Active)
             .on(CharacteristicEventTypes.GET, (callback: CharacteristicGetCallback) => {
                 callback(undefined, this.currentPower);
             })
             .on(CharacteristicEventTypes.SET, (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
+                this.setTargetPower(value);
                 callback();
             });
 
@@ -209,7 +201,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private setTargetPower(value: CharacteristicValue) {
-        this.targetPower = value as boolean;
+        this.targetPower = value as number;
 
         if (this.targetPower != this.currentPower) {
             this.log.info("Power set to " + (this.targetPower ? "ON" : "OFF"));

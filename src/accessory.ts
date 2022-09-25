@@ -351,7 +351,10 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async isRemoteConnected(): Promise<boolean> {
-        return await ping.promise.probe(this.remote.host.address).then((res) => {return res.alive});
+        const connected = await ping.promise.probe(this.remote.host.address).then((res) => {return res.alive});
+
+        if (!connected) this.log.error("Failed to ping BroadLink RM!");
+        return connected;
     }
 
     /**

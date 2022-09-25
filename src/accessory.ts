@@ -2,9 +2,6 @@ import {
     AccessoryConfig,
     AccessoryPlugin,
     API,
-    CharacteristicEventTypes,
-    CharacteristicGetCallback,
-    CharacteristicSetCallback,
     CharacteristicValue,
     HAP,
     Logging,
@@ -153,9 +150,9 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private initInfoService() {
         this.informationService
-            .setCharacteristic(hap.Characteristic.Manufacturer, "Dyson")
-            .setCharacteristic(hap.Characteristic.Model, "BP01")
-            .setCharacteristic(hap.Characteristic.SerialNumber, "Printed on device");
+            .updateCharacteristic(hap.Characteristic.Manufacturer, "Dyson")
+            .updateCharacteristic(hap.Characteristic.Model, "BP01")
+            .updateCharacteristic(hap.Characteristic.SerialNumber, "Printed on machine");
     }
 
     /**
@@ -164,34 +161,27 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private initFanService() {
         this.fanService.getCharacteristic(hap.Characteristic.Active)
-            .on(CharacteristicEventTypes.GET, (callback: CharacteristicGetCallback) => {
-                callback(undefined, this.currentPower);
-            })
-            .on(CharacteristicEventTypes.SET, (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
-                this.setTargetPower(value);
-                callback();
-            });
+            .onGet(this.getCurrentPower.bind(this))
+            .onSet(this.setTargetPower.bind(this));
 
         this.fanService.getCharacteristic(hap.Characteristic.RotationSpeed)
-            .on(CharacteristicEventTypes.GET, (callback: CharacteristicGetCallback) => {
-                callback(undefined, this.currentSpeed * 10);
-            })
-            .on(CharacteristicEventTypes.SET, (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
-                this.setTargetSpeed(value);
-                callback();
-            })
+            .onGet(this.getCurrentSpeed.bind(this))
+            .onSet(this.setTargetSpeed.bind(this))
             .setProps({
                 minStep: 10
             });
 
         this.fanService.getCharacteristic(hap.Characteristic.SwingMode)
-            .on(CharacteristicEventTypes.GET, (callback: CharacteristicGetCallback) => {
-                callback(undefined, this.currentOscillation);
-            })
-            .on(CharacteristicEventTypes.SET, (value: CharacteristicValue, callback: CharacteristicSetCallback) => {
-                this.setTargetOscillation(value);
-                callback();
-            });
+            .onGet(this.getCurrentOscillation.bind(this))
+            .onSet(this.setTargetOscillation.bind(this));
+    }
+
+    /**
+     * Get the current power state
+     * @private
+     */
+    private async getCurrentPower(): Promise<CharacteristicValue> {
+        return this.currentPower;
     }
 
     /**
@@ -200,7 +190,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @param value value received from Homebridge
      * @private
      */
-    private setTargetPower(value: CharacteristicValue) {
+    private async setTargetPower(value: CharacteristicValue): Promise<void> {
         this.targetPower = value as number;
 
         if (this.targetPower != this.currentPower) {
@@ -209,12 +199,20 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
+     * Get the current fan speed
+     * @private
+     */
+    private async getCurrentSpeed(): Promise<CharacteristicValue> {
+        return this.currentSpeed * 10;
+    }
+
+    /**
      * Set the target fan speed
      *
      * @param value value received from Homebridge
      * @private
      */
-    private setTargetSpeed(value: CharacteristicValue) {
+    private async setTargetSpeed(value: CharacteristicValue): Promise<void> {
         this.targetSpeed = (value as number) / 10;
 
         if (this.targetSpeed != this.currentSpeed) {
@@ -223,12 +221,20 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
+     * Get the current oscillation state
+     * @private
+     */
+    private async getCurrentOscillation(): Promise<CharacteristicValue> {
+        return this.currentOscillation;
+    }
+
+    /**
      * Set the target oscillation state
      *
      * @param value value received from Homebridge
      * @private
      */
-    private setTargetOscillation(value: CharacteristicValue) {
+    private async setTargetOscillation(value: CharacteristicValue): Promise<void> {
         this.targetOscillation = value as number;
 
         if (this.targetOscillation != this.currentOscillation) {
@@ -295,7 +301,8 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private setRemote(device: any) {
-        if (this.remote == null && (!this.mac || device.mac.toString("hex").toUpperCase() == this.mac.split(":").join("").toUpperCase())) {
+        let macString = device.mac.toString("hex").replace(/(.{2})/g, "$1:").slice(0, -1).toUpperCase();
+        if (this.remote == null && (!this.mac || macString == this.mac.toUpperCase())) {
             this.remote = device;
             this.initLoop();
 

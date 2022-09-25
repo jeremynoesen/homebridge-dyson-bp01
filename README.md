@@ -57,3 +57,7 @@ To add the device to Homebridge, add the following to your accessories in the Ho
 After adding this, restart Homebridge for your changes to take effect.
 - If no BroadLink RM device is found, the accessory will not be able to change states, and will not send signals to your Dyson Pure Cool Me.
 - If one is found, you should be able to control your fan like a native HomeKit accessory.
+
+## Troubleshooting
+- If your BroadLink RM randomly stops working or does not reconnect after power loss, try assigning it a static IP address.
+- If not all signals are sending, check the position of your BroadLink RM and ensure it has a direct line-of-sight to the screen on the fan. You can also increase the interval in the config.

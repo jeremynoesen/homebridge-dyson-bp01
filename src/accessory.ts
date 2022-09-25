@@ -266,9 +266,9 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async initPower() {
-        this.currentPower = this.targetPower = await this.storage.getItem(this.name + " power") || false;
+        this.currentPower = this.targetPower = await this.storage.getItem(this.name + " power") || 0;
 
-        this.log.info("Power is " + (this.currentPower ? "ON" : "OFF"));
+        this.log.info("Power is " + (this.currentPower == 1 ? "ON" : "OFF"));
     }
 
     /**
@@ -327,20 +327,17 @@ class DysonBP01 implements AccessoryPlugin {
         setInterval(async () => {
             if (await this.isRemoteConnected()) {
                 if (!this.remoteSkip) {
-                    if (this.currentPower != this.targetPower) {
+                    if (this.canUpdateCurrentPower()) {
                         await this.updateCurrentPower();
-                    } else if (this.currentSpeed < this.targetSpeed && this.currentPower && this.oscillationSkip == 0) {
+                    } else if (this.canIncreaseCurrentSpeed()) {
                         await this.increaseCurrentSpeed();
-                    } else if (this.currentSpeed > this.targetSpeed && this.currentPower && this.oscillationSkip == 0) {
+                    } else if (this.canDecreaseCurrentSpeed()) {
                         await this.decreaseCurrentSpeed();
-                    } else if (this.currentOscillation != this.targetOscillation && this.currentPower) {
+                    } else if (this.canUpdateCurrentOscillation()) {
                         await this.updateCurrentOscillation();
-                        this.oscillationSkip = Math.ceil(3000 / (this.interval));
                     }
                 }
                 this.remoteSkip = false;
-            } else {
-                this.remoteSkip = true;
             }
             if (this.oscillationSkip > 0) this.oscillationSkip--;
         }, this.interval);
@@ -353,8 +350,20 @@ class DysonBP01 implements AccessoryPlugin {
     private async isRemoteConnected(): Promise<boolean> {
         const connected = await ping.promise.probe(this.remote.host.address).then((res) => {return res.alive});
 
-        if (!connected) this.log.error("Failed to ping BroadLink RM!");
+        if (!connected) {
+            this.remoteSkip = true;
+            this.log.error("Failed to ping BroadLink RM!");
+        }
+
         return connected;
+    }
+
+    /**
+     * Check if the current power state can be updated
+     * @private
+     */
+    private canUpdateCurrentPower(): boolean {
+        return this.currentPower != this.targetPower;
     }
 
     /**
@@ -368,6 +377,14 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
+     * Check if the current speed can be increased
+     * @private
+     */
+    private canIncreaseCurrentSpeed(): boolean {
+        return this.currentSpeed < this.targetSpeed && this.currentPower == 1 && this.oscillationSkip == 0;
+    }
+
+    /**
      * Update current speed based on the target speed upwards
      * @private
      */
@@ -375,6 +392,14 @@ class DysonBP01 implements AccessoryPlugin {
         this.remote.sendData(Buffer.from("260050004719171a1718181818311818181818191917183018181a2e19181830171a17301b2e1831171918301731181917000685471917311800068d481818311a00068c481818311800068d4719183018000d050000000000000000", "hex"));
         this.currentSpeed += 1;
         await this.storage.setItem(this.name + " speed", this.currentSpeed);
+    }
+
+    /**
+     * Check if the current speed can be decreased
+     * @private
+     */
+    private canDecreaseCurrentSpeed(): boolean {
+        return this.currentSpeed > this.targetSpeed && this.currentPower == 1 && this.oscillationSkip == 0;
     }
 
     /**
@@ -388,12 +413,21 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
+     * Check if the current oscillation state can be updated
+     * @private
+     */
+    private canUpdateCurrentOscillation(): boolean {
+        return this.currentOscillation != this.targetOscillation && this.currentPower == 1;
+    }
+
+    /**
      * Update current oscillation based on the target oscillation
      * @private
      */
     private async updateCurrentOscillation() {
         this.remote.sendData(Buffer.from("2600580048181819171918181830181918181818181818311819171918301830181917191830173118181a2e1819171918000692491818301800068d471918301800068d481818311800068e471818311900068c4818193018000d05", "hex"));
         this.currentOscillation = this.targetOscillation;
+        this.oscillationSkip = Math.ceil(3000 / (this.interval));
         await this.storage.setItem(this.name + " oscillation", this.currentOscillation);
     }
 

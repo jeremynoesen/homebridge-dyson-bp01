@@ -24,7 +24,7 @@ This plugin is designed to be used with the following devices:
 
 ## Required Software
 - Node.JS v14 or greater
-- Homebridge 1.0.0 or greater
+- Homebridge 1.3.0 or greater
 
 ## Building
 You can build the project by doing the following:

@@ -9,6 +9,8 @@ import {
 } from "homebridge";
 import storage from "node-persist";
 
+import ping from "ping";
+
 let hap: HAP;
 const broadlink = require("./broadlink.js");
 
@@ -115,6 +117,12 @@ class DysonBP01 implements AccessoryPlugin {
     private oscillationSkip: number;
 
     /**
+     * Used to add delay after the remote reconnects
+     * @private
+     */
+    private remoteSkip: boolean;
+
+    /**
      * Create the DysonBP01 accessory
      */
     constructor(log: Logging, config: AccessoryConfig, api: API) {
@@ -129,6 +137,7 @@ class DysonBP01 implements AccessoryPlugin {
         this.currentSpeed = this.targetSpeed = 1;
         this.currentOscillation = this.targetOscillation = 0;
         this.oscillationSkip = 0;
+        this.remoteSkip = false;
 
         this.storage = storage.create();
         this.storage.init({dir: api.user.persistPath(), forgiveParseErrors: true});
@@ -316,18 +325,33 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private initLoop() {
         setInterval(async () => {
-            if (this.currentPower != this.targetPower) {
-                await this.updateCurrentPower();
-            } else if (this.currentSpeed < this.targetSpeed && this.currentPower && this.oscillationSkip == 0) {
-                await this.increaseCurrentSpeed();
-            } else if (this.currentSpeed > this.targetSpeed && this.currentPower && this.oscillationSkip == 0) {
-                await this.decreaseCurrentSpeed();
-            } else if (this.currentOscillation != this.targetOscillation && this.currentPower) {
-                await this.updateCurrentOscillation();
-                this.oscillationSkip = Math.ceil(3000 / (this.interval));
+            if (await this.isRemoteConnected()) {
+                if (!this.remoteSkip) {
+                    if (this.currentPower != this.targetPower) {
+                        await this.updateCurrentPower();
+                    } else if (this.currentSpeed < this.targetSpeed && this.currentPower && this.oscillationSkip == 0) {
+                        await this.increaseCurrentSpeed();
+                    } else if (this.currentSpeed > this.targetSpeed && this.currentPower && this.oscillationSkip == 0) {
+                        await this.decreaseCurrentSpeed();
+                    } else if (this.currentOscillation != this.targetOscillation && this.currentPower) {
+                        await this.updateCurrentOscillation();
+                        this.oscillationSkip = Math.ceil(3000 / (this.interval));
+                    }
+                }
+                this.remoteSkip = false;
+            } else {
+                this.remoteSkip = true;
             }
             if (this.oscillationSkip > 0) this.oscillationSkip--;
         }, this.interval);
+    }
+
+    /**
+     * Check if the BroadLink RM is connected
+     * @private
+     */
+    private async isRemoteConnected(): Promise<boolean> {
+        return await ping.promise.probe(this.remote.host.address).then((res) => {return res.alive});
     }
 
     /**

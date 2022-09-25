@@ -170,27 +170,27 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private initFanService() {
         this.fanService.getCharacteristic(hap.Characteristic.Active)
-            .onGet(this.getCurrentPower.bind(this))
+            .onGet(this.getTargetPower.bind(this))
             .onSet(this.setTargetPower.bind(this));
 
         this.fanService.getCharacteristic(hap.Characteristic.RotationSpeed)
-            .onGet(this.getCurrentSpeed.bind(this))
+            .onGet(this.getTargetSpeed.bind(this))
             .onSet(this.setTargetSpeed.bind(this))
             .setProps({
                 minStep: 10
             });
 
         this.fanService.getCharacteristic(hap.Characteristic.SwingMode)
-            .onGet(this.getCurrentOscillation.bind(this))
+            .onGet(this.getTargetOscillation.bind(this))
             .onSet(this.setTargetOscillation.bind(this));
     }
 
     /**
-     * Get the current power state
+     * Get the target power state
      * @private
      */
-    private async getCurrentPower(): Promise<CharacteristicValue> {
-        return this.currentPower;
+    private async getTargetPower(): Promise<CharacteristicValue> {
+        return this.targetPower;
     }
 
     /**
@@ -208,11 +208,11 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Get the current fan speed
+     * Get the target fan speed
      * @private
      */
-    private async getCurrentSpeed(): Promise<CharacteristicValue> {
-        return this.currentSpeed * 10;
+    private async getTargetSpeed(): Promise<CharacteristicValue> {
+        return this.targetSpeed * 10;
     }
 
     /**
@@ -230,11 +230,11 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Get the current oscillation state
+     * Get the target oscillation state
      * @private
      */
-    private async getCurrentOscillation(): Promise<CharacteristicValue> {
-        return this.currentOscillation;
+    private async getTargetOscillation(): Promise<CharacteristicValue> {
+        return this.targetOscillation;
     }
 
     /**

@@ -310,8 +310,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private setRemote(device: any) {
-        let macString = device.mac.toString("hex").replace(/(.{2})/g, "$1:").slice(0, -1).toUpperCase();
-        if (this.remote == null && (!this.mac || macString == this.mac.toUpperCase())) {
+        if (this.isRemote(device)) {
             this.remote = device;
             this.initLoop();
 
@@ -320,26 +319,30 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
+     * Check that a device is the BroadLink RM that is wanted
+     * @param device device found to set as remote
+     * @private
+     */
+    private isRemote(device: any): boolean {
+        return this.remote == null && (!this.mac || device.mac.toString("hex")
+            .replace(/(.{2})/g, "$1:").slice(0, -1).toUpperCase() == this.mac.toUpperCase());
+    }
+
+    /**
      * Start the loop that updates the accessory states
      * @private
      */
     private initLoop() {
         setInterval(async () => {
+
             if (await this.isRemoteConnected()) {
-                if (!this.remoteSkip) {
-                    if (this.canUpdateCurrentPower()) {
-                        await this.updateCurrentPower();
-                    } else if (this.canIncreaseCurrentSpeed()) {
-                        await this.increaseCurrentSpeed();
-                    } else if (this.canDecreaseCurrentSpeed()) {
-                        await this.decreaseCurrentSpeed();
-                    } else if (this.canUpdateCurrentOscillation()) {
-                        await this.updateCurrentOscillation();
-                    }
-                }
-                this.remoteSkip = false;
+                await this.updateCurrentStates();
             }
-            if (this.oscillationSkip > 0) this.oscillationSkip--;
+
+            if (this.oscillationSkip > 0) {
+                this.oscillationSkip--;
+            }
+
         }, this.interval);
     }
 
@@ -348,14 +351,35 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async isRemoteConnected(): Promise<boolean> {
-        const connected = await ping.promise.probe(this.remote.host.address).then((res) => {return res.alive});
+        const connected = await ping.promise.probe(this.remote.host.address).then((res) => {
+            return res.alive
+        });
 
         if (!connected) {
             this.remoteSkip = true;
             this.log.error("Failed to ping BroadLink RM!");
+        } else if (this.remoteSkip) {
+            this.remoteSkip = false;
+            return false;
         }
 
         return connected;
+    }
+
+    /**
+     * Update the current states of the accessory in the order of power, speed, and oscillation
+     * @private
+     */
+    private async updateCurrentStates() {
+        if (this.canUpdateCurrentPower()) {
+            await this.updateCurrentPower();
+        } else if (this.canIncreaseCurrentSpeed()) {
+            await this.increaseCurrentSpeed();
+        } else if (this.canDecreaseCurrentSpeed()) {
+            await this.decreaseCurrentSpeed();
+        } else if (this.canUpdateCurrentOscillation()) {
+            await this.updateCurrentOscillation();
+        }
     }
 
     /**

@@ -1,7 +1,7 @@
 {
   "pluginAlias": "DysonBP01",
   "pluginType": "accessory",
-  "headerDisplay": "For instructions on how to prepare your BroadLink RM device and Dyson Pure Cool Me to be used by this plugin, please look [here](https://github.com/jeremynoesen/homebridge-dyson-bp01#device-setup).",
+  "headerDisplay": "For instructions on how to prepare your BroadLink RM and Dyson Pure Cool Me to be used by this plugin, please look [here](https://github.com/jeremynoesen/homebridge-dyson-bp01#device-setup).",
   "singular": false,
   "schema": {
     "type": "object",
@@ -18,14 +18,14 @@
         "type": "string",
         "placeholder": "00:00:00:00:00:00",
         "pattern": "^([A-Fa-f0-9]{2}:){5}[A-Fa-f0-9]{2}$",
-        "description": "If you have multiple BroadLink RM devices, enter the MAC address of the one controlling the fan. Leave blank for device auto-discovery.",
+        "description": "If you have multiple BroadLink RMs, enter the MAC address of the one controlling the fan. Leave blank for device auto-discovery.",
         "required": false
       },
       "interval": {
         "title": "Interval",
         "type": "number",
         "placeholder": 650,
-        "description": "This represents the delay between signals sent via the BroadLink RM device in milliseconds. It is not recommended that you set this value lower than the default. You may need to raise it depending on the positioning of your BroadLink RM device. Leave blank to use the default interval.",
+        "description": "This represents the delay between signals sent via the BroadLink RM in milliseconds. It is not recommended that you set this value lower than the default. You may need to raise it depending on the positioning of your BroadLink RM device. Leave blank to use the default interval.",
         "required": false
       }
     }

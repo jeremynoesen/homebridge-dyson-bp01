@@ -69,7 +69,7 @@ class DysonBP01 implements AccessoryPlugin {
     private readonly storage: any;
 
     /**
-     * BroadLink RM device
+     * BroadLink RM
      * @private
      */
     private remote: any;

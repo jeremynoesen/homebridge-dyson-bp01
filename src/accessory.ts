@@ -222,7 +222,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async setTargetSpeed(value: CharacteristicValue): Promise<void> {
-        this.targetSpeed = (value as number) / 10;
+        this.targetSpeed = Math.max(1, (value as number) / 10);
 
         if (this.targetSpeed != this.currentSpeed) {
             this.log.info("Speed set to " + this.targetSpeed);

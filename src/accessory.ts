@@ -202,9 +202,7 @@ class DysonBP01 implements AccessoryPlugin {
     private async setTargetPower(value: CharacteristicValue): Promise<void> {
         this.targetPower = value as number;
 
-        if (this.targetPower != this.currentPower) {
-            this.log.info("Power set to " + (this.targetPower ? "ON" : "OFF"));
-        }
+        this.log.info("Power set to " + (this.targetPower ? "ON" : "OFF"));
     }
 
     /**
@@ -224,9 +222,7 @@ class DysonBP01 implements AccessoryPlugin {
     private async setTargetSpeed(value: CharacteristicValue): Promise<void> {
         this.targetSpeed = Math.max(1, (value as number) / 10);
 
-        if (this.targetSpeed != this.currentSpeed) {
-            this.log.info("Speed set to " + this.targetSpeed);
-        }
+        this.log.info("Speed set to " + this.targetSpeed);
     }
 
     /**
@@ -246,9 +242,7 @@ class DysonBP01 implements AccessoryPlugin {
     private async setTargetOscillation(value: CharacteristicValue): Promise<void> {
         this.targetOscillation = value as number;
 
-        if (this.targetOscillation != this.currentOscillation) {
-            this.log.info("Oscillation set to " + (this.targetOscillation == 1 ? "ON" : "OFF"));
-        }
+        this.log.info("Oscillation set to " + (this.targetOscillation == 1 ? "ON" : "OFF"));
     }
 
     /**

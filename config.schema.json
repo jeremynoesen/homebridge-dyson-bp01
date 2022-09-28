@@ -10,8 +10,15 @@
         "title": "Name",
         "type": "string",
         "default": "Dyson Pure Cool Me",
-        "description": "The display name of the accessory in Homebridge and HomeKit.",
+        "description": "The display name of the accessory in Homebridge and HomeKit. This must be unique per accessory.",
         "required": true
+      },
+      "serial": {
+        "title": "Serial Number",
+        "type": "string",
+        "placeholder": "Printed on machine",
+        "description": "The serial number of your Dyson Pure Cool Me. This is displayed in the Home app, but does not affect functionality. Leave blank to use a placeholder.",
+        "required": false
       },
       "mac": {
         "title": "MAC Address",

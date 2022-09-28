@@ -63,6 +63,12 @@ class DysonBP01 implements AccessoryPlugin {
     private readonly interval: number;
 
     /**
+     * Serial number of Dyson BP01
+     * @private
+     */
+    private readonly serial: string;
+
+    /**
      * Node-persist storage to keep track of previous states across reboots
      * @private
      */
@@ -131,6 +137,7 @@ class DysonBP01 implements AccessoryPlugin {
         this.name = config.name;
         this.mac = config.mac;
         this.interval = config.interval || 650;
+        this.serial = config.serial || "Printed on machine";
 
         this.remote = null;
         this.currentPower = this.targetPower = 0;
@@ -161,7 +168,7 @@ class DysonBP01 implements AccessoryPlugin {
         this.informationService
             .updateCharacteristic(hap.Characteristic.Manufacturer, "Dyson")
             .updateCharacteristic(hap.Characteristic.Model, "BP01")
-            .updateCharacteristic(hap.Characteristic.SerialNumber, "Printed on machine");
+            .updateCharacteristic(hap.Characteristic.SerialNumber, this.serial.toUpperCase());
     }
 
     /**

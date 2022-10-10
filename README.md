@@ -4,7 +4,7 @@
 This Homebridge plugin adds a Dyson BP01 fan to HomeKit in conjunction with a BroadLink RM.
 
 ## Purpose
-There are currently plugins that can control a BroadLink RM to control many other devices; however, they would break if you try to change more than one state of the accessory at once. This plugin solves that specifically for the Dyson BP01.
+There are currently plugins that can control a BroadLink RM to control many other devices; however, they would break if you try to change more than one characteristic of the accessory at once. This plugin solves that specifically for the Dyson BP01.
 
 ## Required Devices
 This plugin is designed to be used with the following devices:
@@ -43,7 +43,7 @@ There are multiple ways to install this plugin:
 After any of these, restart Homebridge.
 
 ## Configuration
-To add the device to Homebridge, add the following to your accessories in the Homebridge config:
+It is recommended that you use the Homebridge config UI to configure this plugin! If you choose to not do this, to add the device to Homebridge, add the following to your accessories in the Homebridge config:
 ```json
 {
   "accessory": "DysonBP01",
@@ -58,7 +58,7 @@ To add the device to Homebridge, add the following to your accessories in the Ho
 - The `interval` option is optional, and it allows you to change the delay in milliseconds between each IR signal. It is recommended that you do not set this value any lower to prevent lost signals. You may need to raise this depending on the positioning of your BroadLink RM.
 
 After adding this, restart Homebridge for your changes to take effect.
-- If no BroadLink RM is found, the accessory will not be able to change states, and will not send signals to your Dyson BP01.
+- If no BroadLink RM is found, the accessory will not be able to update, and will not send signals to your Dyson BP01.
 - If one is found, you should be able to control your fan like a native HomeKit accessory.
 
 ## Troubleshooting

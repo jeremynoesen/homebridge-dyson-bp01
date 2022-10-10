@@ -14,8 +14,9 @@ This plugin is designed to be used with the following devices:
 ## Device Setup
 ### BroadLink RM Setup
 1. Set up your BroadLink RM with the BroadLink app.
-2. In device properties, disable `Lock device`.
-3. Place the device within line-of-sight of the Dyson's display.
+   1. For standard setup, go through the full setup process in the app. Then, in device properties, disable `Lock device`.
+   2. For local network setup, go through the in-app setup, but stop at the "Add Devices" page. Then, close the app.
+2. Place the device within line-of-sight of the Dyson's display.
 
 ### Dyson BP01 Setup
 1. Set the fan speed to 1.
@@ -47,8 +48,8 @@ To add the device to Homebridge, add the following to your accessories in the Ho
 {
   "accessory": "DysonBP01",
   "name": "Dyson Pure Cool Me",
-  "serial": "...",
-  "mac": "00:00:00:00:00:00",
+  "serial": "XXX-XX-XXXXXXXX",
+  "mac": "XX:XX:XX:XX:XX:XX",
   "interval": 650
 }
 ```

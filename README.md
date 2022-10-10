@@ -50,7 +50,7 @@ It is recommended that you use the Homebridge config UI to configure this plugin
   "name": "Dyson Pure Cool Me",
   "serial": "XXX-XX-XXXXXXXX",
   "mac": "XX:XX:XX:XX:XX:XX",
-  "interval": 500
+  "interval": 300
 }
 ```
 - The `serial` option is optional. It is the serial number of your Dyson BP01. This is displayed in the Home app, but does not affect functionality.

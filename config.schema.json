@@ -32,7 +32,7 @@
       "interval": {
         "title": "Interval",
         "type": "number",
-        "placeholder": 500,
+        "placeholder": 300,
         "description": "This represents the delay between signals sent via the BroadLink RM in milliseconds. It is not recommended that you set this value lower than the default. You may need to raise it depending on the positioning of your BroadLink RM. Leave blank to use the default interval.",
         "required": false
       }

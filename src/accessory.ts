@@ -120,13 +120,13 @@ class DysonBP01 implements AccessoryPlugin {
      * Used to add delays before rotation speed signals after swing mode is updated
      * @private
      */
-    private swingModeSkip: number;
+    private swingModeSkips: number;
 
     /**
-     * Used to add delay after the BroadLink RM reconnects
+     * Used to add delays after the BroadLink RM reconnects
      * @private
      */
-    private deviceSkip: boolean;
+    private deviceSkips: number;
 
     /**
      * Create the DysonBP01 accessory
@@ -136,15 +136,15 @@ class DysonBP01 implements AccessoryPlugin {
 
         this.name = config.name;
         this.mac = config.mac;
-        this.interval = config.interval || 500;
+        this.interval = config.interval || 300;
         this.serial = config.serial;
 
         this.device = null;
         this.currentActive = this.targetActive = hap.Characteristic.Active.INACTIVE;
         this.currentRotationSpeed = this.targetRotationSpeed = 10;
         this.currentSwingMode = this.targetSwingMode = hap.Characteristic.SwingMode.SWING_DISABLED;
-        this.swingModeSkip = 0;
-        this.deviceSkip = false;
+        this.swingModeSkips = 0;
+        this.deviceSkips = 0;
 
         this.storage = storage.create();
         this.storage.init({dir: api.user.persistPath(), forgiveParseErrors: true});
@@ -171,8 +171,8 @@ class DysonBP01 implements AccessoryPlugin {
                 await this.updateCharacteristics();
             }
 
-            if (this.swingModeSkip > 0) {
-                this.swingModeSkip--;
+            if (this.swingModeSkips > 0) {
+                this.swingModeSkips--;
             }
 
         }, this.interval);
@@ -262,16 +262,16 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async isDeviceConnected(): Promise<boolean> {
-        const connected = await ping.promise.probe(this.device.host.address).then((res) => {
+        let connected = await ping.promise.probe(this.device.host.address).then((res) => {
             return res.alive
         });
 
         if (!connected) {
-            this.deviceSkip = true;
+            this.deviceSkips = Math.ceil(1000 / (this.interval));
             this.log.error("Failed to ping BroadLink RM!");
-        } else if (this.deviceSkip) {
-            this.deviceSkip = false;
-            return false;
+        } else if (this.deviceSkips > 0) {
+            this.deviceSkips--;
+            connected = false;
         }
 
         return connected;
@@ -386,7 +386,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private canUpdateRotationSpeedUp(): boolean {
-        return this.currentRotationSpeed < this.targetRotationSpeed && this.currentActive == hap.Characteristic.Active.ACTIVE && this.swingModeSkip == 0;
+        return this.currentRotationSpeed < this.targetRotationSpeed && this.currentActive == hap.Characteristic.Active.ACTIVE && this.swingModeSkips == 0;
     }
 
     /**
@@ -404,7 +404,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private canUpdateRotationSpeedDown(): boolean {
-        return this.currentRotationSpeed > this.targetRotationSpeed && this.currentActive == hap.Characteristic.Active.ACTIVE && this.swingModeSkip == 0;
+        return this.currentRotationSpeed > this.targetRotationSpeed && this.currentActive == hap.Characteristic.Active.ACTIVE && this.swingModeSkips == 0;
     }
 
     /**
@@ -462,7 +462,7 @@ class DysonBP01 implements AccessoryPlugin {
     private async updateSwingMode() {
         this.device.sendData(Buffer.from("26003800451718181618191617301817161817181719163018171619172f192d191716191630192e181716301630192d190006584716163018000d050000000000000000000000000000", "hex"));
         this.currentSwingMode = this.targetSwingMode;
-        this.swingModeSkip = Math.ceil(3000 / (this.interval));
+        this.swingModeSkips = Math.ceil(3000 / (this.interval));
         await this.storage.setItem(this.name + " swing-mode", this.currentSwingMode);
     }
 }

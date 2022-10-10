@@ -87,28 +87,28 @@ class DysonBP01 implements AccessoryPlugin {
     private currentActive: number;
 
     /**
-     * Current rotation speed
-     * @private
-     */
-    private currentRotationSpeed: number;
-
-    /**
-     * Current swing mode of the fan
-     * @private
-     */
-    private currentSwingMode: number;
-
-    /**
      * Target active characteristic to set the fan to
      * @private
      */
     private targetActive: number;
 
     /**
+     * Current rotation speed
+     * @private
+     */
+    private currentRotationSpeed: number;
+
+    /**
      * Target rotation speed to set the fan to
      * @private
      */
     private targetRotationSpeed: number;
+
+    /**
+     * Current swing mode of the fan
+     * @private
+     */
+    private currentSwingMode: number;
 
     /**
      * Target swing mode to set the fan to
@@ -161,6 +161,24 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
+     * Start the loop that updates the accessory characteristics
+     * @private
+     */
+    private initLoop() {
+        setInterval(async () => {
+
+            if (await this.isDeviceConnected()) {
+                await this.updateCharacteristics();
+            }
+
+            if (this.swingModeSkip > 0) {
+                this.swingModeSkip--;
+            }
+
+        }, this.interval);
+    }
+
+    /**
      * Initialize the information service for this accessory
      * @private
      */
@@ -193,103 +211,13 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Get the active characteristic
-     * @private
+     * Get the services for this accessory
      */
-    private async getActive(): Promise<CharacteristicValue> {
-        return this.targetActive;
-    }
-
-    /**
-     * Set the active characteristic
-     *
-     * @param value value received from Homebridge
-     * @private
-     */
-    private async setActive(value: CharacteristicValue): Promise<void> {
-        this.targetActive = value as number;
-
-        this.log.info("Power set to " + (this.targetActive == hap.Characteristic.Active.ACTIVE ? "ON" : "OFF"));
-    }
-
-    /**
-     * Get the rotation speed
-     * @private
-     */
-    private async getRotationSpeed(): Promise<CharacteristicValue> {
-        return this.targetRotationSpeed;
-    }
-
-    /**
-     * Set the rotation speed
-     *
-     * @param value value received from Homebridge
-     * @private
-     */
-    private async setRotationSpeed(value: CharacteristicValue): Promise<void> {
-        this.targetRotationSpeed = Math.max(10, value as number);
-
-        this.log.info("Fan speed set to " + (this.targetRotationSpeed / 10));
-    }
-
-    /**
-     * Get the swing mode
-     * @private
-     */
-    private async getSwingMode(): Promise<CharacteristicValue> {
-        return this.targetSwingMode;
-    }
-
-    /**
-     * Set the swing mode
-     *
-     * @param value value received from Homebridge
-     * @private
-     */
-    private async setSwingMode(value: CharacteristicValue): Promise<void> {
-        this.targetSwingMode = value as number;
-
-        this.log.info("Oscillation set to " + (this.targetSwingMode == hap.Characteristic.SwingMode.SWING_ENABLED ? "ON" : "OFF"));
-    }
-
-    /**
-     * Load the previous or initial characteristics of the accessory
-     * @private
-     */
-    private async initCharacteristics() {
-        await this.initActive();
-        await this.initRotationSpeed();
-        await this.initSwingMode();
-    }
-
-    /**
-     * Initialize the active characteristic, either for the first time or from the last known characteristic
-     * @private
-     */
-    private async initActive() {
-        this.currentActive = this.targetActive = await this.storage.getItem(this.name + " active") || hap.Characteristic.Active.INACTIVE;
-
-        this.log.info("Power is " + (this.currentActive == hap.Characteristic.Active.ACTIVE ? "ON" : "OFF"));
-    }
-
-    /**
-     * Initialize the rotation speed, either for the first time or from the last known characteristic
-     * @private
-     */
-    private async initRotationSpeed() {
-        this.currentRotationSpeed = this.targetRotationSpeed = await this.storage.getItem(this.name + " rotation-speed") || 10;
-
-        this.log.info("Fan speed is " + (this.currentRotationSpeed / 10));
-    }
-
-    /**
-     * Initialize the swing mode, either for the first time or from the last known characteristic
-     * @private
-     */
-    private async initSwingMode() {
-        this.currentSwingMode = this.targetSwingMode = await this.storage.getItem(this.name + " swing-mode") || hap.Characteristic.SwingMode.SWING_DISABLED;
-
-        this.log.info("Oscillation is " + (this.currentSwingMode == hap.Characteristic.SwingMode.SWING_ENABLED ? "ON" : "OFF"));
+    getServices(): Service[] {
+        return [
+            this.informationService,
+            this.fanService,
+        ];
     }
 
     /**
@@ -330,24 +258,6 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Start the loop that updates the accessory characteristics
-     * @private
-     */
-    private initLoop() {
-        setInterval(async () => {
-
-            if (await this.isDeviceConnected()) {
-                await this.updateCharacteristics();
-            }
-
-            if (this.swingModeSkip > 0) {
-                this.swingModeSkip--;
-            }
-
-        }, this.interval);
-    }
-
-    /**
      * Check if the BroadLink RM is connected
      * @private
      */
@@ -368,19 +278,59 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
+     * Load the previous or initial characteristics of the accessory
+     * @private
+     */
+    private async initCharacteristics() {
+        await this.initActive();
+        await this.initRotationSpeed();
+        await this.initSwingMode();
+    }
+
+    /**
      * Update the current characteristics of the accessory in the order of active, rotation speed, then swing mode
      * @private
      */
     private async updateCharacteristics() {
         if (this.canUpdateActive()) {
             await this.updateActive();
-        } else if (this.canIncreaseRotationSpeed()) {
-            await this.increaseRotationSpeed();
-        } else if (this.canDecreaseRotationSpeed()) {
-            await this.decreaseRotationSpeed();
+        } else if (this.canUpdateRotationSpeedUp()) {
+            await this.updateRotationSpeedUp();
+        } else if (this.canUpdateRotationSpeedDown()) {
+            await this.updateRotationSpeedDown();
         } else if (this.canUpdateSwingMode()) {
             await this.updateSwingMode();
         }
+    }
+
+    /**
+     * Initialize the active characteristic, either for the first time or from the last known characteristic
+     * @private
+     */
+    private async initActive() {
+        this.currentActive = this.targetActive = await this.storage.getItem(this.name + " active") || hap.Characteristic.Active.INACTIVE;
+
+        this.log.info("Power is " + (this.currentActive == hap.Characteristic.Active.ACTIVE ? "ON" : "OFF"));
+    }
+
+    /**
+     * Get the active characteristic
+     * @private
+     */
+    private async getActive(): Promise<CharacteristicValue> {
+        return this.targetActive;
+    }
+
+    /**
+     * Set the active characteristic
+     *
+     * @param value value received from Homebridge
+     * @private
+     */
+    private async setActive(value: CharacteristicValue): Promise<void> {
+        this.targetActive = value as number;
+
+        this.log.info("Power set to " + (this.targetActive == hap.Characteristic.Active.ACTIVE ? "ON" : "OFF"));
     }
 
     /**
@@ -402,10 +352,40 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
+     * Initialize the rotation speed, either for the first time or from the last known characteristic
+     * @private
+     */
+    private async initRotationSpeed() {
+        this.currentRotationSpeed = this.targetRotationSpeed = await this.storage.getItem(this.name + " rotation-speed") || 10;
+
+        this.log.info("Fan speed is " + (this.currentRotationSpeed / 10));
+    }
+
+    /**
+     * Get the rotation speed
+     * @private
+     */
+    private async getRotationSpeed(): Promise<CharacteristicValue> {
+        return this.targetRotationSpeed;
+    }
+
+    /**
+     * Set the rotation speed
+     *
+     * @param value value received from Homebridge
+     * @private
+     */
+    private async setRotationSpeed(value: CharacteristicValue): Promise<void> {
+        this.targetRotationSpeed = Math.max(10, value as number);
+
+        this.log.info("Fan speed set to " + (this.targetRotationSpeed / 10));
+    }
+
+    /**
      * Check if the current rotation speed can be increased
      * @private
      */
-    private canIncreaseRotationSpeed(): boolean {
+    private canUpdateRotationSpeedUp(): boolean {
         return this.currentRotationSpeed < this.targetRotationSpeed && this.currentActive == hap.Characteristic.Active.ACTIVE && this.swingModeSkip == 0;
     }
 
@@ -413,7 +393,7 @@ class DysonBP01 implements AccessoryPlugin {
      * Increase current rotation speed based on the target rotation speed
      * @private
      */
-    private async increaseRotationSpeed() {
+    private async updateRotationSpeedUp() {
         this.device.sendData(Buffer.from("260050004719171a1718181818311818181818191917183018181a2e19181830171a17301b2e1831171918301731181917000685471917311800068d481818311a00068c481818311800068d4719183018000d050000000000000000", "hex"));
         this.currentRotationSpeed += 10;
         await this.storage.setItem(this.name + " rotation-speed", this.currentRotationSpeed);
@@ -423,7 +403,7 @@ class DysonBP01 implements AccessoryPlugin {
      * Check if the current rotation speed can be decreased
      * @private
      */
-    private canDecreaseRotationSpeed(): boolean {
+    private canUpdateRotationSpeedDown(): boolean {
         return this.currentRotationSpeed > this.targetRotationSpeed && this.currentActive == hap.Characteristic.Active.ACTIVE && this.swingModeSkip == 0;
     }
 
@@ -431,10 +411,40 @@ class DysonBP01 implements AccessoryPlugin {
      * Decrease current rotation speed based on the target rotation speed
      * @private
      */
-    private async decreaseRotationSpeed() {
+    private async updateRotationSpeedDown() {
         this.device.sendData(Buffer.from("26005800481818191818171918301819191718181917183118181830181917311830171a17191a2e18181819183018311700069d471917311800068e481818311700068f471818311800068e491818301800068e4719183018000d05", "hex"));
         this.currentRotationSpeed -= 10;
         await this.storage.setItem(this.name + " rotation-speed", this.currentRotationSpeed);
+    }
+
+    /**
+     * Initialize the swing mode, either for the first time or from the last known characteristic
+     * @private
+     */
+    private async initSwingMode() {
+        this.currentSwingMode = this.targetSwingMode = await this.storage.getItem(this.name + " swing-mode") || hap.Characteristic.SwingMode.SWING_DISABLED;
+
+        this.log.info("Oscillation is " + (this.currentSwingMode == hap.Characteristic.SwingMode.SWING_ENABLED ? "ON" : "OFF"));
+    }
+
+    /**
+     * Get the swing mode
+     * @private
+     */
+    private async getSwingMode(): Promise<CharacteristicValue> {
+        return this.targetSwingMode;
+    }
+
+    /**
+     * Set the swing mode
+     *
+     * @param value value received from Homebridge
+     * @private
+     */
+    private async setSwingMode(value: CharacteristicValue): Promise<void> {
+        this.targetSwingMode = value as number;
+
+        this.log.info("Oscillation set to " + (this.targetSwingMode == hap.Characteristic.SwingMode.SWING_ENABLED ? "ON" : "OFF"));
     }
 
     /**
@@ -454,15 +464,5 @@ class DysonBP01 implements AccessoryPlugin {
         this.currentSwingMode = this.targetSwingMode;
         this.swingModeSkip = Math.ceil(3000 / (this.interval));
         await this.storage.setItem(this.name + " swing-mode", this.currentSwingMode);
-    }
-
-    /**
-     * Get the services for this accessory
-     */
-    getServices(): Service[] {
-        return [
-            this.informationService,
-            this.fanService,
-        ];
     }
 }

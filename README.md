@@ -4,12 +4,12 @@
 This Homebridge plugin adds a Dyson BP01 fan to HomeKit in conjunction with a BroadLink RM.
 
 ## Purpose
-There are currently plugins that can control a BroadLink RM to control many other devices; however, they would break if you try to change more than one state of the accessory at once. This plugin solves that specifically for the Dyson Pure Cool Me.
+There are currently plugins that can control a BroadLink RM to control many other devices; however, they would break if you try to change more than one state of the accessory at once. This plugin solves that specifically for the Dyson BP01.
 
 ## Required Devices
 This plugin is designed to be used with the following devices:
 - A BroadLink RM supported by [this library](https://github.com/kiwi-cam/broadlinkjs-rm)
-- A Dyson Pure Cool Me (BP01)
+- A Dyson BP01
 
 ## Device Setup
 ### BroadLink RM Setup
@@ -17,7 +17,7 @@ This plugin is designed to be used with the following devices:
 2. In device properties, disable `Lock device`.
 3. Place the device within line-of-sight of the Dyson's display.
 
-### Dyson Pure Cool Me Setup
+### Dyson BP01 Setup
 1. Set the fan speed to 1.
 2. Turn off oscillation.
 3. Turn off the fan itself.
@@ -52,12 +52,12 @@ To add the device to Homebridge, add the following to your accessories in the Ho
   "interval": 650
 }
 ```
-- The `serial` option is optional. It is the serial number of your Dyson Pure Cool Me. This is displayed in the Home app, but does not affect functionality.
+- The `serial` option is optional. It is the serial number of your Dyson BP01. This is displayed in the Home app, but does not affect functionality.
 - The `mac` option is optional, but recommended if you have multiple BroadLink RMs. This will ensure the correct device is selected to control your fan.
 - The `interval` option is optional, and it allows you to change the delay in milliseconds between each IR signal. It is recommended that you do not set this value any lower to prevent lost signals. You may need to raise this depending on the positioning of your BroadLink RM.
 
 After adding this, restart Homebridge for your changes to take effect.
-- If no BroadLink RM is found, the accessory will not be able to change states, and will not send signals to your Dyson Pure Cool Me.
+- If no BroadLink RM is found, the accessory will not be able to change states, and will not send signals to your Dyson BP01.
 - If one is found, you should be able to control your fan like a native HomeKit accessory.
 
 ## Troubleshooting

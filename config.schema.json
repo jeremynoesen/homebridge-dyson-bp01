@@ -1,7 +1,7 @@
 {
   "pluginAlias": "DysonBP01",
   "pluginType": "accessory",
-  "headerDisplay": "For instructions on how to prepare your BroadLink RM and Dyson Pure Cool Me to be used by this plugin, please look [here](https://github.com/jeremynoesen/homebridge-dyson-bp01#device-setup).",
+  "headerDisplay": "For instructions on how to prepare your BroadLink RM and Dyson BP01 to be used by this plugin, please look [here](https://github.com/jeremynoesen/homebridge-dyson-bp01#device-setup).",
   "singular": false,
   "schema": {
     "type": "object",
@@ -16,8 +16,8 @@
       "serial": {
         "title": "Serial Number",
         "type": "string",
-        "placeholder": "Printed on machine",
-        "description": "The serial number of your Dyson Pure Cool Me. This is displayed in the Home app, but does not affect functionality. Leave blank to use a placeholder.",
+        "placeholder": "PRINTED ON MACHINE",
+        "description": "The serial number of your Dyson BP01. This is displayed in the Home app, but does not affect functionality. Leave blank to use a placeholder.",
         "required": false
       },
       "mac": {

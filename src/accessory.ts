@@ -51,7 +51,7 @@ class DysonBP01 implements AccessoryPlugin {
     private readonly name: string;
 
     /**
-     * MAC address of BroadLink RM (if configured)
+     * MAC address of BroadLink RM
      * @private
      */
     private readonly mac: string;
@@ -69,7 +69,7 @@ class DysonBP01 implements AccessoryPlugin {
     private readonly serial: string;
 
     /**
-     * Node-persist storage to keep track of previous states across reboots
+     * Node-persist storage to keep track of characteristics
      * @private
      */
     private readonly storage: any;
@@ -78,55 +78,55 @@ class DysonBP01 implements AccessoryPlugin {
      * BroadLink RM
      * @private
      */
-    private remote: any;
+    private device: any;
 
     /**
-     * Current power state of the fan
+     * Current active characteristic of the fan
      * @private
      */
-    private currentPower: number;
+    private currentActive: number;
 
     /**
-     * Current fan speed
+     * Current rotation speed
      * @private
      */
-    private currentSpeed: number;
+    private currentRotationSpeed: number;
 
     /**
-     * Current oscillation state of the fan
+     * Current swing mode of the fan
      * @private
      */
-    private currentOscillation: number;
+    private currentSwingMode: number;
 
     /**
-     * Target power state to set the fan to
+     * Target active characteristic to set the fan to
      * @private
      */
-    private targetPower: number;
+    private targetActive: number;
 
     /**
-     * Target speed to set the fan to
+     * Target rotation speed to set the fan to
      * @private
      */
-    private targetSpeed: number;
+    private targetRotationSpeed: number;
 
     /**
-     * Target oscillation state to set the fan to
+     * Target swing mode to set the fan to
      * @private
      */
-    private targetOscillation: number;
+    private targetSwingMode: number;
 
     /**
-     * Used to add delays before speed signals after oscillation is updated
+     * Used to add delays before rotation speed signals after swing mode is updated
      * @private
      */
-    private oscillationSkip: number;
+    private swingModeSkip: number;
 
     /**
-     * Used to add delay after the remote reconnects
+     * Used to add delay after the BroadLink RM reconnects
      * @private
      */
-    private remoteSkip: boolean;
+    private deviceSkip: boolean;
 
     /**
      * Create the DysonBP01 accessory
@@ -137,26 +137,26 @@ class DysonBP01 implements AccessoryPlugin {
         this.name = config.name;
         this.mac = config.mac;
         this.interval = config.interval || 650;
-        this.serial = config.serial || "Printed on machine";
+        this.serial = config.serial || "PRINTED ON MACHINE";
 
-        this.remote = null;
-        this.currentPower = this.targetPower = 0;
-        this.currentSpeed = this.targetSpeed = 1;
-        this.currentOscillation = this.targetOscillation = 0;
-        this.oscillationSkip = 0;
-        this.remoteSkip = false;
+        this.device = null;
+        this.currentActive = this.targetActive = hap.Characteristic.Active.INACTIVE;
+        this.currentRotationSpeed = this.targetRotationSpeed = 10;
+        this.currentSwingMode = this.targetSwingMode = hap.Characteristic.SwingMode.SWING_DISABLED;
+        this.swingModeSkip = 0;
+        this.deviceSkip = false;
 
         this.storage = storage.create();
         this.storage.init({dir: api.user.persistPath(), forgiveParseErrors: true});
 
         this.informationService = new hap.Service.AccessoryInformation();
-        this.initInfoService();
+        this.initInformationService();
 
         this.fanService = new hap.Service.Fanv2(config.name);
         this.initFanService();
 
-        this.initStates().then(() => {
-            this.initRemote();
+        this.initCharacteristics().then(() => {
+            this.initDevice();
         });
     }
 
@@ -164,7 +164,7 @@ class DysonBP01 implements AccessoryPlugin {
      * Initialize the information service for this accessory
      * @private
      */
-    private initInfoService() {
+    private initInformationService() {
         this.informationService
             .updateCharacteristic(hap.Characteristic.Manufacturer, "Dyson")
             .updateCharacteristic(hap.Characteristic.Model, "BP01")
@@ -177,142 +177,142 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private initFanService() {
         this.fanService.getCharacteristic(hap.Characteristic.Active)
-            .onGet(this.getTargetPower.bind(this))
-            .onSet(this.setTargetPower.bind(this));
+            .onGet(this.getActive.bind(this))
+            .onSet(this.setActive.bind(this));
 
         this.fanService.getCharacteristic(hap.Characteristic.RotationSpeed)
-            .onGet(this.getTargetSpeed.bind(this))
-            .onSet(this.setTargetSpeed.bind(this))
+            .onGet(this.getRotationSpeed.bind(this))
+            .onSet(this.setRotationSpeed.bind(this))
             .setProps({
                 minStep: 10
             });
 
         this.fanService.getCharacteristic(hap.Characteristic.SwingMode)
-            .onGet(this.getTargetOscillation.bind(this))
-            .onSet(this.setTargetOscillation.bind(this));
+            .onGet(this.getSwingMode.bind(this))
+            .onSet(this.setSwingMode.bind(this));
     }
 
     /**
-     * Get the target power state
+     * Get the active characteristic
      * @private
      */
-    private async getTargetPower(): Promise<CharacteristicValue> {
-        return this.targetPower;
+    private async getActive(): Promise<CharacteristicValue> {
+        return this.targetActive;
     }
 
     /**
-     * Set the target power state
+     * Set the active characteristic
      *
      * @param value value received from Homebridge
      * @private
      */
-    private async setTargetPower(value: CharacteristicValue): Promise<void> {
-        this.targetPower = value as number;
+    private async setActive(value: CharacteristicValue): Promise<void> {
+        this.targetActive = value as number;
 
-        this.log.info("Power set to " + (this.targetPower ? "ON" : "OFF"));
+        this.log.info("Power set to " + (this.targetActive == hap.Characteristic.Active.ACTIVE ? "ON" : "OFF"));
     }
 
     /**
-     * Get the target fan speed
+     * Get the rotation speed
      * @private
      */
-    private async getTargetSpeed(): Promise<CharacteristicValue> {
-        return this.targetSpeed * 10;
+    private async getRotationSpeed(): Promise<CharacteristicValue> {
+        return this.targetRotationSpeed;
     }
 
     /**
-     * Set the target fan speed
+     * Set the rotation speed
      *
      * @param value value received from Homebridge
      * @private
      */
-    private async setTargetSpeed(value: CharacteristicValue): Promise<void> {
-        this.targetSpeed = Math.max(1, (value as number) / 10);
+    private async setRotationSpeed(value: CharacteristicValue): Promise<void> {
+        this.targetRotationSpeed = Math.max(10, value as number);
 
-        this.log.info("Speed set to " + this.targetSpeed);
+        this.log.info("Fan speed set to " + (this.targetRotationSpeed / 10));
     }
 
     /**
-     * Get the target oscillation state
+     * Get the swing mode
      * @private
      */
-    private async getTargetOscillation(): Promise<CharacteristicValue> {
-        return this.targetOscillation;
+    private async getSwingMode(): Promise<CharacteristicValue> {
+        return this.targetSwingMode;
     }
 
     /**
-     * Set the target oscillation state
+     * Set the swing mode
      *
      * @param value value received from Homebridge
      * @private
      */
-    private async setTargetOscillation(value: CharacteristicValue): Promise<void> {
-        this.targetOscillation = value as number;
+    private async setSwingMode(value: CharacteristicValue): Promise<void> {
+        this.targetSwingMode = value as number;
 
-        this.log.info("Oscillation set to " + (this.targetOscillation == 1 ? "ON" : "OFF"));
+        this.log.info("Oscillation set to " + (this.targetSwingMode == hap.Characteristic.SwingMode.SWING_ENABLED ? "ON" : "OFF"));
     }
 
     /**
-     * Load the previous or initial states of the accessory
+     * Load the previous or initial characteristics of the accessory
      * @private
      */
-    private async initStates() {
-        await this.initPower();
-        await this.initSpeed();
-        await this.initOscillation();
+    private async initCharacteristics() {
+        await this.initActive();
+        await this.initRotationSpeed();
+        await this.initSwingMode();
     }
 
     /**
-     * Initialize the power state, either for the first time or from the last known state
+     * Initialize the active characteristic, either for the first time or from the last known characteristic
      * @private
      */
-    private async initPower() {
-        this.currentPower = this.targetPower = await this.storage.getItem(this.name + " power") || 0;
+    private async initActive() {
+        this.currentActive = this.targetActive = await this.storage.getItem(this.name + " active") || hap.Characteristic.Active.INACTIVE;
 
-        this.log.info("Power is " + (this.currentPower == 1 ? "ON" : "OFF"));
+        this.log.info("Power is " + (this.currentActive == hap.Characteristic.Active.ACTIVE ? "ON" : "OFF"));
     }
 
     /**
-     * Initialize the fan speed, either for the first time or from the last known state
+     * Initialize the rotation speed, either for the first time or from the last known characteristic
      * @private
      */
-    private async initSpeed() {
-        this.currentSpeed = this.targetSpeed = await this.storage.getItem(this.name + " speed") || 1;
+    private async initRotationSpeed() {
+        this.currentRotationSpeed = this.targetRotationSpeed = await this.storage.getItem(this.name + " rotation-speed") || 10;
 
-        this.log.info("Speed is " + this.currentSpeed);
+        this.log.info("Fan speed is " + (this.currentRotationSpeed / 10));
     }
 
     /**
-     * Initialize the oscillation state, either for the first time or from the last known state
+     * Initialize the swing mode, either for the first time or from the last known characteristic
      * @private
      */
-    private async initOscillation() {
-        this.currentOscillation = this.targetOscillation = await this.storage.getItem(this.name + " oscillation") || 0;
+    private async initSwingMode() {
+        this.currentSwingMode = this.targetSwingMode = await this.storage.getItem(this.name + " swing-mode") || hap.Characteristic.SwingMode.SWING_DISABLED;
 
-        this.log.info("Oscillation is " + (this.currentOscillation == 1 ? "ON" : "OFF"));
+        this.log.info("Oscillation is " + (this.currentSwingMode == hap.Characteristic.SwingMode.SWING_ENABLED ? "ON" : "OFF"));
     }
 
     /**
      * Search for a BroadLink RM
      * @private
      */
-    private initRemote() {
+    private initDevice() {
         broadlink.discover();
         broadlink.on("deviceReady", device => {
-            this.setRemote(device);
+            this.setDevice(device);
         });
 
         this.log.info("Searching for BroadLink RM...");
     }
 
     /**
-     * Set the remote to the found BroadLink RM
-     * @param device device found to set as remote
+     * Use the found BroadLink RM
+     * @param device BroadLink RM
      * @private
      */
-    private setRemote(device: any) {
-        if (this.isRemote(device)) {
-            this.remote = device;
+    private setDevice(device: any) {
+        if (this.isDeviceValid(device)) {
+            this.device = device;
             this.initLoop();
 
             this.log.info("BroadLink RM discovered!");
@@ -320,28 +320,28 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Check that a device is the BroadLink RM that is wanted
-     * @param device device found to set as remote
+     * Check that the found BroadLink RM is valid
+     * @param device BroadLink RM
      * @private
      */
-    private isRemote(device: any): boolean {
-        return this.remote == null && (!this.mac || device.mac.toString("hex")
+    private isDeviceValid(device: any): boolean {
+        return this.device == null && (!this.mac || device.mac.toString("hex")
             .replace(/(.{2})/g, "$1:").slice(0, -1).toUpperCase() == this.mac.toUpperCase());
     }
 
     /**
-     * Start the loop that updates the accessory states
+     * Start the loop that updates the accessory characteristics
      * @private
      */
     private initLoop() {
         setInterval(async () => {
 
-            if (await this.isRemoteConnected()) {
-                await this.updateCurrentStates();
+            if (await this.isDeviceConnected()) {
+                await this.updateCharacteristics();
             }
 
-            if (this.oscillationSkip > 0) {
-                this.oscillationSkip--;
+            if (this.swingModeSkip > 0) {
+                this.swingModeSkip--;
             }
 
         }, this.interval);
@@ -351,16 +351,16 @@ class DysonBP01 implements AccessoryPlugin {
      * Check if the BroadLink RM is connected
      * @private
      */
-    private async isRemoteConnected(): Promise<boolean> {
-        const connected = await ping.promise.probe(this.remote.host.address).then((res) => {
+    private async isDeviceConnected(): Promise<boolean> {
+        const connected = await ping.promise.probe(this.device.host.address).then((res) => {
             return res.alive
         });
 
         if (!connected) {
-            this.remoteSkip = true;
+            this.deviceSkip = true;
             this.log.error("Failed to ping BroadLink RM!");
-        } else if (this.remoteSkip) {
-            this.remoteSkip = false;
+        } else if (this.deviceSkip) {
+            this.deviceSkip = false;
             return false;
         }
 
@@ -368,92 +368,92 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Update the current states of the accessory in the order of power, speed, and oscillation
+     * Update the current characteristics of the accessory in the order of active, rotation speed, then swing mode
      * @private
      */
-    private async updateCurrentStates() {
-        if (this.canUpdateCurrentPower()) {
-            await this.updateCurrentPower();
-        } else if (this.canIncreaseCurrentSpeed()) {
-            await this.increaseCurrentSpeed();
-        } else if (this.canDecreaseCurrentSpeed()) {
-            await this.decreaseCurrentSpeed();
-        } else if (this.canUpdateCurrentOscillation()) {
-            await this.updateCurrentOscillation();
+    private async updateCharacteristics() {
+        if (this.canUpdateActive()) {
+            await this.updateActive();
+        } else if (this.canIncreaseRotationSpeed()) {
+            await this.increaseRotationSpeed();
+        } else if (this.canDecreaseRotationSpeed()) {
+            await this.decreaseRotationSpeed();
+        } else if (this.canUpdateSwingMode()) {
+            await this.updateSwingMode();
         }
     }
 
     /**
-     * Check if the current power state can be updated
+     * Check if the current active characteristic can be updated
      * @private
      */
-    private canUpdateCurrentPower(): boolean {
-        return this.currentPower != this.targetPower;
+    private canUpdateActive(): boolean {
+        return this.currentActive != this.targetActive;
     }
 
     /**
-     * Update current power based on the target power
+     * Update current active characteristic based on the target active
      * @private
      */
-    private async updateCurrentPower() {
-        this.remote.sendData(Buffer.from("260050004a1618191719181819301719181818181819173118191818181919171818181818191917183018181819183018000699481818311900068c471918301800068e481817321900068c4719183018000d050000000000000000", "hex"));
-        this.currentPower = this.targetPower;
-        await this.storage.setItem(this.name + " power", this.currentPower);
+    private async updateActive() {
+        this.device.sendData(Buffer.from("260050004a1618191719181819301719181818181819173118191818181919171818181818191917183018181819183018000699481818311900068c471918301800068e481817321900068c4719183018000d050000000000000000", "hex"));
+        this.currentActive = this.targetActive;
+        await this.storage.setItem(this.name + " active", this.currentActive);
     }
 
     /**
-     * Check if the current speed can be increased
+     * Check if the current rotation speed can be increased
      * @private
      */
-    private canIncreaseCurrentSpeed(): boolean {
-        return this.currentSpeed < this.targetSpeed && this.currentPower == 1 && this.oscillationSkip == 0;
+    private canIncreaseRotationSpeed(): boolean {
+        return this.currentRotationSpeed < this.targetRotationSpeed && this.currentActive == hap.Characteristic.Active.ACTIVE && this.swingModeSkip == 0;
     }
 
     /**
-     * Update current speed based on the target speed upwards
+     * Increase current rotation speed based on the target rotation speed
      * @private
      */
-    private async increaseCurrentSpeed() {
-        this.remote.sendData(Buffer.from("260050004719171a1718181818311818181818191917183018181a2e19181830171a17301b2e1831171918301731181917000685471917311800068d481818311a00068c481818311800068d4719183018000d050000000000000000", "hex"));
-        this.currentSpeed += 1;
-        await this.storage.setItem(this.name + " speed", this.currentSpeed);
+    private async increaseRotationSpeed() {
+        this.device.sendData(Buffer.from("260050004719171a1718181818311818181818191917183018181a2e19181830171a17301b2e1831171918301731181917000685471917311800068d481818311a00068c481818311800068d4719183018000d050000000000000000", "hex"));
+        this.currentRotationSpeed += 10;
+        await this.storage.setItem(this.name + " rotation-speed", this.currentRotationSpeed);
     }
 
     /**
-     * Check if the current speed can be decreased
+     * Check if the current rotation speed can be decreased
      * @private
      */
-    private canDecreaseCurrentSpeed(): boolean {
-        return this.currentSpeed > this.targetSpeed && this.currentPower == 1 && this.oscillationSkip == 0;
+    private canDecreaseRotationSpeed(): boolean {
+        return this.currentRotationSpeed > this.targetRotationSpeed && this.currentActive == hap.Characteristic.Active.ACTIVE && this.swingModeSkip == 0;
     }
 
     /**
-     * Update current speed based on the target speed downwards
+     * Decrease current rotation speed based on the target rotation speed
      * @private
      */
-    private async decreaseCurrentSpeed() {
-        this.remote.sendData(Buffer.from("26005800481818191818171918301819191718181917183118181830181917311830171a17191a2e18181819183018311700069d471917311800068e481818311700068f471818311800068e491818301800068e4719183018000d05", "hex"));
-        this.currentSpeed -= 1;
-        await this.storage.setItem(this.name + " speed", this.currentSpeed);
+    private async decreaseRotationSpeed() {
+        this.device.sendData(Buffer.from("26005800481818191818171918301819191718181917183118181830181917311830171a17191a2e18181819183018311700069d471917311800068e481818311700068f471818311800068e491818301800068e4719183018000d05", "hex"));
+        this.currentRotationSpeed -= 10;
+        await this.storage.setItem(this.name + " rotation-speed", this.currentRotationSpeed);
     }
 
     /**
-     * Check if the current oscillation state can be updated
+     * Check if the current swing mode can be updated
      * @private
      */
-    private canUpdateCurrentOscillation(): boolean {
-        return this.currentOscillation != this.targetOscillation && this.currentPower == 1;
+    private canUpdateSwingMode(): boolean {
+        return this.currentSwingMode != this.targetSwingMode && this.currentActive == hap.Characteristic.Active.ACTIVE;
     }
 
     /**
-     * Update current oscillation based on the target oscillation
+     * Update current swing mode based on the target swing mode
      * @private
      */
-    private async updateCurrentOscillation() {
-        this.remote.sendData(Buffer.from("2600580048181819171918181830181918181818181818311819171918301830181917191830173118181a2e1819171918000692491818301800068d471918301800068d481818311800068e471818311900068c4818193018000d05", "hex"));
-        this.currentOscillation = this.targetOscillation;
-        this.oscillationSkip = Math.ceil(3000 / (this.interval));
-        await this.storage.setItem(this.name + " oscillation", this.currentOscillation);
+    private async updateSwingMode() {
+        this.device.sendData(Buffer.from("2600580048181819171918181830181918181818181818311819171918301830181917191830173118181a2e1819171918000692491818301800068d471918301800068d481818311800068e471818311900068c4818193018000d05", "hex"));
+        this.currentSwingMode = this.targetSwingMode;
+        this.swingModeSkip = Math.ceil(3000 / (this.interval));
+        await this.storage.setItem(this.name + " swing-mode", this.currentSwingMode);
     }
 
     /**

@@ -136,7 +136,7 @@ class DysonBP01 implements AccessoryPlugin {
 
         this.name = config.name;
         this.mac = config.mac;
-        this.interval = config.interval || 650;
+        this.interval = config.interval || 500;
         this.serial = config.serial;
 
         this.device = null;
@@ -346,7 +346,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async updateActive() {
-        this.device.sendData(Buffer.from("260050004a1618191719181819301719181818181819173118191818181919171818181818191917183018181819183018000699481818311900068c471918301800068e481817321900068c4719183018000d050000000000000000", "hex"));
+        this.device.sendData(Buffer.from("260038004519151a161917171a2d1917161816191718172f19181619161817181719161916181718173018171630161a1600066c4717163017000d050000000000000000000000000000", "hex"));
         this.currentActive = this.targetActive;
         await this.storage.setItem(this.name + " active", this.currentActive);
     }
@@ -394,7 +394,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async updateRotationSpeedUp() {
-        this.device.sendData(Buffer.from("260050004719171a1718181818311818181818191917183018181a2e19181830171a17301b2e1831171918301731181917000685471917311800068d481818311a00068c481818311800068d4719183018000d050000000000000000", "hex"));
+        this.device.sendData(Buffer.from("26003800441a151b14191817192d171819171816181717301917163018181530171a1530182d182f19161630192e182e1900065f4616192e19000d050000000000000000000000000000", "hex"));
         this.currentRotationSpeed += 10;
         await this.storage.setItem(this.name + " rotation-speed", this.currentRotationSpeed);
     }
@@ -412,7 +412,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async updateRotationSpeedDown() {
-        this.device.sendData(Buffer.from("26005800481818191818171918301819191718181917183118181830181917311830171a17191a2e18181819183018311700069d471917311800068e481818311700068f471818311800068e491818301800068e4719183018000d05", "hex"));
+        this.device.sendData(Buffer.from("260038004815181817181916182e161819171619161916301619172f19161730192d19161917172f1619161917181630190006664717192d19000d050000000000000000000000000000", "hex"));
         this.currentRotationSpeed -= 10;
         await this.storage.setItem(this.name + " rotation-speed", this.currentRotationSpeed);
     }
@@ -460,7 +460,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async updateSwingMode() {
-        this.device.sendData(Buffer.from("2600580048181819171918181830181918181818181818311819171918301830181917191830173118181a2e1819171918000692491818301800068d471918301800068d481818311800068e471818311900068c4818193018000d05", "hex"));
+        this.device.sendData(Buffer.from("26003800451718181618191617301817161817181719163018171619172f192d191716191630192e181716301630192d190006584716163018000d050000000000000000000000000000", "hex"));
         this.currentSwingMode = this.targetSwingMode;
         this.swingModeSkip = Math.ceil(3000 / (this.interval));
         await this.storage.setItem(this.name + " swing-mode", this.currentSwingMode);

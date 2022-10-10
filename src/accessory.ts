@@ -137,7 +137,7 @@ class DysonBP01 implements AccessoryPlugin {
         this.name = config.name;
         this.mac = config.mac;
         this.interval = config.interval || 650;
-        this.serial = config.serial || "PRINTED ON MACHINE";
+        this.serial = config.serial;
 
         this.device = null;
         this.currentActive = this.targetActive = hap.Characteristic.Active.INACTIVE;
@@ -168,7 +168,7 @@ class DysonBP01 implements AccessoryPlugin {
         this.informationService
             .updateCharacteristic(hap.Characteristic.Manufacturer, "Dyson")
             .updateCharacteristic(hap.Characteristic.Model, "BP01")
-            .updateCharacteristic(hap.Characteristic.SerialNumber, this.serial.toUpperCase());
+            .updateCharacteristic(hap.Characteristic.SerialNumber, this.serial ? this.serial.toUpperCase() : "Printed on machine");
     }
 
     /**

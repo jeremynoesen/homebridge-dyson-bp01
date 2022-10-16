@@ -48,14 +48,10 @@ It is recommended that you use the Homebridge config UI to configure this plugin
 {
   "accessory": "DysonBP01",
   "name": "Dyson Pure Cool Me",
-  "serial": "XXX-XX-XXXXXXXX",
-  "mac": "XX:XX:XX:XX:XX:XX",
-  "interval": 300
+  "mac": "XX:XX:XX:XX:XX:XX"
 }
 ```
-- The `serial` option is optional. It is the serial number of your Dyson BP01. This is displayed in the Home app, but does not affect functionality.
 - The `mac` option is optional, but recommended if you have multiple BroadLink RMs. This will ensure the correct device is selected to control your fan.
-- The `interval` option is optional, and it allows you to change the delay in milliseconds between each IR signal. It is recommended that you do not set this value any lower to prevent lost signals. You may need to raise this depending on the positioning of your BroadLink RM.
 
 After adding this, restart Homebridge for your changes to take effect.
 - If no BroadLink RM is found, the accessory will not be able to update, and will not send signals to your Dyson BP01.
@@ -63,4 +59,4 @@ After adding this, restart Homebridge for your changes to take effect.
 
 ## Troubleshooting
 - If your BroadLink RM randomly stops working or does not reconnect after power loss, try assigning it a static IP address.
-- If not all signals are sending, check the position of your BroadLink RM and ensure it has a direct line-of-sight to the screen on the fan. You can also increase the interval in the config.
+- If not all signals are sending, check the position of your BroadLink RM and ensure it has a direct line-of-sight to the screen on the fan.

@@ -114,7 +114,7 @@ class DysonBP01 implements AccessoryPlugin {
      * Used to add delays after the BroadLink RM reconnects
      * @private
      */
-    private deviceSkip: boolean;
+    private deviceSkips: number;
 
     /**
      * Create the DysonBP01 accessory
@@ -129,8 +129,7 @@ class DysonBP01 implements AccessoryPlugin {
         this.currentActive = this.targetActive = hap.Characteristic.Active.INACTIVE;
         this.currentRotationSpeed = this.targetRotationSpeed = 10;
         this.currentSwingMode = this.targetSwingMode = hap.Characteristic.SwingMode.SWING_DISABLED;
-        this.swingModeSkips = 0;
-        this.deviceSkip = false;
+        this.swingModeSkips = this.deviceSkips = 0;
 
         this.storage = storage.create();
         this.storage.init({dir: api.user.persistPath(), forgiveParseErrors: true});
@@ -155,11 +154,23 @@ class DysonBP01 implements AccessoryPlugin {
 
             await this.updateCharacteristics();
 
-            if (this.swingModeSkips > 0) {
-                this.swingModeSkips--;
-            }
+            this.doSkips();
 
         }, 500);
+    }
+
+    /**
+     * Decrement skip variables
+     * @private
+     */
+    private doSkips() {
+        if (this.swingModeSkips > 0) {
+            this.swingModeSkips--;
+        }
+
+        if (this.deviceSkips > 0) {
+            this.deviceSkips--;
+        }
     }
 
     /**
@@ -251,10 +262,10 @@ class DysonBP01 implements AccessoryPlugin {
         });
 
         if (!connected) {
-            this.deviceSkip = true;
+            this.deviceSkips = 3;
             this.log.error("Failed to ping BroadLink RM!");
-        } else if (this.deviceSkip) {
-            this.deviceSkip = connected = false;
+        } else if (this.deviceSkips > 0) {
+            connected = false;
         }
 
         return connected;
@@ -329,7 +340,7 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private async canUpdateActive(): Promise<boolean> {
         return this.currentActive != this.targetActive &&
-            this.isDeviceConnected();
+            await this.isDeviceConnected();
     }
 
     /**
@@ -385,7 +396,8 @@ class DysonBP01 implements AccessoryPlugin {
     private async canUpdateRotationSpeedUp(): Promise<boolean> {
         return this.currentRotationSpeed < this.targetRotationSpeed &&
             this.currentActive == hap.Characteristic.Active.ACTIVE &&
-            this.swingModeSkips == 0 && this.isDeviceConnected();
+            this.swingModeSkips == 0 &&
+            await this.isDeviceConnected();
     }
 
     /**
@@ -407,7 +419,8 @@ class DysonBP01 implements AccessoryPlugin {
     private async canUpdateRotationSpeedDown(): Promise<boolean> {
         return this.currentRotationSpeed > this.targetRotationSpeed &&
             this.currentActive == hap.Characteristic.Active.ACTIVE &&
-            this.swingModeSkips == 0 && this.isDeviceConnected();
+            this.swingModeSkips == 0 &&
+            await this.isDeviceConnected();
     }
 
     /**
@@ -467,7 +480,7 @@ class DysonBP01 implements AccessoryPlugin {
     private async canUpdateSwingMode(): Promise<boolean> {
         return this.currentSwingMode != this.targetSwingMode &&
             this.currentActive == hap.Characteristic.Active.ACTIVE &&
-            this.isDeviceConnected();
+            await this.isDeviceConnected();
     }
 
     /**

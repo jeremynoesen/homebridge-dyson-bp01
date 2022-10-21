@@ -157,11 +157,8 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private initLoop() {
         setInterval(async () => {
-
             await this.updateCharacteristics();
-
             this.doSkips();
-
         }, 500);
     }
 
@@ -170,17 +167,9 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private doSkips() {
-        if (this.activeSkips > 0) {
-            this.activeSkips--;
-        }
-
-        if (this.swingModeSkips > 0) {
-            this.swingModeSkips--;
-        }
-
-        if (this.deviceSkips > 0) {
-            this.deviceSkips--;
-        }
+        this.doActiveSkip();
+        this.doSwingModeSkip();
+        this.doDeviceSkip();
     }
 
     /**
@@ -282,6 +271,16 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
+     * Decrement device skips
+     * @private
+     */
+    private doDeviceSkip() {
+        if (this.deviceSkips > 0) {
+            this.deviceSkips--;
+        }
+    }
+
+    /**
      * Load the previous or initial characteristics of the accessory
      * @private
      */
@@ -366,6 +365,16 @@ class DysonBP01 implements AccessoryPlugin {
         this.activeSkips = 2;
         this.swingModeSkips = 0;
         await this.storage.setItem(this.name + " current active", this.currentActive);
+    }
+
+    /**
+     * Decrement active skips
+     * @private
+     */
+    private doActiveSkip() {
+        if (this.activeSkips > 0) {
+            this.activeSkips--;
+        }
     }
 
     /**
@@ -510,5 +519,15 @@ class DysonBP01 implements AccessoryPlugin {
         this.currentSwingMode = this.targetSwingMode;
         this.swingModeSkips = 7;
         await this.storage.setItem(this.name + " current swing mode", this.currentSwingMode);
+    }
+
+    /**
+     * Decrement swing mode skips
+     * @private
+     */
+    private doSwingModeSkip() {
+        if (this.swingModeSkips > 0) {
+            this.swingModeSkips--;
+        }
     }
 }

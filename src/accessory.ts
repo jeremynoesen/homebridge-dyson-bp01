@@ -364,6 +364,7 @@ class DysonBP01 implements AccessoryPlugin {
             "hex"));
         this.currentActive = this.targetActive;
         this.activeSkips = 2;
+        this.swingModeSkips = 0;
         await this.storage.setItem(this.name + " current active", this.currentActive);
     }
 

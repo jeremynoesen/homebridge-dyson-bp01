@@ -159,7 +159,7 @@ class DysonBP01 implements AccessoryPlugin {
         setInterval(async () => {
             await this.updateCharacteristics();
             this.doSkips();
-        }, 500);
+        }, 600);
     }
 
     /**
@@ -261,7 +261,7 @@ class DysonBP01 implements AccessoryPlugin {
         });
 
         if (!connected) {
-            this.deviceSkips = 5;
+            this.deviceSkips = 4;
             this.log.error("Failed to ping BroadLink RM!");
         } else if (this.deviceSkips > 0) {
             connected = false;
@@ -517,7 +517,7 @@ class DysonBP01 implements AccessoryPlugin {
             "26003800451718181618191617301817161817181719163018171619172f192d191716191630192e181716301630192d190006584716163018000d05",
             "hex"));
         this.currentSwingMode = this.targetSwingMode;
-        this.swingModeSkips = 7;
+        this.swingModeSkips = 6;
         await this.storage.setItem(this.name + " current swing mode", this.currentSwingMode);
     }
 

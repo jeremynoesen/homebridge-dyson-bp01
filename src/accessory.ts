@@ -148,6 +148,7 @@ class DysonBP01 implements AccessoryPlugin {
 
         this.initCharacteristics().then(() => {
             this.initDevice();
+            this.initLoop();
         });
     }
 
@@ -157,10 +158,14 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private initLoop() {
         setInterval(async () => {
-            if(await this.isDeviceConnected()) {
-                await this.updateCharacteristics();
+            if (this.device == null) {
+                broadlink.discover();
+            } else {
+                if (await this.isDeviceConnected()) {
+                    await this.updateCharacteristics();
+                }
+                this.doSkips();
             }
-            this.doSkips();
         }, 600);
     }
 
@@ -220,7 +225,6 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private initDevice() {
-        broadlink.discover();
         broadlink.on("deviceReady", device => {
             this.setDevice(device);
         });
@@ -236,7 +240,6 @@ class DysonBP01 implements AccessoryPlugin {
     private setDevice(device: any) {
         if (this.isDeviceValid(device)) {
             this.device = device;
-            this.initLoop();
 
             this.log.info("BroadLink RM discovered!");
         }
@@ -262,14 +265,37 @@ class DysonBP01 implements AccessoryPlugin {
         });
 
         if (!connected) {
-            this.deviceSkips = 3;
-            this.log.error("Failed to ping BroadLink RM!");
+            this.setDeviceSkips();
         } else if (this.deviceSkips > 0) {
-            this.deviceSkips--;
+            this.doDeviceSkip();
             connected = false;
         }
 
         return connected;
+    }
+
+    /**
+     * Set the device skips
+     * @private
+     */
+    private setDeviceSkips() {
+        if (this.deviceSkips == 0) {
+            this.log.info("Reconnecting to BroadLink RM...");
+        }
+
+        this.deviceSkips = 3;
+    }
+
+    /**
+     * Decrement the device skips
+     * @private
+     */
+    private doDeviceSkip() {
+        this.deviceSkips--;
+
+        if (this.deviceSkips == 0) {
+            this.log.info("BroadLink RM reconnected!")
+        }
     }
 
     /**
@@ -341,8 +367,7 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private async canUpdateActive(): Promise<boolean> {
         return this.currentActive != this.targetActive &&
-            this.activeSkips == 0 &&
-            await this.isDeviceConnected();
+            this.activeSkips == 0;
     }
 
     /**
@@ -360,7 +385,7 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Decrement active skips
+     * Decrement active skips if needed
      * @private
      */
     private doActiveSkip() {
@@ -411,8 +436,7 @@ class DysonBP01 implements AccessoryPlugin {
         return this.currentRotationSpeed < this.targetRotationSpeed &&
             this.currentActive == hap.Characteristic.Active.ACTIVE &&
             this.activeSkips == 0 &&
-            this.swingModeSkips == 0 &&
-            await this.isDeviceConnected();
+            this.swingModeSkips == 0;
     }
 
     /**
@@ -435,8 +459,7 @@ class DysonBP01 implements AccessoryPlugin {
         return this.currentRotationSpeed > this.targetRotationSpeed &&
             this.currentActive == hap.Characteristic.Active.ACTIVE &&
             this.activeSkips == 0 &&
-            this.swingModeSkips == 0 &&
-            await this.isDeviceConnected();
+            this.swingModeSkips == 0;
     }
 
     /**
@@ -496,8 +519,7 @@ class DysonBP01 implements AccessoryPlugin {
     private async canUpdateSwingMode(): Promise<boolean> {
         return this.currentSwingMode != this.targetSwingMode &&
             this.currentActive == hap.Characteristic.Active.ACTIVE &&
-            this.activeSkips == 0 &&
-            await this.isDeviceConnected();
+            this.activeSkips == 0;
     }
 
     /**
@@ -514,7 +536,7 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Decrement swing mode skips
+     * Decrement swing mode skips if needed
      * @private
      */
     private doSwingModeSkip() {

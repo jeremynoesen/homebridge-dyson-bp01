@@ -157,7 +157,9 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private initLoop() {
         setInterval(async () => {
-            await this.updateCharacteristics();
+            if(await this.isDeviceConnected()) {
+                await this.updateCharacteristics();
+            }
             this.doSkips();
         }, 600);
     }
@@ -169,7 +171,6 @@ class DysonBP01 implements AccessoryPlugin {
     private doSkips() {
         this.doActiveSkip();
         this.doSwingModeSkip();
-        this.doDeviceSkip();
     }
 
     /**
@@ -261,23 +262,14 @@ class DysonBP01 implements AccessoryPlugin {
         });
 
         if (!connected) {
-            this.deviceSkips = 4;
+            this.deviceSkips = 3;
             this.log.error("Failed to ping BroadLink RM!");
         } else if (this.deviceSkips > 0) {
+            this.deviceSkips--;
             connected = false;
         }
 
         return connected;
-    }
-
-    /**
-     * Decrement device skips
-     * @private
-     */
-    private doDeviceSkip() {
-        if (this.deviceSkips > 0) {
-            this.deviceSkips--;
-        }
     }
 
     /**

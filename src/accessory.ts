@@ -265,7 +265,7 @@ class DysonBP01 implements AccessoryPlugin {
         });
 
         if (!connected) {
-            this.setDeviceSkips();
+            this.doDeviceReconnect();
         } else if (this.deviceSkips > 0) {
             this.doDeviceSkip();
             connected = false;
@@ -278,7 +278,7 @@ class DysonBP01 implements AccessoryPlugin {
      * Set the device skips
      * @private
      */
-    private setDeviceSkips() {
+    private doDeviceReconnect() {
         if (this.deviceSkips == 0) {
             this.log.info("Reconnecting to BroadLink RM...");
         }

@@ -293,8 +293,9 @@ class DysonBP01 implements AccessoryPlugin {
     private doDeviceSkip() {
         if (this.deviceSkips > 0) {
             this.deviceSkips--;
-        } else {
-            this.log.info("BroadLink RM reconnected!")
+            if (this.deviceSkips == 0) {
+                this.log.info("BroadLink RM reconnected!")
+            }
         }
     }
 

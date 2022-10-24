@@ -283,7 +283,7 @@ class DysonBP01 implements AccessoryPlugin {
             this.log.info("Reconnecting to BroadLink RM...");
         }
 
-        this.deviceSkips = 4;
+        this.deviceSkips = 5;
     }
 
     /**
@@ -379,7 +379,7 @@ class DysonBP01 implements AccessoryPlugin {
             "260038004519151a161917171a2d1917161816191718172f19181619161817181719161916181718173018171630161a1600066c4717163017000d05",
             "hex"));
         this.currentActive = this.targetActive;
-        this.activeSkips = 3;
+        this.activeSkips = 4;
         this.swingModeSkips = 0;
         await this.storage.setItem(this.name + " current active", this.currentActive);
     }

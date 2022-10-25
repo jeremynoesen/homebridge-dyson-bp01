@@ -380,7 +380,7 @@ class DysonBP01 implements AccessoryPlugin {
             "26005800481718161916161916311817191619171816192d181918171817181719161817181718161a2e1816192d19171800066b45191631190006604817182d1a00066147151a2d190006614916192d190006604618172f18000d05",
             "hex"));
         this.currentActive = this.targetActive;
-        this.activeSkips = 2;
+        this.activeSkips = this.targetActive ? 2 : 8;
         this.swingModeSkips = 0;
         await this.storage.setItem(this.name + " current active", this.currentActive);
     }

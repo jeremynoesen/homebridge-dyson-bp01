@@ -153,6 +153,18 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
+     * Identify the accessory through HomeKit
+     */
+    identify(): void {
+        if (this.device == null) {
+            this.log.info("Identified (BroadLink RM not connected)");
+        } else {
+            this.log.info("Identified (BroadLink RM connected at " + this.device.mac.toString("hex")
+                .replace(/(.{2})/g, "$1:").slice(0, -1).toUpperCase() + ")");
+        }
+    }
+
+    /**
      * Start the loop that updates the accessory characteristics
      * @private
      */

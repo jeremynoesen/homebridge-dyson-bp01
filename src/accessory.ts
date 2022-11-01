@@ -12,7 +12,7 @@ import ping from "ping";
 import * as constants from "./helpers/constants";
 import * as messages from "./helpers/messages";
 
-const broadlink = require("../lib/broadlink");
+const broadlink = require("./helpers/broadlink");
 
 let hap: HAP;
 

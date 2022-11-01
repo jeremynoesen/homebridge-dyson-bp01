@@ -236,9 +236,9 @@ class DysonBP01 implements AccessoryPlugin {
      */
     identify(): void {
         if (this.device == null) {
-            this.log.info("Identified (BroadLink RM not connected)");
+            this.log.info("Identified, BroadLink RM not connected");
         } else {
-            this.log.info("Identified (BroadLink RM connected at " + this.macToString(this.device) + ")");
+            this.log.info("Identified, BroadLink RM connected at " + this.macToString(this.device));
         }
     }
 
@@ -332,7 +332,7 @@ class DysonBP01 implements AccessoryPlugin {
         if (this.isDeviceValid(device)) {
             this.device = device;
 
-            this.log.info("BroadLink RM discovered!");
+            this.log.info("BroadLink RM discovered at" + this.macToString(device));
         }
     }
 
@@ -383,7 +383,7 @@ class DysonBP01 implements AccessoryPlugin {
         if (this.deviceSkips > 0) {
             this.deviceSkips--;
             if (this.deviceSkips == 0) {
-                this.log.info("BroadLink RM reconnected!")
+                this.log.info("BroadLink RM reconnected")
             }
         }
     }

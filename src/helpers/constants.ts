@@ -77,3 +77,8 @@ export const STORAGE_CURRENT_SWING_MODE: string = "$NAME$ current swing mode";
  * Node persist variable name for target swing mode
  */
 export const STORAGE_TARGET_SWING_MODE: string = "$NAME$ target swing mode";
+
+/**
+ * Accessory ID, used by Homebridge to assign accessories to plugins
+ */
+export const ACCESSORY_ID: string = "DysonBP01";

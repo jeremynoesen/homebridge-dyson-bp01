@@ -72,11 +72,3 @@ export const SWING_MODE_INIT: string = "Swing mode is $STATE$";
  * Message shown when changing the swing mode
  */
 export const SWING_MODE_SET: string = "Swing mode set to $STATE$";
-
-/**
- * Convert the device MAC address to a properly formatted string
- * @param device BroadLink RM
- */
-export const macToString = (device: any): string => {
-    return device.mac.toString("hex").replace(/(.{2})/g, "$1:").slice(0, -1).toUpperCase()
-}

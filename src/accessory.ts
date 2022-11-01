@@ -18,7 +18,7 @@ let hap: HAP;
 
 export = (api: API) => {
     hap = api.hap;
-    api.registerAccessory("DysonBP01", DysonBP01);
+    api.registerAccessory(constants.ACCESSORY_ID, DysonBP01);
 };
 
 /**
@@ -161,7 +161,7 @@ class DysonBP01 implements AccessoryPlugin {
         if (this.device == null) {
             this.log.info(messages.IDENTIFY_NOT_CONNECTED);
         } else {
-            this.log.info(messages.IDENTIFY_CONNECTED.replace("$MAC$", messages.macToString(this.device)));
+            this.log.info(messages.IDENTIFY_CONNECTED.replace("$MAC$", this.macToString(this.device)));
         }
     }
 
@@ -255,7 +255,7 @@ class DysonBP01 implements AccessoryPlugin {
         if (this.isDeviceValid(device)) {
             this.device = device;
 
-            this.log.info(messages.DEVICE_DISCOVERED.replace("$MAC$", messages.macToString(device)));
+            this.log.info(messages.DEVICE_DISCOVERED.replace("$MAC$", this.macToString(device)));
         }
     }
 
@@ -265,7 +265,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private isDeviceValid(device: any): boolean {
-        return this.device == null && (!this.mac || messages.macToString(device) == this.mac.toUpperCase());
+        return this.device == null && (!this.mac || this.macToString(device) == this.mac.toUpperCase());
     }
 
     /**
@@ -309,6 +309,14 @@ class DysonBP01 implements AccessoryPlugin {
                 this.log.info(messages.DEVICE_RECONNECTED)
             }
         }
+    }
+
+    /**
+     * Convert the device MAC address to a properly formatted string
+     * @param device BroadLink RM
+     */
+    private macToString(device: any): string {
+        return device.mac.toString("hex").replace(/(.{2})/g, "$1:").slice(0, -1).toUpperCase()
     }
 
     /**

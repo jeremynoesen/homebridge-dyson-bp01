@@ -18,6 +18,7 @@
     "noImplicitAny": false
   },
   "include": [
-    "src"
+    "src",
+    "lib"
   ]
 }

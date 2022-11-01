@@ -9,10 +9,10 @@ import {
 } from "homebridge";
 import storage from "node-persist";
 import ping from "ping";
-import * as constants from "./constants";
-import * as messages from "./messages";
+import * as constants from "./helpers/constants";
+import * as messages from "./helpers/messages";
 
-const broadlink = require("./broadlink.js");
+const broadlink = require("../lib/broadlink");
 
 let hap: HAP;
 

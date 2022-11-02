@@ -56,12 +56,12 @@ export const ACTIVE_SET: string = "Active set to $STATE$";
 /**
  * Message shown when loading the previous rotation speed
  */
-export const ROTATION_SPEED_INIT: string = "Rotation speed is $STATE$";
+export const ROTATION_SPEED_INIT: string = "Rotation speed is $STATE$%";
 
 /**
  * Message shown when setting a new rotation speed
  */
-export const ROTATION_SPEED_SET: string = "Rotation speed set to $STATE$";
+export const ROTATION_SPEED_SET: string = "Rotation speed set to $STATE$%";
 
 /**
  * Message shown when changing the swing mode

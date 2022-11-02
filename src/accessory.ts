@@ -445,8 +445,8 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async setRotationSpeed(value: CharacteristicValue): Promise<void> {
-        if (value as number != this.targetRotationSpeed) {
-            this.targetRotationSpeed = Math.max(constants.STEP_SIZE, value as number);
+        if (value as number > 0 && value as number != this.targetRotationSpeed) {
+            this.targetRotationSpeed = value as number;
             await this.storage.setItem(constants.STORAGE_TARGET_ROTATION_SPEED
                 .replace("$NAME$", this.name), this.targetRotationSpeed);
 

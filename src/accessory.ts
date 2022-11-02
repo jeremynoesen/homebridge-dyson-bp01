@@ -427,7 +427,7 @@ class DysonBP01 implements AccessoryPlugin {
             .replace("$NAME$", this.name)) || constants.STEP_SIZE;
 
         this.log.info(messages.ROTATION_SPEED_INIT
-            .replace("$STATE$", (this.targetRotationSpeed / constants.STEP_SIZE) + ""));
+            .replace("$STATE$", this.targetRotationSpeed + ""));
     }
 
     /**
@@ -451,7 +451,7 @@ class DysonBP01 implements AccessoryPlugin {
                 .replace("$NAME$", this.name), this.targetRotationSpeed);
 
             this.log.info(messages.ROTATION_SPEED_SET
-                .replace("$STATE$", (this.targetRotationSpeed / constants.STEP_SIZE) + ""));
+                .replace("$STATE$", this.targetRotationSpeed + ""));
         }
     }
 

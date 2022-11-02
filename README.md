@@ -52,6 +52,7 @@ It is recommended that you use the Homebridge config UI to configure this plugin
 }
 ```
 - The `mac` option is optional, but recommended if you have multiple BroadLink RMs. This will ensure the correct device is selected to control your fan.
+- Every time you change `name`, you will need to set fan speed back to 1, oscillation off, and fan power off to re-sync the machine.
 
 After adding this, restart Homebridge for your changes to take effect.
 - If no BroadLink RM is found, the accessory will not be able to update, and will not send signals to your Dyson BP01.

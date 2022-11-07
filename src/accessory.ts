@@ -400,7 +400,7 @@ class DysonBP01 implements AccessoryPlugin {
     private async updateActive(): Promise<void> {
         this.device.sendData(Buffer.from(constants.SIGNAL_ACTIVE, "hex"));
         this.currentActive = this.targetActive;
-        this.activeSkips = this.targetActive ? constants.SKIPS_ACTIVE : constants.SKIPS_INACTIVE;
+        this.activeSkips = this.currentActive ? constants.SKIPS_ACTIVE : constants.SKIPS_INACTIVE;
         this.swingModeSkips = 0;
         await this.storage.setItem(constants.STORAGE_CURRENT_ACTIVE
             .replace("$NAME$", this.name), this.currentActive);

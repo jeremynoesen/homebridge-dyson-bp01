@@ -161,7 +161,7 @@ class DysonBP01 implements AccessoryPlugin {
         if (this.device == null) {
             this.log.info(messages.IDENTIFY_NOT_CONNECTED);
         } else {
-            this.log.info(messages.IDENTIFY_CONNECTED.replace("$MAC$", this.macToString(this.device)));
+            this.log.info(messages.IDENTIFY_CONNECTED.replace(constants.PLACEHOLDER, this.macToString(this.device)));
         }
     }
 
@@ -255,7 +255,7 @@ class DysonBP01 implements AccessoryPlugin {
         if (this.isDeviceValid(device)) {
             this.device = device;
 
-            this.log.info(messages.DEVICE_DISCOVERED.replace("$MAC$", this.macToString(device)));
+            this.log.info(messages.DEVICE_DISCOVERED.replace(constants.PLACEHOLDER, this.macToString(device)));
         }
     }
 
@@ -351,12 +351,12 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private async initActive(): Promise<void> {
         this.currentActive = await this.storage.getItem(constants.STORAGE_CURRENT_ACTIVE
-            .replace("$NAME$", this.name)) || hap.Characteristic.Active.INACTIVE;
+            .replace(constants.PLACEHOLDER, this.name)) || hap.Characteristic.Active.INACTIVE;
         this.targetActive = await this.storage.getItem(constants.STORAGE_TARGET_ACTIVE
-            .replace("$NAME$", this.name)) || hap.Characteristic.Active.INACTIVE;
+            .replace(constants.PLACEHOLDER, this.name)) || hap.Characteristic.Active.INACTIVE;
 
         this.log.info(messages.ACTIVE_INIT
-            .replace("$STATE$", this.targetActive + ""));
+            .replace(constants.PLACEHOLDER, this.targetActive + ""));
     }
 
     /**
@@ -377,10 +377,10 @@ class DysonBP01 implements AccessoryPlugin {
         if (value as number != this.targetActive) {
             this.targetActive = value as number;
             await this.storage.setItem(constants.STORAGE_TARGET_ACTIVE
-                .replace("$NAME$", this.name), this.targetActive);
+                .replace(constants.PLACEHOLDER, this.name), this.targetActive);
 
             this.log.info(messages.ACTIVE_SET
-                .replace("$STATE$", this.targetActive + ""));
+                .replace(constants.PLACEHOLDER, this.targetActive + ""));
         }
     }
 
@@ -403,7 +403,7 @@ class DysonBP01 implements AccessoryPlugin {
         this.activeSkips = this.currentActive ? constants.SKIPS_ACTIVE : constants.SKIPS_INACTIVE;
         this.swingModeSkips = 0;
         await this.storage.setItem(constants.STORAGE_CURRENT_ACTIVE
-            .replace("$NAME$", this.name), this.currentActive);
+            .replace(constants.PLACEHOLDER, this.name), this.currentActive);
     }
 
     /**
@@ -422,12 +422,12 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private async initRotationSpeed(): Promise<void> {
         this.currentRotationSpeed = await this.storage.getItem(constants.STORAGE_CURRENT_ROTATION_SPEED
-            .replace("$NAME$", this.name)) || constants.STEP_SIZE;
+            .replace(constants.PLACEHOLDER, this.name)) || constants.STEP_SIZE;
         this.targetRotationSpeed = await this.storage.getItem(constants.STORAGE_TARGET_ROTATION_SPEED
-            .replace("$NAME$", this.name)) || constants.STEP_SIZE;
+            .replace(constants.PLACEHOLDER, this.name)) || constants.STEP_SIZE;
 
         this.log.info(messages.ROTATION_SPEED_INIT
-            .replace("$STATE$", this.targetRotationSpeed + ""));
+            .replace(constants.PLACEHOLDER, this.targetRotationSpeed + ""));
     }
 
     /**
@@ -449,10 +449,10 @@ class DysonBP01 implements AccessoryPlugin {
         if (clampedRotationSpeed != this.targetRotationSpeed) {
             this.targetRotationSpeed = clampedRotationSpeed
             await this.storage.setItem(constants.STORAGE_TARGET_ROTATION_SPEED
-                .replace("$NAME$", this.name), this.targetRotationSpeed);
+                .replace(constants.PLACEHOLDER, this.name), this.targetRotationSpeed);
 
             this.log.info(messages.ROTATION_SPEED_SET
-                .replace("$STATE$", this.targetRotationSpeed + ""));
+                .replace(constants.PLACEHOLDER, this.targetRotationSpeed + ""));
         }
     }
 
@@ -475,7 +475,7 @@ class DysonBP01 implements AccessoryPlugin {
         this.device.sendData(Buffer.from(constants.SIGNAL_ROTATION_SPEED_UP, "hex"));
         this.currentRotationSpeed += constants.STEP_SIZE;
         await this.storage.setItem(constants.STORAGE_CURRENT_ROTATION_SPEED
-            .replace("$NAME$", this.name), this.currentRotationSpeed);
+            .replace(constants.PLACEHOLDER, this.name), this.currentRotationSpeed);
     }
 
     /**
@@ -497,7 +497,7 @@ class DysonBP01 implements AccessoryPlugin {
         this.device.sendData(Buffer.from(constants.SIGNAL_ROTATION_SPEED_DOWN, "hex"));
         this.currentRotationSpeed -= constants.STEP_SIZE;
         await this.storage.setItem(constants.STORAGE_CURRENT_ROTATION_SPEED
-            .replace("$NAME$", this.name), this.currentRotationSpeed);
+            .replace(constants.PLACEHOLDER, this.name), this.currentRotationSpeed);
     }
 
     /**
@@ -506,12 +506,12 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private async initSwingMode(): Promise<void> {
         this.currentSwingMode = await this.storage.getItem(constants.STORAGE_CURRENT_SWING_MODE
-            .replace("$NAME$", this.name)) || hap.Characteristic.SwingMode.SWING_DISABLED;
+            .replace(constants.PLACEHOLDER, this.name)) || hap.Characteristic.SwingMode.SWING_DISABLED;
         this.targetSwingMode = await this.storage.getItem(constants.STORAGE_TARGET_SWING_MODE
-            .replace("$NAME$", this.name)) || hap.Characteristic.SwingMode.SWING_DISABLED;
+            .replace(constants.PLACEHOLDER, this.name)) || hap.Characteristic.SwingMode.SWING_DISABLED;
 
         this.log.info(messages.SWING_MODE_INIT
-            .replace("$STATE$", this.targetSwingMode + ""));
+            .replace(constants.PLACEHOLDER, this.targetSwingMode + ""));
     }
 
     /**
@@ -532,10 +532,10 @@ class DysonBP01 implements AccessoryPlugin {
         if (value as number != this.targetSwingMode) {
             this.targetSwingMode = value as number;
             await this.storage.setItem(constants.STORAGE_TARGET_SWING_MODE
-                .replace("$NAME$", this.name), this.targetSwingMode);
+                .replace(constants.PLACEHOLDER, this.name), this.targetSwingMode);
 
             this.log.info(messages.SWING_MODE_SET
-                .replace("$STATE$", this.targetSwingMode + ""));
+                .replace(constants.PLACEHOLDER, this.targetSwingMode + ""));
         }
     }
 
@@ -558,7 +558,7 @@ class DysonBP01 implements AccessoryPlugin {
         this.currentSwingMode = this.targetSwingMode;
         this.swingModeSkips = constants.SKIPS_SWING_MODE;
         await this.storage.setItem(constants.STORAGE_CURRENT_SWING_MODE
-            .replace("$NAME$", this.name), this.currentSwingMode);
+            .replace(constants.PLACEHOLDER, this.name), this.currentSwingMode);
     }
 
     /**

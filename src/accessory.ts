@@ -334,13 +334,13 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async updateCharacteristics(): Promise<void> {
-        if (await this.canUpdateActive()) {
+        if (this.canUpdateActive()) {
             await this.updateActive();
-        } else if (await this.canUpdateRotationSpeedUp()) {
+        } else if (this.canUpdateRotationSpeedUp()) {
             await this.updateRotationSpeedUp();
-        } else if (await this.canUpdateRotationSpeedDown()) {
+        } else if (this.canUpdateRotationSpeedDown()) {
             await this.updateRotationSpeedDown();
-        } else if (await this.canUpdateSwingMode()) {
+        } else if (this.canUpdateSwingMode()) {
             await this.updateSwingMode();
         }
     }
@@ -388,7 +388,7 @@ class DysonBP01 implements AccessoryPlugin {
      * Check if the current active characteristic can be updated
      * @private
      */
-    private async canUpdateActive(): Promise<boolean> {
+    private canUpdateActive(): boolean {
         return this.currentActive != this.targetActive &&
             this.activeSkips == 0;
     }
@@ -460,7 +460,7 @@ class DysonBP01 implements AccessoryPlugin {
      * Check if the current rotation speed can be increased
      * @private
      */
-    private async canUpdateRotationSpeedUp(): Promise<boolean> {
+    private canUpdateRotationSpeedUp(): boolean {
         return this.currentRotationSpeed < this.targetRotationSpeed &&
             this.currentActive == hap.Characteristic.Active.ACTIVE &&
             this.activeSkips == 0 &&
@@ -482,7 +482,7 @@ class DysonBP01 implements AccessoryPlugin {
      * Check if the current rotation speed can be decreased
      * @private
      */
-    private async canUpdateRotationSpeedDown(): Promise<boolean> {
+    private canUpdateRotationSpeedDown(): boolean {
         return this.currentRotationSpeed > this.targetRotationSpeed &&
             this.currentActive == hap.Characteristic.Active.ACTIVE &&
             this.activeSkips == 0 &&
@@ -543,7 +543,7 @@ class DysonBP01 implements AccessoryPlugin {
      * Check if the current swing mode can be updated
      * @private
      */
-    private async canUpdateSwingMode(): Promise<boolean> {
+    private canUpdateSwingMode(): boolean {
         return this.currentSwingMode != this.targetSwingMode &&
             this.currentActive == hap.Characteristic.Active.ACTIVE &&
             this.activeSkips == 0;

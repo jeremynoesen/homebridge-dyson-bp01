@@ -1,12 +1,4 @@
-import {
-    AccessoryConfig,
-    AccessoryPlugin,
-    API,
-    CharacteristicValue,
-    HAP,
-    Logging,
-    Service
-} from "homebridge";
+import {AccessoryConfig, AccessoryPlugin, API, CharacteristicValue, HAP, Logging, Service} from "homebridge";
 import storage from "node-persist";
 import ping from "ping";
 import * as constants from "./helpers/constants";
@@ -306,7 +298,7 @@ class DysonBP01 implements AccessoryPlugin {
         if (this.deviceSkips > 0) {
             this.deviceSkips--;
             if (this.deviceSkips == 0) {
-                this.log.info(messages.DEVICE_RECONNECTED)
+                this.log.info(messages.DEVICE_RECONNECTED);
             }
         }
     }
@@ -316,7 +308,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @param device BroadLink RM
      */
     private macToString(device: any): string {
-        return device.mac.toString("hex").replace(/(.{2})/g, "$1:").slice(0, -1).toUpperCase()
+        return device.mac.toString("hex").replace(/(.{2})/g, "$1:").slice(0, -1).toUpperCase();
     }
 
     /**
@@ -447,7 +439,7 @@ class DysonBP01 implements AccessoryPlugin {
     private async setRotationSpeed(value: CharacteristicValue): Promise<void> {
         let clampedRotationSpeed = Math.max(constants.STEP_SIZE, value as number);
         if (clampedRotationSpeed != this.targetRotationSpeed) {
-            this.targetRotationSpeed = clampedRotationSpeed
+            this.targetRotationSpeed = clampedRotationSpeed;
             await this.storage.setItem(constants.STORAGE_TARGET_ROTATION_SPEED
                 .replace(constants.PLACEHOLDER, this.name), this.targetRotationSpeed);
 

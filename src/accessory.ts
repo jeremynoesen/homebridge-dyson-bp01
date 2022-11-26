@@ -15,25 +15,23 @@ export = (api: API) => {
 
 /**
  * Dyson BP01 accessory for Homebridge
- *
- * @author Jeremy Noesen
  */
 class DysonBP01 implements AccessoryPlugin {
 
     /**
-     * Information service to provide accessory details in Homebridge
+     * Information service to provide accessory information
      * @private
      */
     private readonly informationService: Service;
 
     /**
-     * Fan service to add a fan to Homebridge
+     * Fan service to add fan controls to accessory
      * @private
      */
     private readonly fanService: Service;
 
     /**
-     * Logger
+     * Homebridge logger
      * @private
      */
     private readonly log: Logging;
@@ -51,7 +49,7 @@ class DysonBP01 implements AccessoryPlugin {
     private readonly mac: string;
 
     /**
-     * Node-persist storage to keep track of characteristics
+     * Node-persist storage
      * @private
      */
     private readonly storage: any;
@@ -63,13 +61,13 @@ class DysonBP01 implements AccessoryPlugin {
     private device: any;
 
     /**
-     * Current active characteristic of the fan
+     * Current active state of the fan
      * @private
      */
     private currentActive: number;
 
     /**
-     * Target active characteristic to set the fan to
+     * Target active state to set the fan to
      * @private
      */
     private targetActive: number;
@@ -99,25 +97,28 @@ class DysonBP01 implements AccessoryPlugin {
     private targetSwingMode: number;
 
     /**
-     * Used to add delays after active characteristic is updated
+     * Loop skips applied after active is updated
      * @private
      */
     private activeSkips: number;
 
     /**
-     * Used to add delays after swing mode is updated
+     * Loop skips applied after swing mode is updated
      * @private
      */
     private swingModeSkips: number;
 
     /**
-     * Used to add delays after the BroadLink RM reconnects
+     * Loop skips applied after the BroadLink RM reconnects
      * @private
      */
     private deviceSkips: number;
 
     /**
      * Create the DysonBP01 accessory
+     * @param log Homebridge logging instance
+     * @param config Homebridge config
+     * @param api Homebridge API
      */
     constructor(log: Logging, config: AccessoryConfig, api: API) {
         this.log = log;
@@ -158,7 +159,7 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Start the loop that updates the accessory characteristics
+     * Start the loop that updates the accessory
      * @private
      */
     private initLoop(): void {
@@ -239,7 +240,7 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Use the found BroadLink RM
+     * Use a found BroadLink RM
      * @param device BroadLink RM
      * @private
      */
@@ -279,7 +280,7 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Set the device skips
+     * Start device reconnection sequence
      * @private
      */
     private doDeviceReconnect(): void {
@@ -291,7 +292,7 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Decrement the device skips
+     * Decrement device skips
      * @private
      */
     private doDeviceSkip(): void {
@@ -304,7 +305,7 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Convert the device MAC address to a properly formatted string
+     * Convert a device MAC address to a properly formatted string
      * @param device BroadLink RM
      */
     private macToString(device: any): string {
@@ -338,7 +339,7 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Initialize the active characteristic, either for the first time or from the last known characteristic
+     * Initialize the active characteristic from a previous saved state or from defaults
      * @private
      */
     private async initActive(): Promise<void> {
@@ -361,7 +362,6 @@ class DysonBP01 implements AccessoryPlugin {
 
     /**
      * Set the active characteristic
-     *
      * @param value value received from Homebridge
      * @private
      */
@@ -386,7 +386,7 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Update current active characteristic based on the target active
+     * Update current active characteristic based on the target active state
      * @private
      */
     private async updateActive(): Promise<void> {
@@ -399,7 +399,7 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Decrement active skips if needed
+     * Decrement active skips
      * @private
      */
     private doActiveSkip(): void {
@@ -409,7 +409,7 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Initialize the rotation speed, either for the first time or from the last known characteristic
+     * Initialize the rotation speed from a previous saved state or from defaults
      * @private
      */
     private async initRotationSpeed(): Promise<void> {
@@ -432,7 +432,6 @@ class DysonBP01 implements AccessoryPlugin {
 
     /**
      * Set the rotation speed
-     *
      * @param value value received from Homebridge
      * @private
      */
@@ -493,7 +492,7 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Initialize the swing mode, either for the first time or from the last known characteristic
+     * Initialize the swing mode from a previous saved state or from defaults
      * @private
      */
     private async initSwingMode(): Promise<void> {
@@ -516,7 +515,6 @@ class DysonBP01 implements AccessoryPlugin {
 
     /**
      * Set the swing mode
-     *
      * @param value value received from Homebridge
      * @private
      */
@@ -554,7 +552,7 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Decrement swing mode skips if needed
+     * Decrement swing mode skips
      * @private
      */
     private doSwingModeSkip(): void {

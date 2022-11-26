@@ -267,7 +267,7 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private async isDeviceConnected(): Promise<boolean> {
         let connected = await ping.promise.probe(this.device.host.address).then((res) => {
-            return res.alive
+            return res.alive;
         });
 
         if (!connected) {

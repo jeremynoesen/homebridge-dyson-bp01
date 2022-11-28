@@ -50,11 +50,6 @@ export const SIGNAL_SWING_MODE: string = "260058004716191517191917192c1619171816
 export const STEP_SIZE: number = 10;
 
 /**
- * Placeholder string used by other strings to insert values
- */
-export const PLACEHOLDER: string = "$VAL$";
-
-/**
  * Accessory ID, used by Homebridge to assign accessories to plugins
  * You must edit your Homebridge config after changing this!
  */

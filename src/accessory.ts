@@ -167,7 +167,7 @@ class DysonBP01 implements AccessoryPlugin {
         if (this.device == null) {
             this.log.info(messages.IDENTIFY_NOT_CONNECTED);
         } else {
-            this.log.info(messages.IDENTIFY_CONNECTED.replace(constants.PLACEHOLDER,
+            this.log.info(messages.IDENTIFY_CONNECTED.replace(messages.PLACEHOLDER,
                 this.device.mac.toString("hex").replace(/(.{2})/g, "$1:").slice(0, -1).toUpperCase()));
         }
     }
@@ -181,7 +181,7 @@ class DysonBP01 implements AccessoryPlugin {
             let mac = device.mac.toString("hex").replace(/(.{2})/g, "$1:").slice(0, -1).toUpperCase();
             if (this.device == null && (!this.mac || mac == this.mac.toUpperCase())) {
                 this.device = device;
-                this.log.info(messages.DEVICE_DISCOVERED.replace(constants.PLACEHOLDER, mac));
+                this.log.info(messages.DEVICE_DISCOVERED.replace(messages.PLACEHOLDER, mac));
             }
         });
         this.log.info(messages.DEVICE_SEARCHING);
@@ -226,11 +226,11 @@ class DysonBP01 implements AccessoryPlugin {
     private async initCharacteristics(): Promise<void> {
         this.characteristics = await this.storage.getItem(this.name) || this.characteristics;
         this.log.info(messages.ACTIVE_INIT
-            .replace(constants.PLACEHOLDER, this.characteristics.targetActive + ""));
+            .replace(messages.PLACEHOLDER, this.characteristics.targetActive + ""));
         this.log.info(messages.ROTATION_SPEED_INIT
-            .replace(constants.PLACEHOLDER, this.characteristics.targetRotationSpeed + ""));
+            .replace(messages.PLACEHOLDER, this.characteristics.targetRotationSpeed + ""));
         this.log.info(messages.SWING_MODE_INIT
-            .replace(constants.PLACEHOLDER, this.characteristics.targetSwingMode + ""));
+            .replace(messages.PLACEHOLDER, this.characteristics.targetSwingMode + ""));
     }
 
     /**
@@ -251,7 +251,7 @@ class DysonBP01 implements AccessoryPlugin {
             this.characteristics.targetActive = value as number;
             await this.storage.setItem(this.name, this.characteristics);
             this.log.info(messages.ACTIVE_SET
-                .replace(constants.PLACEHOLDER, this.characteristics.targetActive + ""));
+                .replace(messages.PLACEHOLDER, this.characteristics.targetActive + ""));
         }
     }
 
@@ -305,7 +305,7 @@ class DysonBP01 implements AccessoryPlugin {
             this.characteristics.targetRotationSpeed = clampedRotationSpeed;
             await this.storage.setItem(this.name, this.characteristics);
             this.log.info(messages.ROTATION_SPEED_SET
-                .replace(constants.PLACEHOLDER, this.characteristics.targetRotationSpeed + ""));
+                .replace(messages.PLACEHOLDER, this.characteristics.targetRotationSpeed + ""));
         }
     }
 
@@ -353,7 +353,7 @@ class DysonBP01 implements AccessoryPlugin {
             this.characteristics.targetSwingMode = value as number;
             await this.storage.setItem(this.name, this.characteristics);
             this.log.info(messages.SWING_MODE_SET
-                .replace(constants.PLACEHOLDER, this.characteristics.targetSwingMode + ""));
+                .replace(messages.PLACEHOLDER, this.characteristics.targetSwingMode + ""));
         }
     }
 

@@ -1,4 +1,7 @@
-import {PLACEHOLDER} from "./constants";
+/**
+ * Placeholder string used by messages to insert values
+ */
+export const PLACEHOLDER: string = "$VAL$";
 
 /**
  * Information service manufacturer field

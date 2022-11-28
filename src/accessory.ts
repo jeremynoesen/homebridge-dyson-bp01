@@ -18,16 +18,10 @@ export = (api: API) => {
 class DysonBP01 implements AccessoryPlugin {
 
     /**
-     * Information service to provide accessory information
+     * Services to provide accessory information and controls
      * @private
      */
-    private readonly informationService: Service;
-
-    /**
-     * Fan service to add fan controls to accessory
-     * @private
-     */
-    private readonly fanService: Service;
+    private readonly services: any;
 
     /**
      * Homebridge logger
@@ -60,58 +54,16 @@ class DysonBP01 implements AccessoryPlugin {
     private device: any;
 
     /**
-     * Current active state of the fan
+     * Characteristic states
      * @private
      */
-    private currentActive: number;
+    private characteristics: any;
 
     /**
-     * Target active state to set the fan to
+     * Loop skips
      * @private
      */
-    private targetActive: number;
-
-    /**
-     * Current rotation speed
-     * @private
-     */
-    private currentRotationSpeed: number;
-
-    /**
-     * Target rotation speed to set the fan to
-     * @private
-     */
-    private targetRotationSpeed: number;
-
-    /**
-     * Current swing mode of the fan
-     * @private
-     */
-    private currentSwingMode: number;
-
-    /**
-     * Target swing mode to set the fan to
-     * @private
-     */
-    private targetSwingMode: number;
-
-    /**
-     * Loop skips applied after active is updated
-     * @private
-     */
-    private activeSkips: number;
-
-    /**
-     * Loop skips applied after swing mode is updated
-     * @private
-     */
-    private swingModeSkips: number;
-
-    /**
-     * Loop skips applied after the BroadLink RM reconnects
-     * @private
-     */
-    private deviceSkips: number;
+    private skips: any;
 
     /**
      * Create the DysonBP01 accessory
@@ -124,23 +76,30 @@ class DysonBP01 implements AccessoryPlugin {
         this.name = config.name;
         this.mac = config.mac;
         this.device = null;
-        this.currentActive = this.targetActive = hap.Characteristic.Active.INACTIVE;
-        this.currentRotationSpeed = this.targetRotationSpeed = constants.STEP_SIZE;
-        this.currentSwingMode = this.targetSwingMode = hap.Characteristic.SwingMode.SWING_DISABLED;
-        this.activeSkips = this.swingModeSkips = this.deviceSkips = 0;
-        this.informationService = new hap.Service.AccessoryInformation();
-        this.fanService = new hap.Service.Fanv2(config.name);
+        this.characteristics = {
+            currentActive: hap.Characteristic.Active.INACTIVE,
+            targetActive: hap.Characteristic.Active.INACTIVE,
+            currentRotationSpeed: constants.STEP_SIZE,
+            targetRotationSpeed: constants.STEP_SIZE,
+            currentSwingMode: hap.Characteristic.SwingMode.SWING_DISABLED,
+            targetSwingMode: hap.Characteristic.SwingMode.SWING_DISABLED
+        };
+        this.skips = {
+            active: 0,
+            swingMode: 0,
+            device: 0
+        };
+        this.services = {
+            information: new hap.Service.AccessoryInformation(),
+            fan: new hap.Service.Fanv2(config.name)
+        };
         this.storage = storage.create();
         this.storage.init({dir: api.user.persistPath(), forgiveParseErrors: true});
-        this.initInformationService();
-        this.initFanService();
-        this.initActive()
-            .then(() => this.initRotationSpeed()
-                .then(() => this.initSwingMode()
-                    .then(() => {
-                        this.initDevice();
-                        this.initLoop()
-                    })));
+        this.initServices();
+        this.initCharacteristics().then(() => {
+            this.initDevice();
+            this.initLoop()
+        });
     }
 
     /**
@@ -169,33 +128,26 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Initialize the fan service for this accessory
+     * Initialize the services for this accessory
      * @private
      */
-    private initFanService(): void {
-        this.fanService.getCharacteristic(hap.Characteristic.Active)
+    private initServices(): void {
+        this.services.information
+            .updateCharacteristic(hap.Characteristic.Manufacturer, messages.INFO_MANUFACTURER)
+            .updateCharacteristic(hap.Characteristic.Model, messages.INFO_MODEL)
+            .updateCharacteristic(hap.Characteristic.SerialNumber, messages.INFO_SERIAL_NUMBER);
+        this.services.fan.getCharacteristic(hap.Characteristic.Active)
             .onGet(this.getActive.bind(this))
             .onSet(this.setActive.bind(this));
-        this.fanService.getCharacteristic(hap.Characteristic.RotationSpeed)
+        this.services.fan.getCharacteristic(hap.Characteristic.RotationSpeed)
             .onGet(this.getRotationSpeed.bind(this))
             .onSet(this.setRotationSpeed.bind(this))
             .setProps({
                 minStep: constants.STEP_SIZE
             });
-        this.fanService.getCharacteristic(hap.Characteristic.SwingMode)
+        this.services.fan.getCharacteristic(hap.Characteristic.SwingMode)
             .onGet(this.getSwingMode.bind(this))
             .onSet(this.setSwingMode.bind(this));
-    }
-
-    /**
-     * Initialize the information service for this accessory
-     * @private
-     */
-    private initInformationService(): void {
-        this.informationService
-            .updateCharacteristic(hap.Characteristic.Manufacturer, messages.INFO_MANUFACTURER)
-            .updateCharacteristic(hap.Characteristic.Model, messages.INFO_MODEL)
-            .updateCharacteristic(hap.Characteristic.SerialNumber, messages.INFO_SERIAL_NUMBER);
     }
 
     /**
@@ -203,8 +155,8 @@ class DysonBP01 implements AccessoryPlugin {
      */
     getServices(): Service[] {
         return [
-            this.informationService,
-            this.fanService,
+            this.services.information,
+            this.services.fan,
         ];
     }
 
@@ -244,11 +196,11 @@ class DysonBP01 implements AccessoryPlugin {
             return res.alive;
         });
         if (!connected) {
-            if (this.deviceSkips == 0) {
+            if (this.skips.device == 0) {
                 this.log.info(messages.DEVICE_RECONNECTING);
             }
-            this.deviceSkips = constants.SKIPS_DEVICE;
-        } else if (this.deviceSkips > 0) {
+            this.skips.device = constants.SKIPS_DEVICE;
+        } else if (this.skips.device > 0) {
             connected = false;
         }
         return connected;
@@ -259,25 +211,26 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private doDeviceSkip(): void {
-        if (this.deviceSkips > 0) {
-            this.deviceSkips--;
-            if (this.deviceSkips == 0) {
+        if (this.skips.device > 0) {
+            this.skips.device--;
+            if (this.skips.device == 0) {
                 this.log.info(messages.DEVICE_RECONNECTED);
             }
         }
     }
 
     /**
-     * Initialize the active characteristic from a previous saved state or from defaults
+     * Initialize all characteristics from a previous saved state or from defaults
      * @private
      */
-    private async initActive(): Promise<void> {
-        this.currentActive = await this.storage.getItem(constants.STORAGE_CURRENT_ACTIVE
-            .replace(constants.PLACEHOLDER, this.name)) || hap.Characteristic.Active.INACTIVE;
-        this.targetActive = await this.storage.getItem(constants.STORAGE_TARGET_ACTIVE
-            .replace(constants.PLACEHOLDER, this.name)) || hap.Characteristic.Active.INACTIVE;
+    private async initCharacteristics(): Promise<void> {
+        this.characteristics = await this.storage.getItem(this.name) || this.characteristics;
         this.log.info(messages.ACTIVE_INIT
-            .replace(constants.PLACEHOLDER, this.targetActive + ""));
+            .replace(constants.PLACEHOLDER, this.characteristics.targetActive + ""));
+        this.log.info(messages.ROTATION_SPEED_INIT
+            .replace(constants.PLACEHOLDER, this.characteristics.targetRotationSpeed + ""));
+        this.log.info(messages.SWING_MODE_INIT
+            .replace(constants.PLACEHOLDER, this.characteristics.targetSwingMode + ""));
     }
 
     /**
@@ -285,7 +238,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async getActive(): Promise<CharacteristicValue> {
-        return this.targetActive;
+        return this.characteristics.targetActive;
     }
 
     /**
@@ -294,12 +247,11 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async setActive(value: CharacteristicValue): Promise<void> {
-        if (value as number != this.targetActive) {
-            this.targetActive = value as number;
-            await this.storage.setItem(constants.STORAGE_TARGET_ACTIVE
-                .replace(constants.PLACEHOLDER, this.name), this.targetActive);
+        if (value as number != this.characteristics.targetActive) {
+            this.characteristics.targetActive = value as number;
+            await this.storage.setItem(this.name, this.characteristics);
             this.log.info(messages.ACTIVE_SET
-                .replace(constants.PLACEHOLDER, this.targetActive + ""));
+                .replace(constants.PLACEHOLDER, this.characteristics.targetActive + ""));
         }
     }
 
@@ -308,8 +260,8 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private canUpdateActive(): boolean {
-        return this.currentActive != this.targetActive &&
-            this.activeSkips == 0;
+        return this.characteristics.currentActive != this.characteristics.targetActive &&
+            this.skips.active == 0;
     }
 
     /**
@@ -318,11 +270,10 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private async updateActive(): Promise<void> {
         this.device.sendData(Buffer.from(constants.SIGNAL_ACTIVE, "hex"));
-        this.currentActive = this.targetActive;
-        this.activeSkips = this.currentActive ? constants.SKIPS_ACTIVE : constants.SKIPS_INACTIVE;
-        this.swingModeSkips = 0;
-        await this.storage.setItem(constants.STORAGE_CURRENT_ACTIVE
-            .replace(constants.PLACEHOLDER, this.name), this.currentActive);
+        this.characteristics.currentActive = this.characteristics.targetActive;
+        this.skips.active = this.characteristics.currentActive ? constants.SKIPS_ACTIVE : constants.SKIPS_INACTIVE;
+        this.skips.swingMode = 0;
+        await this.storage.setItem(this.name, this.characteristics);
     }
 
     /**
@@ -330,22 +281,9 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private doActiveSkip(): void {
-        if (this.activeSkips > 0) {
-            this.activeSkips--;
+        if (this.skips.active > 0) {
+            this.skips.active--;
         }
-    }
-
-    /**
-     * Initialize the rotation speed from a previous saved state or from defaults
-     * @private
-     */
-    private async initRotationSpeed(): Promise<void> {
-        this.currentRotationSpeed = await this.storage.getItem(constants.STORAGE_CURRENT_ROTATION_SPEED
-            .replace(constants.PLACEHOLDER, this.name)) || constants.STEP_SIZE;
-        this.targetRotationSpeed = await this.storage.getItem(constants.STORAGE_TARGET_ROTATION_SPEED
-            .replace(constants.PLACEHOLDER, this.name)) || constants.STEP_SIZE;
-        this.log.info(messages.ROTATION_SPEED_INIT
-            .replace(constants.PLACEHOLDER, this.targetRotationSpeed + ""));
     }
 
     /**
@@ -353,7 +291,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async getRotationSpeed(): Promise<CharacteristicValue> {
-        return this.targetRotationSpeed;
+        return this.characteristics.targetRotationSpeed;
     }
 
     /**
@@ -363,12 +301,11 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private async setRotationSpeed(value: CharacteristicValue): Promise<void> {
         let clampedRotationSpeed = Math.max(constants.STEP_SIZE, value as number);
-        if (clampedRotationSpeed != this.targetRotationSpeed) {
-            this.targetRotationSpeed = clampedRotationSpeed;
-            await this.storage.setItem(constants.STORAGE_TARGET_ROTATION_SPEED
-                .replace(constants.PLACEHOLDER, this.name), this.targetRotationSpeed);
+        if (clampedRotationSpeed != this.characteristics.targetRotationSpeed) {
+            this.characteristics.targetRotationSpeed = clampedRotationSpeed;
+            await this.storage.setItem(this.name, this.characteristics);
             this.log.info(messages.ROTATION_SPEED_SET
-                .replace(constants.PLACEHOLDER, this.targetRotationSpeed + ""));
+                .replace(constants.PLACEHOLDER, this.characteristics.targetRotationSpeed + ""));
         }
     }
 
@@ -377,10 +314,10 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private canUpdateRotationSpeed(): boolean {
-        return this.currentRotationSpeed != this.targetRotationSpeed &&
-            this.currentActive == hap.Characteristic.Active.ACTIVE &&
-            this.activeSkips == 0 &&
-            this.swingModeSkips == 0;
+        return this.characteristics.currentRotationSpeed != this.characteristics.targetRotationSpeed &&
+            this.characteristics.currentActive == hap.Characteristic.Active.ACTIVE &&
+            this.skips.active == 0 &&
+            this.skips.swingMode == 0;
     }
 
     /**
@@ -388,28 +325,14 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async updateRotationSpeed(): Promise<void> {
-        if (this.currentRotationSpeed < this.targetRotationSpeed) {
+        if (this.characteristics.currentRotationSpeed < this.characteristics.targetRotationSpeed) {
             this.device.sendData(Buffer.from(constants.SIGNAL_ROTATION_SPEED_UP, "hex"));
-            this.currentRotationSpeed += constants.STEP_SIZE;
-        } else if (this.currentRotationSpeed > this.targetRotationSpeed) {
+            this.characteristics.currentRotationSpeed += constants.STEP_SIZE;
+        } else if (this.characteristics.currentRotationSpeed > this.characteristics.targetRotationSpeed) {
             this.device.sendData(Buffer.from(constants.SIGNAL_ROTATION_SPEED_DOWN, "hex"));
-            this.currentRotationSpeed -= constants.STEP_SIZE;
+            this.characteristics.currentRotationSpeed -= constants.STEP_SIZE;
         }
-        await this.storage.setItem(constants.STORAGE_CURRENT_ROTATION_SPEED
-            .replace(constants.PLACEHOLDER, this.name), this.currentRotationSpeed);
-    }
-
-    /**
-     * Initialize the swing mode from a previous saved state or from defaults
-     * @private
-     */
-    private async initSwingMode(): Promise<void> {
-        this.currentSwingMode = await this.storage.getItem(constants.STORAGE_CURRENT_SWING_MODE
-            .replace(constants.PLACEHOLDER, this.name)) || hap.Characteristic.SwingMode.SWING_DISABLED;
-        this.targetSwingMode = await this.storage.getItem(constants.STORAGE_TARGET_SWING_MODE
-            .replace(constants.PLACEHOLDER, this.name)) || hap.Characteristic.SwingMode.SWING_DISABLED;
-        this.log.info(messages.SWING_MODE_INIT
-            .replace(constants.PLACEHOLDER, this.targetSwingMode + ""));
+        await this.storage.setItem(this.name, this.characteristics);
     }
 
     /**
@@ -417,7 +340,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async getSwingMode(): Promise<CharacteristicValue> {
-        return this.targetSwingMode;
+        return this.characteristics.targetSwingMode;
     }
 
     /**
@@ -426,12 +349,11 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async setSwingMode(value: CharacteristicValue): Promise<void> {
-        if (value as number != this.targetSwingMode) {
-            this.targetSwingMode = value as number;
-            await this.storage.setItem(constants.STORAGE_TARGET_SWING_MODE
-                .replace(constants.PLACEHOLDER, this.name), this.targetSwingMode);
+        if (value as number != this.characteristics.targetSwingMode) {
+            this.characteristics.targetSwingMode = value as number;
+            await this.storage.setItem(this.name, this.characteristics);
             this.log.info(messages.SWING_MODE_SET
-                .replace(constants.PLACEHOLDER, this.targetSwingMode + ""));
+                .replace(constants.PLACEHOLDER, this.characteristics.targetSwingMode + ""));
         }
     }
 
@@ -440,9 +362,9 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private canUpdateSwingMode(): boolean {
-        return this.currentSwingMode != this.targetSwingMode &&
-            this.currentActive == hap.Characteristic.Active.ACTIVE &&
-            this.activeSkips == 0;
+        return this.characteristics.currentSwingMode != this.characteristics.targetSwingMode &&
+            this.characteristics.currentActive == hap.Characteristic.Active.ACTIVE &&
+            this.skips.active == 0;
     }
 
     /**
@@ -451,10 +373,9 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private async updateSwingMode(): Promise<void> {
         this.device.sendData(Buffer.from(constants.SIGNAL_SWING_MODE, "hex"));
-        this.currentSwingMode = this.targetSwingMode;
-        this.swingModeSkips = constants.SKIPS_SWING_MODE;
-        await this.storage.setItem(constants.STORAGE_CURRENT_SWING_MODE
-            .replace(constants.PLACEHOLDER, this.name), this.currentSwingMode);
+        this.characteristics.currentSwingMode = this.characteristics.targetSwingMode;
+        this.skips.swingMode = constants.SKIPS_SWING_MODE;
+        await this.storage.setItem(this.name, this.characteristics);
     }
 
     /**
@@ -462,8 +383,8 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private doSwingModeSkip(): void {
-        if (this.swingModeSkips > 0) {
-            this.swingModeSkips--;
+        if (this.skips.swingMode > 0) {
+            this.skips.swingMode--;
         }
     }
 }

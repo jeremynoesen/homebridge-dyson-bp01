@@ -55,42 +55,6 @@ export const STEP_SIZE: number = 10;
 export const PLACEHOLDER: string = "$VAL$";
 
 /**
- * Node persist variable name for current active
- * You must manually set active to off when changing this!
- */
-export const STORAGE_CURRENT_ACTIVE: string = PLACEHOLDER + " current active";
-
-/**
- * Node persist variable name for target active
- * You must manually set active to off when changing this!
- */
-export const STORAGE_TARGET_ACTIVE: string = PLACEHOLDER + " target active";
-
-/**
- * Node persist variable name for current rotation speed
- * You must manually set rotation speed to 1 when changing this!
- */
-export const STORAGE_CURRENT_ROTATION_SPEED: string = PLACEHOLDER + " current rotation speed";
-
-/**
- * Node persist variable name for target rotation speed
- * You must manually set rotation speed to 1 when changing this!
- */
-export const STORAGE_TARGET_ROTATION_SPEED: string = PLACEHOLDER + " target rotation speed";
-
-/**
- * Node persist variable name for current swing mode
- * You must manually set swing mode to off when changing this!
- */
-export const STORAGE_CURRENT_SWING_MODE: string = PLACEHOLDER + " current swing mode";
-
-/**
- * Node persist variable name for target swing mode
- * You must manually set swing mode to off when changing this!
- */
-export const STORAGE_TARGET_SWING_MODE: string = PLACEHOLDER + " target swing mode";
-
-/**
  * Accessory ID, used by Homebridge to assign accessories to plugins
  * You must edit your Homebridge config after changing this!
  */

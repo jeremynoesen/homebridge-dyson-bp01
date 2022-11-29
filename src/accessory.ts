@@ -90,6 +90,7 @@ class DysonBP01 implements AccessoryPlugin {
         this.name = config.name;
         this.mac = config.mac;
         this.device = null;
+        this.storage = storage.create();
         this.characteristics = {
             currentActive: hap.Characteristic.Active.INACTIVE,
             targetActive: hap.Characteristic.Active.INACTIVE,
@@ -107,8 +108,10 @@ class DysonBP01 implements AccessoryPlugin {
             information: new hap.Service.AccessoryInformation(),
             fan: new hap.Service.Fanv2(config.name)
         };
-        this.storage = storage.create();
-        this.storage.init({dir: api.user.persistPath(), forgiveParseErrors: true}).then(() => {
+        this.storage.init({
+            dir: api.user.persistPath(),
+            forgiveParseErrors: true
+        }).then(() => {
             this.initServices();
             this.initCharacteristics().then(() => {
                 this.initDevice();

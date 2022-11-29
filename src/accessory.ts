@@ -27,7 +27,7 @@ class DysonBP01 implements AccessoryPlugin {
     };
 
     /**
-     * Homebridge logger
+     * Homebridge logging instance
      * @private
      */
     private readonly log: Logging;
@@ -51,7 +51,7 @@ class DysonBP01 implements AccessoryPlugin {
     private readonly storage: storage.LocalStorage;
 
     /**
-     * Loop skips
+     * Loop skips applied after characteristic updates or device reconnect
      * @private
      */
     private readonly skips: {
@@ -61,13 +61,13 @@ class DysonBP01 implements AccessoryPlugin {
     };
 
     /**
-     * BroadLink RM
+     * BroadLink RM controlling this fan
      * @private
      */
     private device: any;
 
     /**
-     * Characteristic states
+     * Characteristic current and target states
      * @private
      */
     private characteristics: {

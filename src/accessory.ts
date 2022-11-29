@@ -98,7 +98,7 @@ class DysonBP01 implements AccessoryPlugin {
         this.initServices();
         this.initCharacteristics().then(() => {
             this.initDevice();
-            this.initLoop()
+            this.initLoop();
         });
     }
 

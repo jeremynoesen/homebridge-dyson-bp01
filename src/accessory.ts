@@ -21,7 +21,10 @@ class DysonBP01 implements AccessoryPlugin {
      * Services to provide accessory information and controls
      * @private
      */
-    private readonly services: any;
+    private readonly services: {
+        readonly information: Service,
+        readonly fan: Service
+    };
 
     /**
      * Homebridge logger
@@ -45,7 +48,17 @@ class DysonBP01 implements AccessoryPlugin {
      * Node-persist storage
      * @private
      */
-    private readonly storage: any;
+    private readonly storage: storage.LocalStorage;
+
+    /**
+     * Loop skips
+     * @private
+     */
+    private readonly skips: {
+        active: number,
+        swingMode: number,
+        device: number
+    };
 
     /**
      * BroadLink RM
@@ -57,13 +70,14 @@ class DysonBP01 implements AccessoryPlugin {
      * Characteristic states
      * @private
      */
-    private characteristics: any;
-
-    /**
-     * Loop skips
-     * @private
-     */
-    private skips: any;
+    private characteristics: {
+        currentActive: number,
+        targetActive: number,
+        currentRotationSpeed: number,
+        targetRotationSpeed: number,
+        currentSwingMode: number,
+        targetSwingMode: number
+    };
 
     /**
      * Create the DysonBP01 accessory
@@ -94,11 +108,12 @@ class DysonBP01 implements AccessoryPlugin {
             fan: new hap.Service.Fanv2(config.name)
         };
         this.storage = storage.create();
-        this.storage.init({dir: api.user.persistPath(), forgiveParseErrors: true});
-        this.initServices();
-        this.initCharacteristics().then(() => {
-            this.initDevice();
-            this.initLoop();
+        this.storage.init({dir: api.user.persistPath(), forgiveParseErrors: true}).then(() => {
+            this.initServices();
+            this.initCharacteristics().then(() => {
+                this.initDevice();
+                this.initLoop();
+            });
         });
     }
 

@@ -39,12 +39,6 @@ class DysonBP01 implements AccessoryPlugin {
     private readonly name: string;
 
     /**
-     * MAC address of BroadLink RM
-     * @private
-     */
-    private readonly mac: string;
-
-    /**
      * Node-persist storage
      * @private
      */
@@ -59,6 +53,12 @@ class DysonBP01 implements AccessoryPlugin {
         swingMode: number,
         device: number
     };
+
+    /**
+     * MAC address of BroadLink RM
+     * @private
+     */
+    private mac: string;
 
     /**
      * BroadLink RM controlling this fan
@@ -174,7 +174,7 @@ class DysonBP01 implements AccessoryPlugin {
     getServices(): Service[] {
         return [
             this.services.information,
-            this.services.fan,
+            this.services.fan
         ];
     }
 
@@ -185,8 +185,7 @@ class DysonBP01 implements AccessoryPlugin {
         if (this.device == null) {
             this.log.info(messages.IDENTIFY_NOT_CONNECTED);
         } else {
-            this.log.info(messages.IDENTIFY_CONNECTED.replace(messages.PLACEHOLDER,
-                this.device.mac.toString("hex").replace(/(.{2})/g, "$1:").slice(0, -1).toUpperCase()));
+            this.log.info(messages.IDENTIFY_CONNECTED.replace(messages.PLACEHOLDER, this.mac));
         }
     }
 
@@ -197,9 +196,10 @@ class DysonBP01 implements AccessoryPlugin {
     private initDevice(): void {
         broadlink.on("deviceReady", device => {
             let mac = device.mac.toString("hex").replace(/(.{2})/g, "$1:").slice(0, -1).toUpperCase();
-            if (this.device == null && (!this.mac || mac == this.mac.toUpperCase())) {
+            if (this.device == null && (!this.mac || this.mac.toUpperCase() == mac)) {
                 this.device = device;
-                this.log.info(messages.DEVICE_DISCOVERED.replace(messages.PLACEHOLDER, mac));
+                this.mac = mac;
+                this.log.info(messages.DEVICE_DISCOVERED.replace(messages.PLACEHOLDER, this.mac));
             }
         });
         this.log.info(messages.DEVICE_SEARCHING);

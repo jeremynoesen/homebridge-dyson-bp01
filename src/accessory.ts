@@ -1,10 +1,10 @@
 import {AccessoryConfig, AccessoryPlugin, API, CharacteristicValue, HAP, Logging, Service} from "homebridge";
 import storage from "node-persist";
 import ping from "ping";
-import * as constants from "./helpers/constants";
-import * as messages from "./helpers/messages";
+import * as constants from "./constants";
+import * as messages from "./messages";
 
-const broadlink = require("./helpers/broadlink");
+const BroadLinkJS = require('kiwicam-broadlinkjs-rm');
 let hap: HAP;
 
 export = (api: API) => {
@@ -37,6 +37,12 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private readonly name: string;
+
+    /**
+     * BroadLinkJS instance
+     * @private
+     */
+    private readonly broadlink: any;
 
     /**
      * Node-persist storage
@@ -90,6 +96,7 @@ class DysonBP01 implements AccessoryPlugin {
         this.name = config.name;
         this.mac = config.mac;
         this.device = null;
+        this.broadlink = new BroadLinkJS();
         this.storage = storage.create();
         this.characteristics = {
             currentActive: hap.Characteristic.Active.INACTIVE,
@@ -127,7 +134,7 @@ class DysonBP01 implements AccessoryPlugin {
     private initLoop(): void {
         setInterval(async () => {
             if (this.device == null) {
-                broadlink.discover();
+                this.broadlink.discover();
             } else {
                 if (await this.isDeviceConnected()) {
                     if (this.canUpdateActive()) {
@@ -194,7 +201,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private initDevice(): void {
-        broadlink.on("deviceReady", device => {
+        this.broadlink.on("deviceReady", device => {
             let mac = device.mac.toString("hex").replace(/(.{2})/g, "$1:").slice(0, -1).toUpperCase();
             if (this.device == null && (!this.mac || this.mac.toUpperCase() == mac)) {
                 this.device = device;

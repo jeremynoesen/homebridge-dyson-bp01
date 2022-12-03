@@ -1,6 +1,6 @@
 import {AccessoryConfig, AccessoryPlugin, API, CharacteristicValue, HAP, Logging, Service} from "homebridge";
 import BroadLinkJS from "kiwicam-broadlinkjs-rm";
-import storage from "node-persist";
+import node_persist from "node-persist";
 import ping from "ping";
 import * as constants from "./constants";
 import * as messages from "./messages";
@@ -51,7 +51,7 @@ class DysonBP01 implements AccessoryPlugin {
      * Node-persist storage instance
      * @private
      */
-    private readonly storage: storage.LocalStorage;
+    private readonly storage: node_persist.LocalStorage;
 
     /**
      * Loop skips applied after characteristic updates or device reconnect
@@ -101,7 +101,7 @@ class DysonBP01 implements AccessoryPlugin {
         this.mac = config.mac;
         this.device = null;
         this.broadlink = new BroadLinkJS();
-        this.storage = storage.create();
+        this.storage = node_persist.create();
         this.characteristics = {
             currentActive: this.hap.Characteristic.Active.INACTIVE,
             targetActive: this.hap.Characteristic.Active.INACTIVE,

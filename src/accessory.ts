@@ -1,10 +1,10 @@
 import {AccessoryConfig, AccessoryPlugin, API, CharacteristicValue, HAP, Logging, Service} from "homebridge";
+import BroadLinkJS from "kiwicam-broadlinkjs-rm";
 import storage from "node-persist";
 import ping from "ping";
 import * as constants from "./constants";
 import * as messages from "./messages";
 
-const BroadLinkJS = require('kiwicam-broadlinkjs-rm');
 let hap: HAP;
 
 export = (api: API) => {
@@ -42,10 +42,10 @@ class DysonBP01 implements AccessoryPlugin {
      * BroadLinkJS instance
      * @private
      */
-    private readonly broadlink: any;
+    private readonly broadlink: BroadLinkJS;
 
     /**
-     * Node-persist storage
+     * Node-persist storage instance
      * @private
      */
     private readonly storage: storage.LocalStorage;

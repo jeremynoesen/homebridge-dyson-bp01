@@ -5,10 +5,7 @@ import ping from "ping";
 import * as constants from "./constants";
 import * as messages from "./messages";
 
-let hap: HAP;
-
 export = (api: API) => {
-    hap = api.hap;
     api.registerAccessory(constants.ACCESSORY_ID, DysonBP01);
 };
 
@@ -18,6 +15,18 @@ export = (api: API) => {
 class DysonBP01 implements AccessoryPlugin {
 
     /**
+     * Homebridge logging instance
+     * @private
+     */
+    private readonly log: Logging;
+
+    /**
+     * Homebridge HAP instance
+     * @private
+     */
+    private readonly hap: HAP;
+
+    /**
      * Services to provide accessory information and controls
      * @private
      */
@@ -25,12 +34,6 @@ class DysonBP01 implements AccessoryPlugin {
         readonly information: Service,
         readonly fan: Service
     };
-
-    /**
-     * Homebridge logging instance
-     * @private
-     */
-    private readonly log: Logging;
 
     /**
      * Accessory name
@@ -93,18 +96,19 @@ class DysonBP01 implements AccessoryPlugin {
      */
     constructor(log: Logging, config: AccessoryConfig, api: API) {
         this.log = log;
+        this.hap = api.hap;
         this.name = config.name;
         this.mac = config.mac;
         this.device = null;
         this.broadlink = new BroadLinkJS();
         this.storage = storage.create();
         this.characteristics = {
-            currentActive: hap.Characteristic.Active.INACTIVE,
-            targetActive: hap.Characteristic.Active.INACTIVE,
+            currentActive: this.hap.Characteristic.Active.INACTIVE,
+            targetActive: this.hap.Characteristic.Active.INACTIVE,
             currentRotationSpeed: constants.STEP_SIZE,
             targetRotationSpeed: constants.STEP_SIZE,
-            currentSwingMode: hap.Characteristic.SwingMode.SWING_DISABLED,
-            targetSwingMode: hap.Characteristic.SwingMode.SWING_DISABLED
+            currentSwingMode: this.hap.Characteristic.SwingMode.SWING_DISABLED,
+            targetSwingMode: this.hap.Characteristic.SwingMode.SWING_DISABLED
         };
         this.skips = {
             active: 0,
@@ -112,8 +116,8 @@ class DysonBP01 implements AccessoryPlugin {
             device: 0
         };
         this.services = {
-            information: new hap.Service.AccessoryInformation(),
-            fan: new hap.Service.Fanv2(config.name)
+            information: new this.hap.Service.AccessoryInformation(),
+            fan: new this.hap.Service.Fanv2(config.name)
         };
         this.storage.init({
             dir: api.user.persistPath(),
@@ -158,19 +162,19 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private initServices(): void {
         this.services.information
-            .updateCharacteristic(hap.Characteristic.Manufacturer, messages.INFO_MANUFACTURER)
-            .updateCharacteristic(hap.Characteristic.Model, messages.INFO_MODEL)
-            .updateCharacteristic(hap.Characteristic.SerialNumber, messages.INFO_SERIAL_NUMBER);
-        this.services.fan.getCharacteristic(hap.Characteristic.Active)
+            .updateCharacteristic(this.hap.Characteristic.Manufacturer, messages.INFO_MANUFACTURER)
+            .updateCharacteristic(this.hap.Characteristic.Model, messages.INFO_MODEL)
+            .updateCharacteristic(this.hap.Characteristic.SerialNumber, messages.INFO_SERIAL_NUMBER);
+        this.services.fan.getCharacteristic(this.hap.Characteristic.Active)
             .onGet(this.getActive.bind(this))
             .onSet(this.setActive.bind(this));
-        this.services.fan.getCharacteristic(hap.Characteristic.RotationSpeed)
+        this.services.fan.getCharacteristic(this.hap.Characteristic.RotationSpeed)
             .onGet(this.getRotationSpeed.bind(this))
             .onSet(this.setRotationSpeed.bind(this))
             .setProps({
                 minStep: constants.STEP_SIZE
             });
-        this.services.fan.getCharacteristic(hap.Characteristic.SwingMode)
+        this.services.fan.getCharacteristic(this.hap.Characteristic.SwingMode)
             .onGet(this.getSwingMode.bind(this))
             .onSet(this.setSwingMode.bind(this));
     }
@@ -340,7 +344,7 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private canUpdateRotationSpeed(): boolean {
         return this.characteristics.currentRotationSpeed != this.characteristics.targetRotationSpeed &&
-            this.characteristics.currentActive == hap.Characteristic.Active.ACTIVE &&
+            this.characteristics.currentActive == this.hap.Characteristic.Active.ACTIVE &&
             this.skips.active == 0 &&
             this.skips.swingMode == 0;
     }
@@ -388,7 +392,7 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private canUpdateSwingMode(): boolean {
         return this.characteristics.currentSwingMode != this.characteristics.targetSwingMode &&
-            this.characteristics.currentActive == hap.Characteristic.Active.ACTIVE &&
+            this.characteristics.currentActive == this.hap.Characteristic.Active.ACTIVE &&
             this.skips.active == 0;
     }
 

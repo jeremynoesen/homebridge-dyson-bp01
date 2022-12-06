@@ -329,9 +329,13 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async setRotationSpeed(value: CharacteristicValue): Promise<void> {
-        let clampedRotationSpeed = Math.max(constants.STEP_SIZE, value as number);
-        if (clampedRotationSpeed != this.characteristics.targetRotationSpeed) {
-            this.characteristics.targetRotationSpeed = clampedRotationSpeed;
+        let tempValue = value as number;
+        if (tempValue < constants.STEP_SIZE) {
+            tempValue = constants.STEP_SIZE;
+            this.services.fan.updateCharacteristic(this.hap.Characteristic.Active, tempValue);
+        }
+        if (tempValue != this.characteristics.targetRotationSpeed) {
+            this.characteristics.targetRotationSpeed = tempValue;
             await this.storage.setItem(this.name, this.characteristics);
             this.log.info(messages.ROTATION_SPEED_SET
                 .replace(messages.PLACEHOLDER, this.characteristics.targetRotationSpeed + ""));

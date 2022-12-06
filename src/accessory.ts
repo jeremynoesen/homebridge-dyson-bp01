@@ -332,7 +332,7 @@ class DysonBP01 implements AccessoryPlugin {
         let tempValue = value as number;
         if (tempValue < constants.STEP_SIZE) {
             tempValue = constants.STEP_SIZE;
-            this.services.fan.updateCharacteristic(this.hap.Characteristic.Active, tempValue);
+            this.services.fan.updateCharacteristic(this.hap.Characteristic.RotationSpeed, tempValue);
         }
         if (tempValue != this.characteristics.targetRotationSpeed) {
             this.characteristics.targetRotationSpeed = tempValue;

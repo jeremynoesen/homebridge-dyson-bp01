@@ -1,7 +1,7 @@
 /**
  * Loop interval in milliseconds
  */
-export const INTERVAL: number = 650;
+export const INTERVAL: number = 700;
 
 /**
  * Number of active skips after turning on the fan

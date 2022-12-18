@@ -70,7 +70,7 @@ class DysonBP01 implements AccessoryPlugin {
     private mac: string;
 
     /**
-     * BroadLink RM controlling this fan
+     * BroadLink RM used to send signals
      * @private
      */
     private device: any;
@@ -89,7 +89,7 @@ class DysonBP01 implements AccessoryPlugin {
     };
 
     /**
-     * Create the DysonBP01 accessory
+     * Create DysonBP01 accessory
      * @param log Homebridge logging instance
      * @param config Homebridge config
      * @param api Homebridge API
@@ -132,7 +132,7 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Start the loop that updates the accessory
+     * Start loop that updates accessory states
      * @private
      */
     private initLoop(): void {
@@ -157,7 +157,7 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Initialize the services for this accessory
+     * Initialize services for accessory
      * @private
      */
     private initServices(): void {
@@ -180,7 +180,7 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Get the services for this accessory
+     * Get services for accessory
      */
     getServices(): Service[] {
         return [
@@ -190,7 +190,7 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Identify the accessory through HomeKit
+     * Identify accessory through HomeKit
      */
     identify(): void {
         if (this.device == null) {
@@ -201,7 +201,7 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Search for a BroadLink RM
+     * Search for BroadLink RM
      * @private
      */
     private initDevice(): void {
@@ -217,7 +217,7 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Check if the BroadLink RM is connected
+     * Check if BroadLink RM is connected
      * @private
      */
     private async isDeviceConnected(): Promise<boolean> {
@@ -249,7 +249,7 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Initialize all characteristics from a previous saved state or from defaults
+     * Initialize all characteristics from persist storage or defaults
      * @private
      */
     private async initCharacteristics(): Promise<void> {
@@ -263,7 +263,7 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Get the active characteristic
+     * Get target Active
      * @private
      */
     private async getActive(): Promise<CharacteristicValue> {
@@ -271,8 +271,8 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Set the active characteristic
-     * @param value value received from Homebridge
+     * Set target Active
+     * @param value Value received from Homebridge
      * @private
      */
     private async setActive(value: CharacteristicValue): Promise<void> {
@@ -285,7 +285,7 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Check if the current active characteristic can be updated
+     * Check if current Active can be updated
      * @private
      */
     private canUpdateActive(): boolean {
@@ -294,7 +294,7 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Update current active characteristic based on the target active state
+     * Update current Active based on target Active
      * @private
      */
     private async updateActive(): Promise<void> {
@@ -306,7 +306,7 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Decrement active skips
+     * Decrement Active skips
      * @private
      */
     private doActiveSkip(): void {
@@ -316,7 +316,7 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Get the rotation speed
+     * Get target Rotation Speed
      * @private
      */
     private async getRotationSpeed(): Promise<CharacteristicValue> {
@@ -324,8 +324,8 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Set the rotation speed
-     * @param value value received from Homebridge
+     * Set target Rotation Speed
+     * @param value Value received from Homebridge
      * @private
      */
     private async setRotationSpeed(value: CharacteristicValue): Promise<void> {
@@ -343,7 +343,7 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Check if the current rotation speed can be updated
+     * Check if current Rotation Speed can be updated
      * @private
      */
     private canUpdateRotationSpeed(): boolean {
@@ -354,7 +354,7 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Update current rotation speed based on the target rotation speed
+     * Update current Rotation Speed based on target Rotation Speed
      * @private
      */
     private async updateRotationSpeed(): Promise<void> {
@@ -369,7 +369,7 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Get the swing mode
+     * Get target Swing Mode
      * @private
      */
     private async getSwingMode(): Promise<CharacteristicValue> {
@@ -377,8 +377,8 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Set the swing mode
-     * @param value value received from Homebridge
+     * Set target Swing Mode
+     * @param value Value received from Homebridge
      * @private
      */
     private async setSwingMode(value: CharacteristicValue): Promise<void> {
@@ -391,7 +391,7 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Check if the current swing mode can be updated
+     * Check if current Swing Mode can be updated
      * @private
      */
     private canUpdateSwingMode(): boolean {
@@ -401,7 +401,7 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Update current swing mode based on the target swing mode
+     * Update current Swing Mode based on target Swing Mode
      * @private
      */
     private async updateSwingMode(): Promise<void> {
@@ -412,7 +412,7 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Decrement swing mode skips
+     * Decrement Swing Mode skips
      * @private
      */
     private doSwingModeSkip(): void {

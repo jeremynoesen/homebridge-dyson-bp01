@@ -16,7 +16,7 @@ export const INFO_MODEL: string = "BP01";
 /**
  * Information service serial number field
  */
-export const INFO_SERIAL_NUMBER: string = "Printed under machine";
+export const INFO_SERIAL_NUMBER: string = "Printed Under Machine";
 
 /**
  * Identify message when the BroadLink RM is not connected
@@ -61,19 +61,19 @@ export const ACTIVE_SET: string = "Active set to " + PLACEHOLDER;
 /**
  * Message shown when loading the previous rotation speed
  */
-export const ROTATION_SPEED_INIT: string = "Rotation speed initialized to " + PLACEHOLDER + "%";
+export const ROTATION_SPEED_INIT: string = "Rotation Speed initialized to " + PLACEHOLDER + "%";
 
 /**
  * Message shown when setting a new rotation speed
  */
-export const ROTATION_SPEED_SET: string = "Rotation speed set to " + PLACEHOLDER + "%";
+export const ROTATION_SPEED_SET: string = "Rotation Speed set to " + PLACEHOLDER + "%";
 
 /**
  * Message shown when changing the swing mode
  */
-export const SWING_MODE_INIT: string = "Swing mode initialized to " + PLACEHOLDER;
+export const SWING_MODE_INIT: string = "Swing Mode initialized to " + PLACEHOLDER;
 
 /**
  * Message shown when changing the swing mode
  */
-export const SWING_MODE_SET: string = "Swing mode set to " + PLACEHOLDER;
+export const SWING_MODE_SET: string = "Swing Mode set to " + PLACEHOLDER;

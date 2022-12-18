@@ -133,6 +133,17 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
+     * Identify the accessory through HomeKit
+     */
+    identify(): void {
+        if (this.device == null) {
+            this.log.info(messages.IDENTIFY_NOT_CONNECTED);
+        } else {
+            this.log.info(messages.IDENTIFY_CONNECTED.replace(messages.PLACEHOLDER, this.mac));
+        }
+    }
+
+    /**
      * Start the loop that updates the accessory
      * @private
      */
@@ -195,17 +206,6 @@ class DysonBP01 implements AccessoryPlugin {
             this.services.information,
             this.services.fan
         ];
-    }
-
-    /**
-     * Identify the accessory through HomeKit
-     */
-    identify(): void {
-        if (this.device == null) {
-            this.log.info(messages.IDENTIFY_NOT_CONNECTED);
-        } else {
-            this.log.info(messages.IDENTIFY_CONNECTED.replace(messages.PLACEHOLDER, this.mac));
-        }
     }
 
     /**

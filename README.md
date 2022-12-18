@@ -1,7 +1,7 @@
 # homebridge-dyson-bp01 [![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)
 
 ## About
-This Homebridge plugin adds a Dyson BP01 fan to HomeKit in conjunction with a BroadLink RM.
+This Homebridge plugin adds a Dyson BP01 fan to HomeKit using a BroadLink RM.
 
 ## Purpose
 There are currently plugins out there that can use a BroadLink RM to control many other devices; however, they break if you try to change more than one characteristic of an accessory at once. This plugin aims to fix this issue to bring a more native HomeKit experience to the IR-controlled Dyson BP01.

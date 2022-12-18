@@ -190,7 +190,7 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Identify accessory through HomeKit
+     * Identify accessory
      */
     identify(): void {
         if (this.device == null) {
@@ -249,7 +249,7 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Initialize all characteristics from persist storage or defaults
+     * Initialize characteristics from persist storage or defaults
      * @private
      */
     private async initCharacteristics(): Promise<void> {

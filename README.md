@@ -30,8 +30,8 @@ Using the remote provided with the fan:
 
 ## Building
 You can build the project by doing the following:
-- Clone or download this repository.
-- Run `npm run build` in the folder of the repository.
+1. Clone or download this repository.
+2. Run `npm run build` in the folder of the repository.
 
 ## Installation
 There are multiple ways to install this plugin:

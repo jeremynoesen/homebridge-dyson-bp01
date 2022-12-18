@@ -10,7 +10,7 @@
         "title": "Name",
         "type": "string",
         "default": "Dyson Pure Cool Me",
-        "description": "Enter a name for the accessory. Changing this later will require you to [set up the fan again](https://github.com/jeremynoesen/homebridge-dyson-bp01#dyson-bp01-setup).",
+        "description": "Enter a name for the accessory. Changing this later will require you to set up the fan again using the instructions above.",
         "required": true
       },
       "mac": {
@@ -18,7 +18,7 @@
         "type": "string",
         "placeholder": "XX:XX:XX:XX:XX:XX",
         "pattern": "^([A-Fa-f0-9]{2}:){5}[A-Fa-f0-9]{2}$",
-        "description": "Enter the MAC address of the BroadLink RM you want to use. Leave this blank to automatically discover devices.",
+        "description": "Enter the MAC address of the BroadLink RM you want to use. Leave this blank for automatic discovery.",
         "required": false
       }
     }

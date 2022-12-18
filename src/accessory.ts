@@ -119,12 +119,13 @@ class DysonBP01 implements AccessoryPlugin {
             information: new this.hap.Service.AccessoryInformation(),
             fan: new this.hap.Service.Fanv2(config.name)
         };
+        this.initInformationService();
         this.storage.init({
             dir: api.user.persistPath(),
             forgiveParseErrors: true
         }).then(() => {
-            this.initServices();
             this.initCharacteristics().then(() => {
+                this.initFanService();
                 this.initDevice();
                 this.initLoop();
             });
@@ -157,14 +158,21 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Initialize the services for this accessory
+     * Initialize the information service for this accessory
      * @private
      */
-    private initServices(): void {
+    private initInformationService(): void {
         this.services.information
             .updateCharacteristic(this.hap.Characteristic.Manufacturer, messages.INFO_MANUFACTURER)
             .updateCharacteristic(this.hap.Characteristic.Model, messages.INFO_MODEL)
             .updateCharacteristic(this.hap.Characteristic.SerialNumber, messages.INFO_SERIAL_NUMBER);
+    }
+
+    /**
+     * Initialize the fan service for this accessory
+     * @private
+     */
+    private initFanService(): void {
         this.services.fan.getCharacteristic(this.hap.Characteristic.Active)
             .onGet(this.getActive.bind(this))
             .onSet(this.setActive.bind(this));

@@ -21,12 +21,12 @@ export const INFO_SERIAL_NUMBER: string = "Printed Under Machine";
 /**
  * Identify message when the BroadLink RM is not connected
  */
-export const IDENTIFY_NOT_CONNECTED: string = "Identified; BroadLink RM not connected";
+export const IDENTIFY_NOT_CONNECTED: string = "Identified; not connected to BroadLink RM";
 
 /**
  * Identify message when the BroadLink RM is connected
  */
-export const IDENTIFY_CONNECTED: string = "Identified; BroadLink RM connected [" + PLACEHOLDER + "]";
+export const IDENTIFY_CONNECTED: string = "Identified; connected to BroadLink RM [" + PLACEHOLDER + "]";
 
 /**
  * Message shown when the plugin is initially searching for the BroadLink RM
@@ -36,7 +36,7 @@ export const DEVICE_SEARCHING: string = "Searching for BroadLink RM...";
 /**
  * Message shown when the BroadLink RM is discovered
  */
-export const DEVICE_DISCOVERED: string = "BroadLink RM discovered [" + PLACEHOLDER + "]";
+export const DEVICE_DISCOVERED: string = "Discovered BroadLink RM [" + PLACEHOLDER + "]";
 
 /**
  * Message shown when the plugin is attempting to reconnect to the BroadLink RM
@@ -46,7 +46,7 @@ export const DEVICE_RECONNECTING: string = "Reconnecting to BroadLink RM...";
 /**
  * Message shown when the BroadLink RM is reconnected
  */
-export const DEVICE_RECONNECTED: string = "BroadLink RM reconnected";
+export const DEVICE_RECONNECTED: string = "Reconnected to BroadLink RM";
 
 /**
  * Message shown when loading the previous active state

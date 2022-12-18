@@ -14,12 +14,12 @@ export const SKIPS_ACTIVE: number = 2;
 export const SKIPS_INACTIVE: number = 8;
 
 /**
- * Number of Swing Mode skips
+ * Number of Swing Mode skips after toggling Swing Mode
  */
 export const SKIPS_SWING_MODE: number = 6;
 
 /**
- * Number of device skips
+ * Number of device skips when reconnecting
  */
 export const SKIPS_DEVICE: number = 4;
 

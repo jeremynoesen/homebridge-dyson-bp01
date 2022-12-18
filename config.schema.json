@@ -1,7 +1,7 @@
 {
   "pluginAlias": "DysonBP01",
   "pluginType": "accessory",
-  "headerDisplay": "For instructions on how to prepare your BroadLink RM and Dyson BP01 to be used by this plugin, please look [here](https://github.com/jeremynoesen/homebridge-dyson-bp01#device-setup).",
+  "headerDisplay": "For instructions on how to set up your BroadLink RM and Dyson BP01, [follow these instructions](https://github.com/jeremynoesen/homebridge-dyson-bp01#hardware-setup).",
   "singular": false,
   "schema": {
     "type": "object",
@@ -10,7 +10,7 @@
         "title": "Name",
         "type": "string",
         "default": "Dyson Pure Cool Me",
-        "description": "The display name of the accessory in Homebridge and HomeKit. This must be unique per accessory.",
+        "description": "Enter a name for the accessory. Changing this later will require you to [set up the fan again](https://github.com/jeremynoesen/homebridge-dyson-bp01#dyson-bp01-setup).",
         "required": true
       },
       "mac": {
@@ -18,7 +18,7 @@
         "type": "string",
         "placeholder": "XX:XX:XX:XX:XX:XX",
         "pattern": "^([A-Fa-f0-9]{2}:){5}[A-Fa-f0-9]{2}$",
-        "description": "If you have multiple BroadLink RMs, enter the MAC address of the one controlling the fan. Leave blank for device auto-discovery.",
+        "description": "Enter the MAC address of the BroadLink RM you want to use. Leave this blank to automatically discover devices.",
         "required": false
       }
     }

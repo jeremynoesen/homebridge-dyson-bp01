@@ -4,17 +4,17 @@
 export const PLACEHOLDER: string = "$VAL$";
 
 /**
- * Information service manufacturer field
+ * Information service Manufacturer field
  */
 export const INFO_MANUFACTURER: string  = "Dyson";
 
 /**
- * Information service model field
+ * Information service Model field
  */
 export const INFO_MODEL: string = "BP01";
 
 /**
- * Information service serial number field
+ * Information service Serial Number field
  */
 export const INFO_SERIAL_NUMBER: string = "Printed Under Machine";
 

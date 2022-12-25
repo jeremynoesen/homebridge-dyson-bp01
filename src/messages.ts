@@ -21,12 +21,12 @@ export const INFO_SERIAL_NUMBER: string = "Printed Under Machine";
 /**
  * Identify message when BroadLink RM is not connected
  */
-export const IDENTIFY_NOT_CONNECTED: string = "Identified; not connected to BroadLink RM";
+export const IDENTIFY_NOT_CONNECTED: string = "Not connected to BroadLink RM";
 
 /**
  * Identify message when BroadLink RM is connected
  */
-export const IDENTIFY_CONNECTED: string = "Identified; connected to BroadLink RM [" + PLACEHOLDER + "]";
+export const IDENTIFY_CONNECTED: string = "Connected to BroadLink RM [" + PLACEHOLDER + "]";
 
 /**
  * Message shown when searching for BroadLink RM
@@ -51,29 +51,29 @@ export const DEVICE_RECONNECTED: string = "Reconnected to BroadLink RM";
 /**
  * Message shown when initializing Active
  */
-export const ACTIVE_INIT: string = "Active initialized to " + PLACEHOLDER;
+export const ACTIVE_INIT: string = "Initialized Active to " + PLACEHOLDER;
 
 /**
  * Message shown when setting Active
  */
-export const ACTIVE_SET: string = "Active set to " + PLACEHOLDER;
+export const ACTIVE_SET: string = "Set Active to " + PLACEHOLDER;
 
 /**
  * Message shown when initializing Rotation Speed
  */
-export const ROTATION_SPEED_INIT: string = "Rotation Speed initialized to " + PLACEHOLDER + "%";
+export const ROTATION_SPEED_INIT: string = "Initialized Rotation Speed to " + PLACEHOLDER + "%";
 
 /**
  * Message shown when setting Rotation Speed
  */
-export const ROTATION_SPEED_SET: string = "Rotation Speed set to " + PLACEHOLDER + "%";
+export const ROTATION_SPEED_SET: string = "Set Rotation Speed to " + PLACEHOLDER + "%";
 
 /**
  * Message shown when initializing Swing Mode
  */
-export const SWING_MODE_INIT: string = "Swing Mode initialized to " + PLACEHOLDER;
+export const SWING_MODE_INIT: string = "Initialized Swing Mode to " + PLACEHOLDER;
 
 /**
  * Message shown when setting Swing Mode
  */
-export const SWING_MODE_SET: string = "Swing Mode set to " + PLACEHOLDER;
+export const SWING_MODE_SET: string = "Set Swing Mode to " + PLACEHOLDER;

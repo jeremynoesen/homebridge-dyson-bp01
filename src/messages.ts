@@ -19,16 +19,6 @@ export const INFO_MODEL: string = "BP01";
 export const INFO_SERIAL_NUMBER: string = "Printed Under Machine";
 
 /**
- * Identify message when BroadLink RM is not connected
- */
-export const IDENTIFY_NOT_CONNECTED: string = "Not connected to BroadLink RM";
-
-/**
- * Identify message when BroadLink RM is connected
- */
-export const IDENTIFY_CONNECTED: string = "Connected to BroadLink RM [" + PLACEHOLDER + "]";
-
-/**
  * Message shown when searching for BroadLink RM
  */
 export const DEVICE_SEARCHING: string = "Searching for BroadLink RM...";

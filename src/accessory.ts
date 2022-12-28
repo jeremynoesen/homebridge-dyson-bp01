@@ -242,11 +242,11 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private async initCharacteristics(): Promise<void> {
         this.characteristics = await this.storage.getItem(this.name) || this.characteristics;
-        this.log.info(messages.ACTIVE_INIT
+        this.log.info(messages.INIT_ACTIVE
             .replace(messages.PLACEHOLDER, this.characteristics.targetActive + ""));
-        this.log.info(messages.ROTATION_SPEED_INIT
+        this.log.info(messages.INIT_ROTATION_SPEED
             .replace(messages.PLACEHOLDER, this.characteristics.targetRotationSpeed + ""));
-        this.log.info(messages.SWING_MODE_INIT
+        this.log.info(messages.INIT_SWING_MODE
             .replace(messages.PLACEHOLDER, this.characteristics.targetSwingMode + ""));
     }
 
@@ -267,7 +267,7 @@ class DysonBP01 implements AccessoryPlugin {
         if (value as number != this.characteristics.targetActive) {
             this.characteristics.targetActive = value as number;
             await this.storage.setItem(this.name, this.characteristics);
-            this.log.info(messages.ACTIVE_SET
+            this.log.info(messages.SET_ACTIVE
                 .replace(messages.PLACEHOLDER, this.characteristics.targetActive + ""));
         }
     }
@@ -325,7 +325,7 @@ class DysonBP01 implements AccessoryPlugin {
         if (tempValue != this.characteristics.targetRotationSpeed) {
             this.characteristics.targetRotationSpeed = tempValue;
             await this.storage.setItem(this.name, this.characteristics);
-            this.log.info(messages.ROTATION_SPEED_SET
+            this.log.info(messages.SET_ROTATION_SPEED
                 .replace(messages.PLACEHOLDER, this.characteristics.targetRotationSpeed + ""));
         }
     }
@@ -373,7 +373,7 @@ class DysonBP01 implements AccessoryPlugin {
         if (value as number != this.characteristics.targetSwingMode) {
             this.characteristics.targetSwingMode = value as number;
             await this.storage.setItem(this.name, this.characteristics);
-            this.log.info(messages.SWING_MODE_SET
+            this.log.info(messages.SET_SWING_MODE
                 .replace(messages.PLACEHOLDER, this.characteristics.targetSwingMode + ""));
         }
     }

@@ -41,29 +41,29 @@ export const DEVICE_RECONNECTED: string = "Reconnected to BroadLink RM";
 /**
  * Message shown when initializing Active
  */
-export const ACTIVE_INIT: string = "Initialized Active to " + PLACEHOLDER;
-
-/**
- * Message shown when setting Active
- */
-export const ACTIVE_SET: string = "Set Active to " + PLACEHOLDER;
+export const INIT_ACTIVE: string = "Initialized Active to " + PLACEHOLDER;
 
 /**
  * Message shown when initializing Rotation Speed
  */
-export const ROTATION_SPEED_INIT: string = "Initialized Rotation Speed to " + PLACEHOLDER + "%";
-
-/**
- * Message shown when setting Rotation Speed
- */
-export const ROTATION_SPEED_SET: string = "Set Rotation Speed to " + PLACEHOLDER + "%";
+export const INIT_ROTATION_SPEED: string = "Initialized Rotation Speed to " + PLACEHOLDER + "%";
 
 /**
  * Message shown when initializing Swing Mode
  */
-export const SWING_MODE_INIT: string = "Initialized Swing Mode to " + PLACEHOLDER;
+export const INIT_SWING_MODE: string = "Initialized Swing Mode to " + PLACEHOLDER;
+
+/**
+ * Message shown when setting Active
+ */
+export const SET_ACTIVE: string = "Set Active to " + PLACEHOLDER;
+
+/**
+ * Message shown when setting Rotation Speed
+ */
+export const SET_ROTATION_SPEED: string = "Set Rotation Speed to " + PLACEHOLDER + "%";
 
 /**
  * Message shown when setting Swing Mode
  */
-export const SWING_MODE_SET: string = "Set Swing Mode to " + PLACEHOLDER;
+export const SET_SWING_MODE: string = "Set Swing Mode to " + PLACEHOLDER;

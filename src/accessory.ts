@@ -66,16 +66,16 @@ class DysonBP01 implements AccessoryPlugin {
     };
 
     /**
-     * MAC address of BroadLink RM to look for
-     * @private
-     */
-    private readonly mac: string;
-
-    /**
      * Whether to expose BroadLink RM sensors or not
      * @private
      */
     private readonly sensors: boolean;
+
+    /**
+     * MAC address of BroadLink RM
+     * @private
+     */
+    private mac: string;
 
     /**
      * BroadLink RM used to send signals
@@ -223,6 +223,17 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
+     * Identify accessory
+     */
+    identify(): void {
+        if (this.device == null) {
+            this.log.info(messages.IDENTIFY_NOT_CONNECTED);
+        } else {
+            this.log.info(messages.IDENTIFY_CONNECTED.replace(messages.PLACEHOLDER, this.mac));
+        }
+    }
+
+    /**
      * Initialize the BroadLink RM
      * @private
      */
@@ -231,13 +242,14 @@ class DysonBP01 implements AccessoryPlugin {
             let mac = device.mac.toString("hex").replace(/(.{2})/g, "$1:").slice(0, -1).toUpperCase();
             if (this.device == null && (!this.mac || this.mac.toUpperCase() == mac)) {
                 this.device = device;
+                this.mac = mac;
                 if (this.sensors) {
                     this.device.on("temperature", (temp, humidity) => {
                         this.setCurrentTemperature(temp);
                         this.setCurrentRelativeHumidity(humidity);
                     });
                 }
-                this.log.info(messages.DEVICE_DISCOVERED.replace(messages.PLACEHOLDER, mac));
+                this.log.info(messages.DEVICE_DISCOVERED.replace(messages.PLACEHOLDER, this.mac));
             }
         });
         this.log.info(messages.DEVICE_SEARCHING);

@@ -18,7 +18,7 @@ This plugin is designed to be used with the following devices:
 1. Set up your BroadLink RM with the BroadLink app.
    1. For standard setup, follow the full setup process within the app. Then, in device properties, disable `Lock device`.
    2. For local network setup, follow the in-app setup, but stop at the "Add Devices" page. Do not continue the setup process, and close the app.
-2. Place the device so it has a direct line of sight to the fan's display.
+2. Place the device so that it has a direct line of sight to the fan's display.
 
 ### Dyson BP01 Setup
 Using the remote provided with the fan:
@@ -48,13 +48,15 @@ After any of these, restart Homebridge.
 It is recommended that you use the Homebridge UI to configure this plugin. Otherwise, add the following under `accessories` in the Homebridge config:
 ```json
 {
-  "accessory": "DysonBP01",
-  "name": "Dyson Pure Cool Me",
-  "mac": "XX:XX:XX:XX:XX:XX"
+   "accessory": "DysonBP01", 
+   "name": "Dyson Pure Cool Me", 
+   "mac": "XX:XX:XX:XX:XX:XX",
+   "sensors": false
 }
 ```
-- Setting `mac` is optional, but recommended if you have multiple BroadLink RMs. This will ensure the correct device is used to control your fan.
-- Changing `name`, will require you to to redo the Dyson BP01 hardware setup.
+- Changing `name`, will require you to redo the Dyson BP01 hardware setup.
+- Setting `mac` is optional, but recommended if you have multiple BroadLink RMs.
+- Set `sensors` to true if your BroadLink RM has the sensor cable to expose those sensors.
 
 After adding this, restart Homebridge for your changes to take effect.
 - If no BroadLink RM is found, the accessory will not be able to update, and will not send signals to your Dyson BP01.

@@ -54,6 +54,16 @@ export const INIT_ROTATION_SPEED: string = "Initialized Rotation Speed to " + PL
 export const INIT_SWING_MODE: string = "Initialized Swing Mode to " + PLACEHOLDER;
 
 /**
+ * Message shown when initializing Current Temperature
+ */
+export const INIT_CURRENT_TEMPERATURE: string = "Initialized Current Temperature to " + PLACEHOLDER + "ºC";
+
+/**
+ * Message shown when initializing Current Relative Humidity
+ */
+export const INIT_CURRENT_RELATIVE_HUMIDITY: string = "Initialized Current Relative Humidity to " + PLACEHOLDER + "%";
+
+/**
  * Message shown when setting Active
  */
 export const SET_ACTIVE: string = "Set Active to " + PLACEHOLDER;
@@ -67,3 +77,13 @@ export const SET_ROTATION_SPEED: string = "Set Rotation Speed to " + PLACEHOLDER
  * Message shown when setting Swing Mode
  */
 export const SET_SWING_MODE: string = "Set Swing Mode to " + PLACEHOLDER;
+
+/**
+ * Message shown when setting Current Temperature
+ */
+export const SET_CURRENT_TEMPERATURE: string = "Set Current Temperature to " + PLACEHOLDER + "ºC";
+
+/**
+ * Message shown when setting Current Relative Humidity
+ */
+export const SET_CURRENT_RELATIVE_HUMIDITY: string = "Set Current Relative Humidity to " + PLACEHOLDER + "%";

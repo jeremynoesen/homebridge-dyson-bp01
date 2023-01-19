@@ -56,7 +56,7 @@ export const INIT_SWING_MODE: string = "Initialized Swing Mode to " + PLACEHOLDE
 /**
  * Message shown when initializing Current Temperature
  */
-export const INIT_CURRENT_TEMPERATURE: string = "Initialized Current Temperature to " + PLACEHOLDER + "ºC";
+export const INIT_CURRENT_TEMPERATURE: string = "Initialized Current Temperature to " + PLACEHOLDER + "˚C";
 
 /**
  * Message shown when initializing Current Relative Humidity
@@ -81,7 +81,7 @@ export const SET_SWING_MODE: string = "Set Swing Mode to " + PLACEHOLDER;
 /**
  * Message shown when setting Current Temperature
  */
-export const SET_CURRENT_TEMPERATURE: string = "Set Current Temperature to " + PLACEHOLDER + "ºC";
+export const SET_CURRENT_TEMPERATURE: string = "Set Current Temperature to " + PLACEHOLDER + "˚C";
 
 /**
  * Message shown when setting Current Relative Humidity

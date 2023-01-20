@@ -476,10 +476,10 @@ class DysonBP01 implements AccessoryPlugin {
 
     /**
      * Set Current Temperature
-     * @param value New temperature
+     * @param value Value received from BroadLink RM
      * @private
      */
-    private setCurrentTemperature(value: number) {
+    private setCurrentTemperature(value: number): void {
         if (value != this.characteristics.currentTemperature) {
             this.characteristics.currentTemperature = value;
             this.log.info(messages.SET_CURRENT_TEMPERATURE
@@ -497,10 +497,10 @@ class DysonBP01 implements AccessoryPlugin {
 
     /**
      * Set Current Relative Humidity
-     * @param value New humidity
+     * @param value Value received from BroadLink RM
      * @private
      */
-    private setCurrentRelativeHumidity(value: number) {
+    private setCurrentRelativeHumidity(value: number): void {
         if (value != this.characteristics.currentRelativeHumidity) {
             this.characteristics.currentRelativeHumidity = value;
             this.log.info(messages.SET_CURRENT_RELATIVE_HUMIDITY

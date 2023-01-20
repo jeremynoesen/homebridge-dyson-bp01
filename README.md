@@ -65,3 +65,4 @@ After adding this, restart Homebridge for your changes to take effect.
 ## Troubleshooting
 - If your BroadLink RM randomly stops working or does not reconnect after power loss, try assigning it a static IP address.
 - If not all signals are sending, check the position of your BroadLink RM and ensure it has a direct line of sight to the fan's display.
+- If the fan ever de-syncs from Homebridge/HomeKit, use the physical remote to change its state to re-sync it.

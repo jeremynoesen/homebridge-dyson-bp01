@@ -207,19 +207,17 @@ class DysonBP01 implements AccessoryPlugin {
      * Get services for accessory
      */
     getServices(): Service[] {
+        let services = [
+            this.services.accessoryInformation,
+            this.services.fanV2
+        ];
         if (this.sensors) {
-            return [
-                this.services.accessoryInformation,
-                this.services.fanV2,
+            services.push(
                 this.services.temperatureSensor,
                 this.services.humiditySensor
-            ];
-        } else {
-            return [
-                this.services.accessoryInformation,
-                this.services.fanV2
-            ];
+            );
         }
+        return services;
     }
 
     /**

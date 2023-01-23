@@ -242,9 +242,9 @@ class DysonBP01 implements AccessoryPlugin {
                 this.device = device;
                 this.mac = mac;
                 if (this.sensors) {
-                    this.device.on("temperature", (temp, humidity) => {
-                        this.setCurrentTemperature(temp);
-                        this.setCurrentRelativeHumidity(humidity);
+                    this.device.on("temperature", async (temp, humidity) => {
+                        await this.setCurrentTemperature(temp);
+                        await this.setCurrentRelativeHumidity(humidity);
                     });
                 }
                 this.log.info(messages.DEVICE_DISCOVERED.replace(messages.PLACEHOLDER, this.mac));
@@ -315,7 +315,7 @@ class DysonBP01 implements AccessoryPlugin {
 
     /**
      * Set target Active
-     * @param value Value received from Homebridge
+     * @param value New value to set
      * @private
      */
     private async setActive(value: CharacteristicValue): Promise<void> {
@@ -368,7 +368,7 @@ class DysonBP01 implements AccessoryPlugin {
 
     /**
      * Set target Rotation Speed
-     * @param value Value received from Homebridge
+     * @param value New value to set
      * @private
      */
     private async setRotationSpeed(value: CharacteristicValue): Promise<void> {
@@ -421,7 +421,7 @@ class DysonBP01 implements AccessoryPlugin {
 
     /**
      * Set target Swing Mode
-     * @param value Value received from Homebridge
+     * @param value New value to set
      * @private
      */
     private async setSwingMode(value: CharacteristicValue): Promise<void> {
@@ -474,12 +474,13 @@ class DysonBP01 implements AccessoryPlugin {
 
     /**
      * Set Current Temperature
-     * @param value Value received from BroadLink RM
+     * @param value New value to set
      * @private
      */
-    private setCurrentTemperature(value: number): void {
-        if (value != this.characteristics.currentTemperature) {
-            this.characteristics.currentTemperature = value;
+    private async setCurrentTemperature(value: CharacteristicValue): Promise<void> {
+        if (value as number != this.characteristics.currentTemperature) {
+            this.characteristics.currentTemperature = value as number;
+            await this.storage.setItem(this.name, this.characteristics);
             this.log.info(messages.SET_CURRENT_TEMPERATURE
                 .replace(messages.PLACEHOLDER, this.characteristics.currentTemperature + ""));
         }
@@ -495,12 +496,13 @@ class DysonBP01 implements AccessoryPlugin {
 
     /**
      * Set Current Relative Humidity
-     * @param value Value received from BroadLink RM
+     * @param value New value to set
      * @private
      */
-    private setCurrentRelativeHumidity(value: number): void {
-        if (value != this.characteristics.currentRelativeHumidity) {
-            this.characteristics.currentRelativeHumidity = value;
+    private async setCurrentRelativeHumidity(value: CharacteristicValue): Promise<void> {
+        if (value as number != this.characteristics.currentRelativeHumidity) {
+            this.characteristics.currentRelativeHumidity = value as number;
+            await this.storage.setItem(this.name, this.characteristics);
             this.log.info(messages.SET_CURRENT_RELATIVE_HUMIDITY
                 .replace(messages.PLACEHOLDER, this.characteristics.currentRelativeHumidity + ""));
         }

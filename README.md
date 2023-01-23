@@ -54,7 +54,7 @@ It is recommended that you use the Homebridge UI to configure this plugin. Other
    "sensors": false
 }
 ```
-- Changing `name`, will require you to redo the Dyson BP01 hardware setup.
+- Changing `name` will require you to redo the Dyson BP01 hardware setup.
 - Setting `mac` is optional, but recommended if you have multiple BroadLink RMs.
 - Setting `sensors` is optional. Set to true if your BroadLink RM has the sensor cable to expose the sensors.
 

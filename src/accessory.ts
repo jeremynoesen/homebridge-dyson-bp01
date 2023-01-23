@@ -298,6 +298,8 @@ class DysonBP01 implements AccessoryPlugin {
         this.log.info(messages.INIT_SWING_MODE
             .replace(messages.PLACEHOLDER, this.characteristics.targetSwingMode + ""));
         if (this.sensors) {
+            this.characteristics.currentTemperature = this.characteristics.currentTemperature || 0;
+            this.characteristics.currentRelativeHumidity = this.characteristics.currentRelativeHumidity || 0;
             this.log.info(messages.INIT_CURRENT_TEMPERATURE
                 .replace(messages.PLACEHOLDER, this.characteristics.currentTemperature + ""));
             this.log.info(messages.INIT_CURRENT_RELATIVE_HUMIDITY

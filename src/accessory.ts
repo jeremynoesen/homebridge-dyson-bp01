@@ -45,10 +45,10 @@ class DysonBP01 implements AccessoryPlugin {
     private readonly name: string;
 
     /**
-     * MAC address of BroadLink RM
+     * MAC address of BroadLink RM to connect to
      * @private
      */
-    private mac: string;
+    private readonly mac: string;
 
     /**
      * Whether to expose BroadLink RM sensors or not
@@ -221,14 +221,24 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Identify accessory
+     * Identify accessory by toggling the Active state
      */
     identify(): void {
-        if (this.device == null) {
-            this.log.info(messages.IDENTIFY_NOT_CONNECTED);
-        } else {
-            this.log.info(messages.IDENTIFY_CONNECTED.replace(messages.PLACEHOLDER, this.mac));
-        }
+        this.log.info(messages.IDENTIFYING);
+        let i = 0;
+        let activeToggle = setInterval(async () => {
+            if (this.characteristics.targetActive == this.characteristics.currentActive) {
+                if (i < 2) {
+                    this.characteristics.targetActive =
+                        this.hap.Characteristic.Active.ACTIVE - this.characteristics.targetActive;
+                    await this.storage.setItem(this.name, this.characteristics);
+                } else {
+                    clearInterval(activeToggle);
+                    this.log.info(messages.IDENTIFIED);
+                }
+                i++;
+            }
+        }, constants.INTERVAL);
     }
 
     /**
@@ -240,17 +250,16 @@ class DysonBP01 implements AccessoryPlugin {
             let mac = device.mac.toString("hex").replace(/(.{2})/g, "$1:").slice(0, -1).toUpperCase();
             if (this.device == null && (!this.mac || this.mac.toUpperCase() == mac)) {
                 this.device = device;
-                this.mac = mac;
                 if (this.sensors) {
                     this.device.on("temperature", async (temp, humidity) => {
                         await this.setCurrentTemperature(temp);
                         await this.setCurrentRelativeHumidity(humidity);
                     });
                 }
-                this.log.info(messages.DEVICE_DISCOVERED.replace(messages.PLACEHOLDER, this.mac));
+                this.log.info(messages.DEVICE_DISCOVERED.replace(messages.PLACEHOLDER, mac));
             }
         });
-        this.log.info(messages.DEVICE_SEARCHING);
+        this.log.info(messages.DEVICE_DISCOVERING);
     }
 
     /**

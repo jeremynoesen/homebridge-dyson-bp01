@@ -27,23 +27,6 @@ class DysonBP01 implements AccessoryPlugin {
     private readonly hap: HAP;
 
     /**
-     * Services to provide accessory information, controls, and sensors
-     * @private
-     */
-    private readonly services: {
-        readonly accessoryInformation: Service,
-        readonly fanV2: Service,
-        readonly temperatureSensor: Service,
-        readonly humiditySensor: Service
-    };
-
-    /**
-     * Accessory name
-     * @private
-     */
-    private readonly name: string;
-
-    /**
      * BroadLinkJS instance
      * @private
      */
@@ -56,20 +39,10 @@ class DysonBP01 implements AccessoryPlugin {
     private readonly storage: node_persist.LocalStorage;
 
     /**
-     * Loop skips applied after characteristic updates or device reconnect
+     * Accessory name
      * @private
      */
-    private readonly skips: {
-        active: number,
-        swingMode: number,
-        device: number
-    };
-
-    /**
-     * Whether to expose BroadLink RM sensors or not
-     * @private
-     */
-    private readonly sensors: boolean;
+    private readonly name: string;
 
     /**
      * MAC address of BroadLink RM
@@ -78,10 +51,27 @@ class DysonBP01 implements AccessoryPlugin {
     private mac: string;
 
     /**
+     * Whether to expose BroadLink RM sensors or not
+     * @private
+     */
+    private readonly sensors: boolean;
+
+    /**
      * BroadLink RM used to send signals
      * @private
      */
     private device: any;
+
+    /**
+     * Services to provide accessory information, controls, and sensors
+     * @private
+     */
+    private readonly services: {
+        readonly accessoryInformation: Service,
+        readonly fanV2: Service,
+        readonly temperatureSensor: Service,
+        readonly humiditySensor: Service
+    };
 
     /**
      * Characteristic current and target states
@@ -99,6 +89,16 @@ class DysonBP01 implements AccessoryPlugin {
     };
 
     /**
+     * Loop skips applied after characteristic updates or device reconnect
+     * @private
+     */
+    private readonly skips: {
+        active: number,
+        swingMode: number,
+        device: number
+    };
+
+    /**
      * Create DysonBP01 accessory
      * @param log Homebridge logging instance
      * @param config Homebridge config
@@ -107,12 +107,18 @@ class DysonBP01 implements AccessoryPlugin {
     constructor(log: Logging, config: AccessoryConfig, api: API) {
         this.log = log;
         this.hap = api.hap;
+        this.broadlink = new BroadLinkJS();
+        this.storage = node_persist.create();
         this.name = config.name;
         this.mac = config.mac;
         this.sensors = config.sensors;
         this.device = null;
-        this.broadlink = new BroadLinkJS();
-        this.storage = node_persist.create();
+        this.services = {
+            accessoryInformation: new this.hap.Service.AccessoryInformation(),
+            fanV2: new this.hap.Service.Fanv2(config.name),
+            temperatureSensor: new this.hap.Service.TemperatureSensor(config.name),
+            humiditySensor: new this.hap.Service.HumiditySensor(config.name)
+        };
         this.characteristics = {
             currentActive: this.hap.Characteristic.Active.INACTIVE,
             targetActive: this.hap.Characteristic.Active.INACTIVE,
@@ -127,12 +133,6 @@ class DysonBP01 implements AccessoryPlugin {
             active: 0,
             swingMode: 0,
             device: 0
-        };
-        this.services = {
-            accessoryInformation: new this.hap.Service.AccessoryInformation(),
-            fanV2: new this.hap.Service.Fanv2(config.name),
-            temperatureSensor: new this.hap.Service.TemperatureSensor(config.name),
-            humiditySensor: new this.hap.Service.HumiditySensor(config.name)
         };
         this.initServices();
         this.storage.init({

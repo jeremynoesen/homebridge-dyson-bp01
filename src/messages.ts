@@ -76,15 +76,30 @@ export const INIT_CURRENT_RELATIVE_HUMIDITY: string = "Initialized Current Relat
 /**
  * Message shown when setting Active
  */
-export const SET_ACTIVE: string = "Set Active to " + PLACEHOLDER;
+export const SETTING_ACTIVE: string = "Setting Active to " + PLACEHOLDER + "...";
 
 /**
  * Message shown when setting Rotation Speed
  */
-export const SET_ROTATION_SPEED: string = "Set Rotation Speed to " + PLACEHOLDER + "%";
+export const SETTING_ROTATION_SPEED: string = "Setting Rotation Speed to " + PLACEHOLDER + "%...";
 
 /**
  * Message shown when setting Swing Mode
+ */
+export const SETTING_SWING_MODE: string = "Setting Swing Mode to " + PLACEHOLDER + "...";
+
+/**
+ * Message shown when Active is set
+ */
+export const SET_ACTIVE: string = "Set Active to " + PLACEHOLDER;
+
+/**
+ * Message shown when Rotation Speed is set
+ */
+export const SET_ROTATION_SPEED: string = "Set Rotation Speed to " + PLACEHOLDER + "%";
+
+/**
+ * Message shown when Swing Mode is set
  */
 export const SET_SWING_MODE: string = "Set Swing Mode to " + PLACEHOLDER;
 

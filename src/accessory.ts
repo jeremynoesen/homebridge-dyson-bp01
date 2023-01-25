@@ -229,9 +229,7 @@ class DysonBP01 implements AccessoryPlugin {
         let activeToggle = setInterval(async () => {
             if (this.characteristics.targetActive == this.characteristics.currentActive) {
                 if (i < 2) {
-                    this.characteristics.targetActive =
-                        this.hap.Characteristic.Active.ACTIVE - this.characteristics.targetActive;
-                    await this.storage.setItem(this.name, this.characteristics);
+                    await this.setActive(this.hap.Characteristic.Active.ACTIVE - this.characteristics.targetActive);
                 } else {
                     clearInterval(activeToggle);
                     this.log.info(messages.IDENTIFIED);
@@ -331,7 +329,7 @@ class DysonBP01 implements AccessoryPlugin {
         if (value as number != this.characteristics.targetActive) {
             this.characteristics.targetActive = value as number;
             await this.storage.setItem(this.name, this.characteristics);
-            this.log.info(messages.SET_ACTIVE
+            this.log.info(messages.SETTING_ACTIVE
                 .replace(messages.PLACEHOLDER, this.characteristics.targetActive + ""));
         }
     }
@@ -355,6 +353,8 @@ class DysonBP01 implements AccessoryPlugin {
         this.skips.active = this.characteristics.currentActive ? constants.SKIPS_ACTIVE : constants.SKIPS_INACTIVE;
         this.skips.swingMode = 0;
         await this.storage.setItem(this.name, this.characteristics);
+        this.log.info(messages.SET_ACTIVE
+            .replace(messages.PLACEHOLDER, this.characteristics.targetActive + ""));
     }
 
     /**
@@ -389,7 +389,7 @@ class DysonBP01 implements AccessoryPlugin {
         if (tempValue != this.characteristics.targetRotationSpeed) {
             this.characteristics.targetRotationSpeed = tempValue;
             await this.storage.setItem(this.name, this.characteristics);
-            this.log.info(messages.SET_ROTATION_SPEED
+            this.log.info(messages.SETTING_ROTATION_SPEED
                 .replace(messages.PLACEHOLDER, this.characteristics.targetRotationSpeed + ""));
         }
     }
@@ -418,6 +418,10 @@ class DysonBP01 implements AccessoryPlugin {
             this.characteristics.currentRotationSpeed -= constants.STEP_SIZE;
         }
         await this.storage.setItem(this.name, this.characteristics);
+        if (this.characteristics.currentRotationSpeed == this.characteristics.targetRotationSpeed) {
+            this.log.info(messages.SET_ROTATION_SPEED
+                .replace(messages.PLACEHOLDER, this.characteristics.targetRotationSpeed + ""));
+        }
     }
 
     /**
@@ -437,7 +441,7 @@ class DysonBP01 implements AccessoryPlugin {
         if (value as number != this.characteristics.targetSwingMode) {
             this.characteristics.targetSwingMode = value as number;
             await this.storage.setItem(this.name, this.characteristics);
-            this.log.info(messages.SET_SWING_MODE
+            this.log.info(messages.SETTING_SWING_MODE
                 .replace(messages.PLACEHOLDER, this.characteristics.targetSwingMode + ""));
         }
     }
@@ -461,6 +465,8 @@ class DysonBP01 implements AccessoryPlugin {
         this.characteristics.currentSwingMode = this.characteristics.targetSwingMode;
         this.skips.swingMode = constants.SKIPS_SWING_MODE;
         await this.storage.setItem(this.name, this.characteristics);
+        this.log.info(messages.SET_SWING_MODE
+            .replace(messages.PLACEHOLDER, this.characteristics.targetSwingMode + ""));
     }
 
     /**

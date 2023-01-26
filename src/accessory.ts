@@ -45,6 +45,12 @@ class DysonBP01 implements AccessoryPlugin {
     private readonly name: string;
 
     /**
+     * Serial number of Dyson BP01
+     * @private
+     */
+    private readonly serial: string;
+
+    /**
      * MAC address of BroadLink RM to connect to
      * @private
      */
@@ -110,6 +116,7 @@ class DysonBP01 implements AccessoryPlugin {
         this.broadlink = new BroadLinkJS();
         this.storage = node_persist.create();
         this.name = config.name;
+        this.serial = config.serial;
         this.mac = config.mac;
         this.sensors = config.sensors;
         this.device = null;
@@ -182,7 +189,8 @@ class DysonBP01 implements AccessoryPlugin {
         this.services.accessoryInformation
             .updateCharacteristic(this.hap.Characteristic.Manufacturer, messages.INFO_MANUFACTURER)
             .updateCharacteristic(this.hap.Characteristic.Model, messages.INFO_MODEL)
-            .updateCharacteristic(this.hap.Characteristic.SerialNumber, messages.INFO_SERIAL_NUMBER);
+            .updateCharacteristic(this.hap.Characteristic.SerialNumber,
+                this.serial ? this.serial.toUpperCase() : messages.INFO_SERIAL_NUMBER);
         this.services.fanV2.getCharacteristic(this.hap.Characteristic.Active)
             .onGet(this.getActive.bind(this))
             .onSet(this.setActive.bind(this));

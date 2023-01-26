@@ -49,13 +49,15 @@ It is recommended that you use the Homebridge UI to configure this plugin. Other
 ```json
 {
    "accessory": "DysonBP01", 
-   "name": "Dyson Pure Cool Me", 
+   "name": "Dyson Pure Cool Me",
+   "serial": "XXX-XX-XXXXXXXX",
    "mac": "XX:XX:XX:XX:XX:XX",
    "sensors": false
 }
 ```
 - Changing `name` will require you to redo the Dyson BP01 hardware setup.
-- Setting `mac` is optional, but recommended if you have multiple BroadLink RMs.
+- Setting `serial` is optional. Set this to the serial number of your Dyson BP01 to have it display with other accessory information.
+- Setting `mac` is optional, but recommended if you have multiple BroadLink RMs, so the plugin can use the right one.
 - Setting `sensors` is optional. Set to true if your BroadLink RM has the sensor cable to expose the sensors.
 
 After adding this, restart Homebridge for your changes to take effect.

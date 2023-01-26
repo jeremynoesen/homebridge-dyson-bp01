@@ -21,12 +21,12 @@ export const INFO_SERIAL_NUMBER: string = "Printed Under Machine";
 /**
  * Message shown when identifying starts
  */
-export const IDENTIFYING: string = "Identifying...";
+export const IDENTIFYING: string = "Identifying accessory...";
 
 /**
  * Message shown when identifying completes
  */
-export const IDENTIFIED: string = "Identified";
+export const IDENTIFIED: string = "Identified accessory";
 
 /**
  * Message shown when searching for BroadLink RM
@@ -51,27 +51,27 @@ export const DEVICE_RECONNECTED: string = "Reconnected to BroadLink RM";
 /**
  * Message shown when initializing Active
  */
-export const INIT_ACTIVE: string = "Initialized Active to " + PLACEHOLDER;
+export const INIT_ACTIVE: string = "Initialized Active as " + PLACEHOLDER;
 
 /**
  * Message shown when initializing Rotation Speed
  */
-export const INIT_ROTATION_SPEED: string = "Initialized Rotation Speed to " + PLACEHOLDER + "%";
+export const INIT_ROTATION_SPEED: string = "Initialized Rotation Speed as " + PLACEHOLDER + "%";
 
 /**
  * Message shown when initializing Swing Mode
  */
-export const INIT_SWING_MODE: string = "Initialized Swing Mode to " + PLACEHOLDER;
+export const INIT_SWING_MODE: string = "Initialized Swing Mode as " + PLACEHOLDER;
 
 /**
  * Message shown when initializing Current Temperature
  */
-export const INIT_CURRENT_TEMPERATURE: string = "Initialized Current Temperature to " + PLACEHOLDER + "˚C";
+export const INIT_CURRENT_TEMPERATURE: string = "Initialized Current Temperature as " + PLACEHOLDER + "˚C";
 
 /**
  * Message shown when initializing Current Relative Humidity
  */
-export const INIT_CURRENT_RELATIVE_HUMIDITY: string = "Initialized Current Relative Humidity to " + PLACEHOLDER + "%";
+export const INIT_CURRENT_RELATIVE_HUMIDITY: string = "Initialized Current Relative Humidity as " + PLACEHOLDER + "%";
 
 /**
  * Message shown when setting Active

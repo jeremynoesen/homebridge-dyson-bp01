@@ -6,7 +6,7 @@ import * as constants from "./constants";
 import * as messages from "./messages";
 
 export = (api: API) => {
-    api.registerAccessory(constants.ACCESSORY_ID, DysonBP01);
+    api.registerAccessory(constants.ACCESSORY_IDENTIFIER, DysonBP01);
 };
 
 /**
@@ -129,8 +129,8 @@ class DysonBP01 implements AccessoryPlugin {
         this.characteristics = {
             currentActive: this.hap.Characteristic.Active.INACTIVE,
             targetActive: this.hap.Characteristic.Active.INACTIVE,
-            currentRotationSpeed: constants.STEP_SIZE,
-            targetRotationSpeed: constants.STEP_SIZE,
+            currentRotationSpeed: constants.ROTATION_SPEED_STEP_SIZE,
+            targetRotationSpeed: constants.ROTATION_SPEED_STEP_SIZE,
             currentSwingMode: this.hap.Characteristic.SwingMode.SWING_DISABLED,
             targetSwingMode: this.hap.Characteristic.SwingMode.SWING_DISABLED,
             currentTemperature: 0,
@@ -178,7 +178,7 @@ class DysonBP01 implements AccessoryPlugin {
                 this.doSwingModeSkip();
                 this.doDeviceSkip();
             }
-        }, constants.INTERVAL);
+        }, constants.LOOP_INTERVAL);
     }
 
     /**
@@ -198,7 +198,7 @@ class DysonBP01 implements AccessoryPlugin {
             .onGet(this.getTargetRotationSpeed.bind(this))
             .onSet(this.setTargetRotationSpeed.bind(this))
             .setProps({
-                minStep: constants.STEP_SIZE
+                minStep: constants.ROTATION_SPEED_STEP_SIZE
             });
         this.services.fanV2.getCharacteristic(this.hap.Characteristic.SwingMode)
             .onGet(this.getTargetSwingMode.bind(this))
@@ -229,22 +229,23 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Identify accessory by toggling the Active state
+     * Identify accessory by toggling Active
      */
     identify(): void {
         this.log.info(messages.IDENTIFYING);
         let i = 0;
         let activeToggle = setInterval(async () => {
             if (this.characteristics.targetActive == this.characteristics.currentActive) {
-                if (i < 2) {
-                    await this.setTargetActive(this.hap.Characteristic.Active.ACTIVE - this.characteristics.targetActive);
+                if (i < constants.IDENTIFY_ACTIVE_TOGGLES) {
+                    await this.setTargetActive(
+                        this.hap.Characteristic.Active.ACTIVE - this.characteristics.targetActive);
                 } else {
                     clearInterval(activeToggle);
                     this.log.info(messages.IDENTIFIED);
                 }
                 i++;
             }
-        }, constants.INTERVAL);
+        }, constants.LOOP_INTERVAL);
     }
 
     /**
@@ -281,9 +282,9 @@ class DysonBP01 implements AccessoryPlugin {
             if (this.skips.device == 0) {
                 this.log.info(messages.DEVICE_DISCONNECTED);
             }
-            this.skips.device = constants.SKIPS_DEVICE;
+            this.skips.device = constants.LOOP_SKIPS_DEVICE;
         } else if (this.skips.device > 0) {
-            if (this.skips.device == constants.SKIPS_DEVICE - 1) {
+            if (this.skips.device == constants.LOOP_SKIPS_DEVICE - 1) {
                 this.log.info(messages.DEVICE_RECONNECTING);
             }
             connected = false;
@@ -368,7 +369,8 @@ class DysonBP01 implements AccessoryPlugin {
     private async updateCurrentActive(): Promise<void> {
         this.device.sendData(Buffer.from(constants.SIGNAL_ACTIVE, "hex"));
         this.characteristics.currentActive = this.characteristics.targetActive;
-        this.skips.active = this.characteristics.currentActive ? constants.SKIPS_ACTIVE : constants.SKIPS_INACTIVE;
+        this.skips.active =
+            this.characteristics.currentActive ? constants.LOOP_SKIPS_ACTIVE : constants.LOOP_SKIPS_INACTIVE;
         this.skips.swingMode = 0;
         await this.storage.setItem(this.name, this.characteristics);
         this.log.info(messages.UPDATED_CURRENT_ACTIVE
@@ -400,8 +402,8 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private async setTargetRotationSpeed(value: CharacteristicValue): Promise<void> {
         let tempValue = value as number;
-        if (tempValue < constants.STEP_SIZE) {
-            tempValue = constants.STEP_SIZE;
+        if (tempValue < constants.ROTATION_SPEED_STEP_SIZE) {
+            tempValue = constants.ROTATION_SPEED_STEP_SIZE;
             this.services.fanV2.updateCharacteristic(this.hap.Characteristic.RotationSpeed, tempValue);
         }
         if (tempValue != this.characteristics.targetRotationSpeed) {
@@ -430,10 +432,10 @@ class DysonBP01 implements AccessoryPlugin {
     private async updateCurrentRotationSpeed(): Promise<void> {
         if (this.characteristics.currentRotationSpeed < this.characteristics.targetRotationSpeed) {
             this.device.sendData(Buffer.from(constants.SIGNAL_ROTATION_SPEED_UP, "hex"));
-            this.characteristics.currentRotationSpeed += constants.STEP_SIZE;
+            this.characteristics.currentRotationSpeed += constants.ROTATION_SPEED_STEP_SIZE;
         } else if (this.characteristics.currentRotationSpeed > this.characteristics.targetRotationSpeed) {
             this.device.sendData(Buffer.from(constants.SIGNAL_ROTATION_SPEED_DOWN, "hex"));
-            this.characteristics.currentRotationSpeed -= constants.STEP_SIZE;
+            this.characteristics.currentRotationSpeed -= constants.ROTATION_SPEED_STEP_SIZE;
         }
         await this.storage.setItem(this.name, this.characteristics);
         this.log.info(messages.UPDATED_CURRENT_ROTATION_SPEED
@@ -479,7 +481,7 @@ class DysonBP01 implements AccessoryPlugin {
     private async updateCurrentSwingMode(): Promise<void> {
         this.device.sendData(Buffer.from(constants.SIGNAL_SWING_MODE, "hex"));
         this.characteristics.currentSwingMode = this.characteristics.targetSwingMode;
-        this.skips.swingMode = constants.SKIPS_SWING_MODE;
+        this.skips.swingMode = constants.LOOP_SKIPS_SWING_MODE;
         await this.storage.setItem(this.name, this.characteristics);
         this.log.info(messages.UPDATED_CURRENT_SWING_MODE
             .replace(messages.PLACEHOLDER, this.characteristics.currentSwingMode + ""));

@@ -123,8 +123,8 @@ class DysonBP01 implements AccessoryPlugin {
         this.services = {
             accessoryInformation: new this.hap.Service.AccessoryInformation(),
             fanV2: new this.hap.Service.Fanv2(config.name),
-            temperatureSensor: new this.hap.Service.TemperatureSensor(config.name),
-            humiditySensor: new this.hap.Service.HumiditySensor(config.name)
+            temperatureSensor: new this.hap.Service.TemperatureSensor(),
+            humiditySensor: new this.hap.Service.HumiditySensor()
         };
         this.characteristics = {
             currentActive: this.hap.Characteristic.Active.INACTIVE,

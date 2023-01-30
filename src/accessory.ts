@@ -6,7 +6,7 @@ import * as constants from "./constants";
 import * as messages from "./messages";
 
 export = (api: API) => {
-    api.registerAccessory(constants.ACCESSORY_IDENTIFIER, DysonBP01);
+    api.registerAccessory(constants.ACCESSORY_NAME, DysonBP01);
 };
 
 /**
@@ -135,16 +135,16 @@ class DysonBP01 implements AccessoryPlugin {
         }).then(() => {
             this.initCharacteristics().then(() => {
                 this.initDevice();
-                this.initLoop();
+                this.initInterval();
             });
         });
     }
 
     /**
-     * Start loop that updates accessory states
+     * Set interval that updates accessory states
      * @private
      */
-    private initLoop(): void {
+    private initInterval(): void {
         setInterval(async () => {
             if (this.broadLink.device == null) {
                 this.broadLink.broadLinkJS.discover();
@@ -165,7 +165,7 @@ class DysonBP01 implements AccessoryPlugin {
                 this.doUpdateCurrentSwingModeSkip();
                 this.doDeviceReconnectSkip();
             }
-        }, constants.LOOP_INTERVAL);
+        }, constants.INTERVAL);
     }
 
     /**
@@ -232,7 +232,7 @@ class DysonBP01 implements AccessoryPlugin {
                 }
                 i++;
             }
-        }, constants.LOOP_INTERVAL);
+        }, constants.INTERVAL);
     }
 
     /**
@@ -355,7 +355,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async updateCurrentActive(): Promise<void> {
-        this.broadLink.device.sendData(Buffer.from(constants.SIGNAL_ACTIVE, "hex"));
+        this.broadLink.device.sendData(Buffer.from(constants.IR_DATA_ACTIVE, "hex"));
         this.characteristics.currentActive = this.characteristics.targetActive;
         this.skips.updateCurrentActive = this.characteristics.currentActive ?
             constants.SKIPS_UPDATE_CURRENT_ACTIVE_1 : constants.SKIPS_UPDATE_CURRENT_ACTIVE_0;
@@ -420,10 +420,10 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private async updateCurrentRotationSpeed(): Promise<void> {
         if (this.characteristics.currentRotationSpeed < this.characteristics.targetRotationSpeed) {
-            this.broadLink.device.sendData(Buffer.from(constants.SIGNAL_ROTATION_SPEED_UP, "hex"));
+            this.broadLink.device.sendData(Buffer.from(constants.IR_DATA_ROTATION_SPEED_UP, "hex"));
             this.characteristics.currentRotationSpeed += constants.ROTATION_SPEED_STEP_SIZE;
         } else if (this.characteristics.currentRotationSpeed > this.characteristics.targetRotationSpeed) {
-            this.broadLink.device.sendData(Buffer.from(constants.SIGNAL_ROTATION_SPEED_DOWN, "hex"));
+            this.broadLink.device.sendData(Buffer.from(constants.IR_DATA_ROTATION_SPEED_DOWN, "hex"));
             this.characteristics.currentRotationSpeed -= constants.ROTATION_SPEED_STEP_SIZE;
         }
         await this.localStorage.setItem(this.config.name, this.characteristics);
@@ -468,7 +468,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async updateCurrentSwingMode(): Promise<void> {
-        this.broadLink.device.sendData(Buffer.from(constants.SIGNAL_SWING_MODE, "hex"));
+        this.broadLink.device.sendData(Buffer.from(constants.IR_DATA_SWING_MODE, "hex"));
         this.characteristics.currentSwingMode = this.characteristics.targetSwingMode;
         this.skips.updateCurrentSwingMode = constants.SKIPS_UPDATE_CURRENT_SWING_MODE;
         await this.localStorage.setItem(this.config.name, this.characteristics);

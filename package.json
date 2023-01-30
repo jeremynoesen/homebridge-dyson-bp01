@@ -1,7 +1,7 @@
 {
   "name": "homebridge-dyson-bp01",
   "displayName": "Homebridge Dyson BP01",
-  "version": "1.6.6",
+  "version": "1.6.7",
   "description": "Homebridge plugin to add a Dyson BP01 to HomeKit using a BroadLink RM",
   "main": "dist/accessory.js",
   "scripts": {

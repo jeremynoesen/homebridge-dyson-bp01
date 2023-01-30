@@ -6,12 +6,12 @@ export const INTERVAL: number = 700;
 /**
  * Number of Active skips after updating current Active to 1
  */
-export const SKIPS_UPDATE_CURRENT_ACTIVE_1: number = 2;
+export const SKIPS_UPDATE_CURRENT_ACTIVE_ACTIVE: number = 2;
 
 /**
  * Number of Active skips after updating current Active to 0
  */
-export const SKIPS_UPDATE_CURRENT_ACTIVE_0: number = 8;
+export const SKIPS_UPDATE_CURRENT_ACTIVE_INACTIVE: number = 8;
 
 /**
  * Number of Swing Mode skips after updating current Swing Mode

@@ -357,8 +357,11 @@ class DysonBP01 implements AccessoryPlugin {
     private async updateCurrentActive(): Promise<void> {
         this.broadLink.device.sendData(Buffer.from(constants.IR_DATA_ACTIVE, "hex"));
         this.characteristics.currentActive = this.characteristics.targetActive;
-        this.skips.updateCurrentActive = this.characteristics.currentActive ?
-            constants.SKIPS_UPDATE_CURRENT_ACTIVE_1 : constants.SKIPS_UPDATE_CURRENT_ACTIVE_0;
+        if (this.characteristics.currentActive == this.homebridge.hap.Characteristic.Active.ACTIVE) {
+            this.skips.updateCurrentActive = constants.SKIPS_UPDATE_CURRENT_ACTIVE_ACTIVE;
+        } else {
+            this.skips.updateCurrentActive = constants.SKIPS_UPDATE_CURRENT_ACTIVE_INACTIVE;
+        }
         this.skips.updateCurrentSwingMode = 0;
         await this.localStorage.setItem(this.config.name, this.characteristics);
         this.homebridge.logging.info(messages.UPDATED_CURRENT_ACTIVE

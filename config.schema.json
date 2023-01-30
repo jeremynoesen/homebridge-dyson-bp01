@@ -13,7 +13,7 @@
         "description": "Enter a name for the accessory. Changing this later will require you to set up the fan again using the instructions above.",
         "required": true
       },
-      "serial": {
+      "serialNumber": {
         "title": "Serial Number",
         "type": "string",
         "placeholder": "XXX-XX-XXXXXXXX",
@@ -21,7 +21,7 @@
         "description": "Enter the serial number of your Dyson BP01 to display it as part of the accessory information. Leave this blank to use a placeholder.",
         "required": false
       },
-      "mac": {
+      "macAddress": {
         "title": "MAC Address",
         "type": "string",
         "placeholder": "XX:XX:XX:XX:XX:XX",
@@ -29,7 +29,7 @@
         "description": "Enter the MAC address of the BroadLink RM you want to use. Leave this blank for automatic discovery.",
         "required": false
       },
-      "sensors": {
+      "exposeSensors": {
         "title": "Expose Sensors",
         "type": "boolean",
         "description": "Check this to expose sensors if you have the sensor cable for your BroadLink RM.",

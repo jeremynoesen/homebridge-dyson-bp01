@@ -50,15 +50,15 @@ It is recommended that you use the Homebridge UI to configure this plugin. Other
 {
    "accessory": "DysonBP01", 
    "name": "Dyson Pure Cool Me",
-   "serial": "XXX-XX-XXXXXXXX",
-   "mac": "XX:XX:XX:XX:XX:XX",
-   "sensors": false
+   "serialNumber": "XXX-XX-XXXXXXXX",
+   "macAddress": "XX:XX:XX:XX:XX:XX",
+   "exposeSensors": false
 }
 ```
 - Changing `name` will require you to redo the Dyson BP01 hardware setup.
-- Setting `serial` is optional. Set this to the serial number of your Dyson BP01 to have it display with other accessory information.
-- Setting `mac` is optional, but recommended if you have multiple BroadLink RMs, so the plugin can use the right one.
-- Setting `sensors` is optional. Set to true if your BroadLink RM has the sensor cable to expose the sensors.
+- Setting `serialNumber` is optional. Set this to the serial number of your Dyson BP01 to have it display with other accessory information.
+- Setting `macAddress` is optional, but recommended if you have multiple BroadLink RMs, so the plugin can use the right one.
+- Setting `exposeSensors` is optional. Set to true if your BroadLink RM has the sensor cable to expose the sensors.
 
 After adding this, restart Homebridge for your changes to take effect.
 - If no BroadLink RM is found, the accessory will not be able to update, and will not send signals to your Dyson BP01.

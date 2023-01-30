@@ -1,6 +1,6 @@
 import {AccessoryConfig, AccessoryPlugin, API, CharacteristicValue, HAP, Logging, Service} from "homebridge";
 import BroadLinkJS from "kiwicam-broadlinkjs-rm";
-import node_persist from "node-persist";
+import nodePersist from "node-persist";
 import ping from "ping";
 import * as constants from "./constants";
 import * as messages from "./messages";
@@ -18,25 +18,25 @@ class DysonBP01 implements AccessoryPlugin {
      * Node-persist storage
      * @private
      */
-    private readonly storage: node_persist.LocalStorage;
+    private readonly localStorage: nodePersist.LocalStorage;
 
     /**
      * Homebridge modules
      * @private
      */
     private readonly homebridge: {
-        readonly log: Logging,
+        readonly logging: Logging,
         readonly hap: HAP
-    }
+    };
 
     /**
      * BroadLinkJS library and device
      * @private
      */
-    private readonly broadlink: {
-        readonly lib: BroadLinkJS,
+    private readonly broadLink: {
+        readonly broadLinkJS: BroadLinkJS,
         device: any
-    }
+    };
 
     /**
      * Accessory config options
@@ -44,9 +44,9 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private readonly config: {
         readonly name: string,
-        readonly serial: string,
-        readonly mac: string,
-        readonly sensors: boolean
+        readonly serialNumber: string,
+        readonly macAddress: string,
+        readonly exposeSensors: boolean
     };
 
     /**
@@ -65,71 +65,71 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private characteristics: {
-        currentActive: number,
         targetActive: number,
-        currentRotationSpeed: number,
         targetRotationSpeed: number,
-        currentSwingMode: number,
         targetSwingMode: number,
+        currentActive: number,
+        currentRotationSpeed: number,
+        currentSwingMode: number,
         currentTemperature: number,
         currentRelativeHumidity: number
     };
 
     /**
-     * Loop skips applied after characteristic updates or device reconnect
+     * Skips applied after certain events
      * @private
      */
     private readonly skips: {
-        active: number,
-        swingMode: number,
-        device: number
+        updateCurrentActive: number,
+        updateCurrentSwingMode: number,
+        deviceReconnect: number
     };
 
     /**
      * Create DysonBP01 accessory
-     * @param log Homebridge logging instance
-     * @param config Homebridge config
+     * @param logging Homebridge logging instance
+     * @param accessoryConfig Homebridge accessory config
      * @param api Homebridge API
      */
-    constructor(log: Logging, config: AccessoryConfig, api: API) {
-        this.storage = node_persist.create();
+    constructor(logging: Logging, accessoryConfig: AccessoryConfig, api: API) {
+        this.localStorage = nodePersist.create();
         this.homebridge = {
-            log: log,
+            logging: logging,
             hap: api.hap
         };
-        this.broadlink = {
-            lib: new BroadLinkJS(),
+        this.broadLink = {
+            broadLinkJS: new BroadLinkJS(),
             device: null
         };
         this.config = {
-            name: config.name,
-            serial: config.serial,
-            mac: config.mac,
-            sensors: config.sensors
+            name: accessoryConfig.name,
+            serialNumber: accessoryConfig.serialNumber,
+            macAddress: accessoryConfig.macAddress,
+            exposeSensors: accessoryConfig.exposeSensors
         };
         this.services = {
             accessoryInformation: new this.homebridge.hap.Service.AccessoryInformation(),
-            fanV2: new this.homebridge.hap.Service.Fanv2(config.name),
+            fanV2: new this.homebridge.hap.Service.Fanv2(accessoryConfig.name),
             temperatureSensor: new this.homebridge.hap.Service.TemperatureSensor(),
             humiditySensor: new this.homebridge.hap.Service.HumiditySensor()
         };
         this.characteristics = {
-            currentActive: this.homebridge.hap.Characteristic.Active.INACTIVE,
             targetActive: this.homebridge.hap.Characteristic.Active.INACTIVE,
-            currentRotationSpeed: constants.ROTATION_SPEED_STEP_SIZE,
             targetRotationSpeed: constants.ROTATION_SPEED_STEP_SIZE,
-            currentSwingMode: this.homebridge.hap.Characteristic.SwingMode.SWING_DISABLED,
             targetSwingMode: this.homebridge.hap.Characteristic.SwingMode.SWING_DISABLED,
+            currentActive: this.homebridge.hap.Characteristic.Active.INACTIVE,
+            currentRotationSpeed: constants.ROTATION_SPEED_STEP_SIZE,
+            currentSwingMode: this.homebridge.hap.Characteristic.SwingMode.SWING_DISABLED,
             currentTemperature: 0,
             currentRelativeHumidity: 0
         };
         this.skips = {
-            active: 0,
-            swingMode: 0,
-            device: 0
+            updateCurrentActive: 0,
+            updateCurrentSwingMode: 0,
+            deviceReconnect: 0
         };
         this.initServices();
-        this.storage.init({
+        this.localStorage.init({
             dir: api.user.persistPath(),
             forgiveParseErrors: true
         }).then(() => {
@@ -146,8 +146,8 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private initLoop(): void {
         setInterval(async () => {
-            if (this.broadlink.device == null) {
-                this.broadlink.lib.discover();
+            if (this.broadLink.device == null) {
+                this.broadLink.broadLinkJS.discover();
             } else {
                 if (await this.isDeviceConnected()) {
                     if (this.canUpdateCurrentActive()) {
@@ -157,13 +157,13 @@ class DysonBP01 implements AccessoryPlugin {
                     } else if (this.canUpdateCurrentSwingMode()) {
                         await this.updateCurrentSwingMode();
                     }
-                    if (this.config.sensors) {
-                        this.broadlink.device.checkTemperature();
+                    if (this.config.exposeSensors) {
+                        this.broadLink.device.checkTemperature();
                     }
                 }
-                this.doActiveSkip();
-                this.doSwingModeSkip();
-                this.doDeviceSkip();
+                this.doUpdateCurrentActiveSkip();
+                this.doUpdateCurrentSwingModeSkip();
+                this.doDeviceReconnectSkip();
             }
         }, constants.LOOP_INTERVAL);
     }
@@ -177,7 +177,7 @@ class DysonBP01 implements AccessoryPlugin {
             .updateCharacteristic(this.homebridge.hap.Characteristic.Manufacturer, messages.INFO_MANUFACTURER)
             .updateCharacteristic(this.homebridge.hap.Characteristic.Model, messages.INFO_MODEL)
             .updateCharacteristic(this.homebridge.hap.Characteristic.SerialNumber,
-                this.config.serial ? this.config.serial.toUpperCase() : messages.INFO_SERIAL_NUMBER);
+                this.config.serialNumber ? this.config.serialNumber.toUpperCase() : messages.INFO_SERIAL_NUMBER);
         this.services.fanV2.getCharacteristic(this.homebridge.hap.Characteristic.Active)
             .onGet(this.getTargetActive.bind(this))
             .onSet(this.setTargetActive.bind(this));
@@ -190,7 +190,7 @@ class DysonBP01 implements AccessoryPlugin {
         this.services.fanV2.getCharacteristic(this.homebridge.hap.Characteristic.SwingMode)
             .onGet(this.getTargetSwingMode.bind(this))
             .onSet(this.setTargetSwingMode.bind(this));
-        if (this.config.sensors) {
+        if (this.config.exposeSensors) {
             this.services.temperatureSensor.getCharacteristic(this.homebridge.hap.Characteristic.CurrentTemperature)
                 .onGet(this.getCurrentTemperature.bind(this));
             this.services.humiditySensor.getCharacteristic(this.homebridge.hap.Characteristic.CurrentRelativeHumidity)
@@ -202,11 +202,11 @@ class DysonBP01 implements AccessoryPlugin {
      * Get services for accessory
      */
     getServices(): Service[] {
-        let services = [
+        let services: Service[] = [
             this.services.accessoryInformation,
             this.services.fanV2
         ];
-        if (this.config.sensors) {
+        if (this.config.exposeSensors) {
             services.push(
                 this.services.temperatureSensor,
                 this.services.humiditySensor
@@ -219,16 +219,16 @@ class DysonBP01 implements AccessoryPlugin {
      * Identify accessory by toggling Active
      */
     identify(): void {
-        this.homebridge.log.info(messages.IDENTIFYING);
-        let i = 0;
-        let activeToggle = setInterval(async () => {
+        this.homebridge.logging.info(messages.IDENTIFYING);
+        let i: number = 0;
+        let activeToggle: NodeJS.Timer = setInterval(async () => {
             if (this.characteristics.targetActive == this.characteristics.currentActive) {
-                if (i < constants.IDENTIFY_ACTIVE_TOGGLES) {
+                if (i < constants.IDENTIFY_ACTIVE_TOGGLE_COUNT) {
                     await this.setTargetActive(
                         this.homebridge.hap.Characteristic.Active.ACTIVE - this.characteristics.targetActive);
                 } else {
                     clearInterval(activeToggle);
-                    this.homebridge.log.info(messages.IDENTIFIED);
+                    this.homebridge.logging.info(messages.IDENTIFIED);
                 }
                 i++;
             }
@@ -240,21 +240,22 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private initDevice(): void {
-        this.broadlink.lib.on("deviceReady", device => {
-            let mac = device.mac.toString("hex").replace(/(.{2})/g, "$1:").slice(0, -1).toUpperCase();
-            this.homebridge.log.info(messages.DEVICE_DISCOVERED.replace(messages.PLACEHOLDER, mac));
-            if (this.broadlink.device == null && (!this.config.mac || this.config.mac.toUpperCase() == mac)) {
-                this.broadlink.device = device;
-                if (this.config.sensors) {
-                    this.broadlink.device.on("temperature", async (temp, humidity) => {
+        this.broadLink.broadLinkJS.on("deviceReady", device => {
+            let macAddress: string = device.mac.toString("hex").replace(/(.{2})/g, "$1:").slice(0, -1).toUpperCase();
+            this.homebridge.logging.info(messages.DEVICE_DISCOVERED.replace(messages.PLACEHOLDER, macAddress));
+            if (this.broadLink.device == null &&
+                (!this.config.macAddress || this.config.macAddress.toUpperCase() == macAddress)) {
+                this.broadLink.device = device;
+                if (this.config.exposeSensors) {
+                    this.broadLink.device.on("temperature", async (temp, humidity) => {
                         await this.setCurrentTemperature(temp);
                         await this.setCurrentRelativeHumidity(humidity);
                     });
                 }
-                this.homebridge.log.info(messages.DEVICE_USING.replace(messages.PLACEHOLDER, mac));
+                this.homebridge.logging.info(messages.DEVICE_USING.replace(messages.PLACEHOLDER, macAddress));
             }
         });
-        this.homebridge.log.info(messages.DEVICE_DISCOVERING);
+        this.homebridge.logging.info(messages.DEVICE_DISCOVERING);
     }
 
     /**
@@ -262,32 +263,32 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async isDeviceConnected(): Promise<boolean> {
-        let connected = await ping.promise.probe(this.broadlink.device.host.address).then((res) => {
+        let alive: boolean = await ping.promise.probe(this.broadLink.device.host.address).then((res) => {
             return res.alive;
         });
-        if (!connected) {
-            if (this.skips.device == 0) {
-                this.homebridge.log.info(messages.DEVICE_DISCONNECTED);
+        if (!alive) {
+            if (this.skips.deviceReconnect == 0) {
+                this.homebridge.logging.info(messages.DEVICE_DISCONNECTED);
             }
-            this.skips.device = constants.LOOP_SKIPS_DEVICE;
-        } else if (this.skips.device > 0) {
-            if (this.skips.device == constants.LOOP_SKIPS_DEVICE - 1) {
-                this.homebridge.log.info(messages.DEVICE_RECONNECTING);
+            this.skips.deviceReconnect = constants.SKIPS_DEVICE_RECONNECT;
+        } else if (this.skips.deviceReconnect > 0) {
+            if (this.skips.deviceReconnect == constants.SKIPS_DEVICE_RECONNECT - 1) {
+                this.homebridge.logging.info(messages.DEVICE_RECONNECTING);
             }
-            connected = false;
+            alive = false;
         }
-        return connected;
+        return alive;
     }
 
     /**
      * Decrement device skips
      * @private
      */
-    private doDeviceSkip(): void {
-        if (this.skips.device > 0) {
-            this.skips.device--;
-            if (this.skips.device == 0) {
-                this.homebridge.log.info(messages.DEVICE_RECONNECTED);
+    private doDeviceReconnectSkip(): void {
+        if (this.skips.deviceReconnect > 0) {
+            this.skips.deviceReconnect--;
+            if (this.skips.deviceReconnect == 0) {
+                this.homebridge.logging.info(messages.DEVICE_RECONNECTED);
             }
         }
     }
@@ -297,23 +298,23 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async initCharacteristics(): Promise<void> {
-        this.characteristics = await this.storage.getItem(this.config.name) || this.characteristics;
-        this.homebridge.log.info(messages.INIT_TARGET_ACTIVE
+        this.characteristics = await this.localStorage.getItem(this.config.name) || this.characteristics;
+        this.homebridge.logging.info(messages.INIT_TARGET_ACTIVE
             .replace(messages.PLACEHOLDER, this.characteristics.targetActive + ""));
-        this.homebridge.log.info(messages.INIT_CURRENT_ACTIVE
+        this.homebridge.logging.info(messages.INIT_TARGET_ROTATION_SPEED
+            .replace(messages.PLACEHOLDER, this.characteristics.targetRotationSpeed + ""));
+        this.homebridge.logging.info(messages.INIT_TARGET_SWING_MODE
+            .replace(messages.PLACEHOLDER, this.characteristics.targetSwingMode + ""));
+        this.homebridge.logging.info(messages.INIT_CURRENT_ACTIVE
             .replace(messages.PLACEHOLDER, this.characteristics.targetActive + ""));
-        this.homebridge.log.info(messages.INIT_TARGET_ROTATION_SPEED
+        this.homebridge.logging.info(messages.INIT_CURRENT_ROTATION_SPEED
             .replace(messages.PLACEHOLDER, this.characteristics.targetRotationSpeed + ""));
-        this.homebridge.log.info(messages.INIT_CURRENT_ROTATION_SPEED
-            .replace(messages.PLACEHOLDER, this.characteristics.targetRotationSpeed + ""));
-        this.homebridge.log.info(messages.INIT_TARGET_SWING_MODE
+        this.homebridge.logging.info(messages.INIT_CURRENT_SWING_MODE
             .replace(messages.PLACEHOLDER, this.characteristics.targetSwingMode + ""));
-        this.homebridge.log.info(messages.INIT_CURRENT_SWING_MODE
-            .replace(messages.PLACEHOLDER, this.characteristics.targetSwingMode + ""));
-        if (this.config.sensors) {
-            this.homebridge.log.info(messages.INIT_CURRENT_TEMPERATURE
+        if (this.config.exposeSensors) {
+            this.homebridge.logging.info(messages.INIT_CURRENT_TEMPERATURE
                 .replace(messages.PLACEHOLDER, this.characteristics.currentTemperature + ""));
-            this.homebridge.log.info(messages.INIT_CURRENT_RELATIVE_HUMIDITY
+            this.homebridge.logging.info(messages.INIT_CURRENT_RELATIVE_HUMIDITY
                 .replace(messages.PLACEHOLDER, this.characteristics.currentRelativeHumidity + ""));
         }
     }
@@ -328,14 +329,14 @@ class DysonBP01 implements AccessoryPlugin {
 
     /**
      * Set target Active
-     * @param value New value to set
+     * @param characteristicValue New characteristic value to set
      * @private
      */
-    private async setTargetActive(value: CharacteristicValue): Promise<void> {
-        if (value as number != this.characteristics.targetActive) {
-            this.characteristics.targetActive = value as number;
-            await this.storage.setItem(this.config.name, this.characteristics);
-            this.homebridge.log.info(messages.SET_TARGET_ACTIVE
+    private async setTargetActive(characteristicValue: CharacteristicValue): Promise<void> {
+        if (characteristicValue as number != this.characteristics.targetActive) {
+            this.characteristics.targetActive = characteristicValue as number;
+            await this.localStorage.setItem(this.config.name, this.characteristics);
+            this.homebridge.logging.info(messages.SET_TARGET_ACTIVE
                 .replace(messages.PLACEHOLDER, this.characteristics.targetActive + ""));
         }
     }
@@ -346,7 +347,7 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private canUpdateCurrentActive(): boolean {
         return this.characteristics.currentActive != this.characteristics.targetActive &&
-            this.skips.active == 0;
+            this.skips.updateCurrentActive == 0;
     }
 
     /**
@@ -354,13 +355,13 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async updateCurrentActive(): Promise<void> {
-        this.broadlink.device.sendData(Buffer.from(constants.SIGNAL_ACTIVE, "hex"));
+        this.broadLink.device.sendData(Buffer.from(constants.SIGNAL_ACTIVE, "hex"));
         this.characteristics.currentActive = this.characteristics.targetActive;
-        this.skips.active =
-            this.characteristics.currentActive ? constants.LOOP_SKIPS_ACTIVE : constants.LOOP_SKIPS_INACTIVE;
-        this.skips.swingMode = 0;
-        await this.storage.setItem(this.config.name, this.characteristics);
-        this.homebridge.log.info(messages.UPDATED_CURRENT_ACTIVE
+        this.skips.updateCurrentActive = this.characteristics.currentActive ?
+            constants.SKIPS_UPDATE_CURRENT_ACTIVE_1 : constants.SKIPS_UPDATE_CURRENT_ACTIVE_0;
+        this.skips.updateCurrentSwingMode = 0;
+        await this.localStorage.setItem(this.config.name, this.characteristics);
+        this.homebridge.logging.info(messages.UPDATED_CURRENT_ACTIVE
             .replace(messages.PLACEHOLDER, this.characteristics.currentActive + ""));
     }
 
@@ -368,9 +369,9 @@ class DysonBP01 implements AccessoryPlugin {
      * Decrement Active skips
      * @private
      */
-    private doActiveSkip(): void {
-        if (this.skips.active > 0) {
-            this.skips.active--;
+    private doUpdateCurrentActiveSkip(): void {
+        if (this.skips.updateCurrentActive > 0) {
+            this.skips.updateCurrentActive--;
         }
     }
 
@@ -384,19 +385,20 @@ class DysonBP01 implements AccessoryPlugin {
 
     /**
      * Set target Rotation Speed
-     * @param value New value to set
+     * @param characteristicValue New characteristic value to set
      * @private
      */
-    private async setTargetRotationSpeed(value: CharacteristicValue): Promise<void> {
-        let tempValue = value as number;
-        if (tempValue < constants.ROTATION_SPEED_STEP_SIZE) {
-            tempValue = constants.ROTATION_SPEED_STEP_SIZE;
-            this.services.fanV2.updateCharacteristic(this.homebridge.hap.Characteristic.RotationSpeed, tempValue);
+    private async setTargetRotationSpeed(characteristicValue: CharacteristicValue): Promise<void> {
+        let clampedCharacteristicValue: number = characteristicValue as number;
+        if (clampedCharacteristicValue < constants.ROTATION_SPEED_STEP_SIZE) {
+            clampedCharacteristicValue = constants.ROTATION_SPEED_STEP_SIZE;
+            this.services.fanV2.updateCharacteristic(
+                this.homebridge.hap.Characteristic.RotationSpeed, clampedCharacteristicValue);
         }
-        if (tempValue != this.characteristics.targetRotationSpeed) {
-            this.characteristics.targetRotationSpeed = tempValue;
-            await this.storage.setItem(this.config.name, this.characteristics);
-            this.homebridge.log.info(messages.SET_TARGET_ROTATION_SPEED
+        if (clampedCharacteristicValue != this.characteristics.targetRotationSpeed) {
+            this.characteristics.targetRotationSpeed = clampedCharacteristicValue;
+            await this.localStorage.setItem(this.config.name, this.characteristics);
+            this.homebridge.logging.info(messages.SET_TARGET_ROTATION_SPEED
                 .replace(messages.PLACEHOLDER, this.characteristics.targetRotationSpeed + ""));
         }
     }
@@ -408,8 +410,8 @@ class DysonBP01 implements AccessoryPlugin {
     private canUpdateCurrentRotationSpeed(): boolean {
         return this.characteristics.currentRotationSpeed != this.characteristics.targetRotationSpeed &&
             this.characteristics.currentActive == this.homebridge.hap.Characteristic.Active.ACTIVE &&
-            this.skips.active == 0 &&
-            this.skips.swingMode == 0;
+            this.skips.updateCurrentActive == 0 &&
+            this.skips.updateCurrentSwingMode == 0;
     }
 
     /**
@@ -418,14 +420,14 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private async updateCurrentRotationSpeed(): Promise<void> {
         if (this.characteristics.currentRotationSpeed < this.characteristics.targetRotationSpeed) {
-            this.broadlink.device.sendData(Buffer.from(constants.SIGNAL_ROTATION_SPEED_UP, "hex"));
+            this.broadLink.device.sendData(Buffer.from(constants.SIGNAL_ROTATION_SPEED_UP, "hex"));
             this.characteristics.currentRotationSpeed += constants.ROTATION_SPEED_STEP_SIZE;
         } else if (this.characteristics.currentRotationSpeed > this.characteristics.targetRotationSpeed) {
-            this.broadlink.device.sendData(Buffer.from(constants.SIGNAL_ROTATION_SPEED_DOWN, "hex"));
+            this.broadLink.device.sendData(Buffer.from(constants.SIGNAL_ROTATION_SPEED_DOWN, "hex"));
             this.characteristics.currentRotationSpeed -= constants.ROTATION_SPEED_STEP_SIZE;
         }
-        await this.storage.setItem(this.config.name, this.characteristics);
-        this.homebridge.log.info(messages.UPDATED_CURRENT_ROTATION_SPEED
+        await this.localStorage.setItem(this.config.name, this.characteristics);
+        this.homebridge.logging.info(messages.UPDATED_CURRENT_ROTATION_SPEED
             .replace(messages.PLACEHOLDER, this.characteristics.currentRotationSpeed + ""));
     }
 
@@ -439,14 +441,14 @@ class DysonBP01 implements AccessoryPlugin {
 
     /**
      * Set target Swing Mode
-     * @param value New value to set
+     * @param characteristicValue New characteristic value to set
      * @private
      */
-    private async setTargetSwingMode(value: CharacteristicValue): Promise<void> {
-        if (value as number != this.characteristics.targetSwingMode) {
-            this.characteristics.targetSwingMode = value as number;
-            await this.storage.setItem(this.config.name, this.characteristics);
-            this.homebridge.log.info(messages.SET_TARGET_SWING_MODE
+    private async setTargetSwingMode(characteristicValue: CharacteristicValue): Promise<void> {
+        if (characteristicValue as number != this.characteristics.targetSwingMode) {
+            this.characteristics.targetSwingMode = characteristicValue as number;
+            await this.localStorage.setItem(this.config.name, this.characteristics);
+            this.homebridge.logging.info(messages.SET_TARGET_SWING_MODE
                 .replace(messages.PLACEHOLDER, this.characteristics.targetSwingMode + ""));
         }
     }
@@ -458,7 +460,7 @@ class DysonBP01 implements AccessoryPlugin {
     private canUpdateCurrentSwingMode(): boolean {
         return this.characteristics.currentSwingMode != this.characteristics.targetSwingMode &&
             this.characteristics.currentActive == this.homebridge.hap.Characteristic.Active.ACTIVE &&
-            this.skips.active == 0;
+            this.skips.updateCurrentActive == 0;
     }
 
     /**
@@ -466,11 +468,11 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async updateCurrentSwingMode(): Promise<void> {
-        this.broadlink.device.sendData(Buffer.from(constants.SIGNAL_SWING_MODE, "hex"));
+        this.broadLink.device.sendData(Buffer.from(constants.SIGNAL_SWING_MODE, "hex"));
         this.characteristics.currentSwingMode = this.characteristics.targetSwingMode;
-        this.skips.swingMode = constants.LOOP_SKIPS_SWING_MODE;
-        await this.storage.setItem(this.config.name, this.characteristics);
-        this.homebridge.log.info(messages.UPDATED_CURRENT_SWING_MODE
+        this.skips.updateCurrentSwingMode = constants.SKIPS_UPDATE_CURRENT_SWING_MODE;
+        await this.localStorage.setItem(this.config.name, this.characteristics);
+        this.homebridge.logging.info(messages.UPDATED_CURRENT_SWING_MODE
             .replace(messages.PLACEHOLDER, this.characteristics.currentSwingMode + ""));
     }
 
@@ -478,9 +480,9 @@ class DysonBP01 implements AccessoryPlugin {
      * Decrement Swing Mode skips
      * @private
      */
-    private doSwingModeSkip(): void {
-        if (this.skips.swingMode > 0) {
-            this.skips.swingMode--;
+    private doUpdateCurrentSwingModeSkip(): void {
+        if (this.skips.updateCurrentSwingMode > 0) {
+            this.skips.updateCurrentSwingMode--;
         }
     }
 
@@ -494,14 +496,14 @@ class DysonBP01 implements AccessoryPlugin {
 
     /**
      * Set Current Temperature
-     * @param value New value to set
+     * @param characteristicValue New characteristic value to set
      * @private
      */
-    private async setCurrentTemperature(value: CharacteristicValue): Promise<void> {
-        if (value as number != this.characteristics.currentTemperature) {
-            this.characteristics.currentTemperature = value as number;
-            await this.storage.setItem(this.config.name, this.characteristics);
-            this.homebridge.log.info(messages.SET_CURRENT_TEMPERATURE
+    private async setCurrentTemperature(characteristicValue: CharacteristicValue): Promise<void> {
+        if (characteristicValue as number != this.characteristics.currentTemperature) {
+            this.characteristics.currentTemperature = characteristicValue as number;
+            await this.localStorage.setItem(this.config.name, this.characteristics);
+            this.homebridge.logging.info(messages.SET_CURRENT_TEMPERATURE
                 .replace(messages.PLACEHOLDER, this.characteristics.currentTemperature + ""));
         }
     }
@@ -516,14 +518,14 @@ class DysonBP01 implements AccessoryPlugin {
 
     /**
      * Set Current Relative Humidity
-     * @param value New value to set
+     * @param characteristicValue New characteristic value to set
      * @private
      */
-    private async setCurrentRelativeHumidity(value: CharacteristicValue): Promise<void> {
-        if (value as number != this.characteristics.currentRelativeHumidity) {
-            this.characteristics.currentRelativeHumidity = value as number;
-            await this.storage.setItem(this.config.name, this.characteristics);
-            this.homebridge.log.info(messages.SET_CURRENT_RELATIVE_HUMIDITY
+    private async setCurrentRelativeHumidity(characteristicValue: CharacteristicValue): Promise<void> {
+        if (characteristicValue as number != this.characteristics.currentRelativeHumidity) {
+            this.characteristics.currentRelativeHumidity = characteristicValue as number;
+            await this.localStorage.setItem(this.config.name, this.characteristics);
+            this.homebridge.logging.info(messages.SET_CURRENT_RELATIVE_HUMIDITY
                 .replace(messages.PLACEHOLDER, this.characteristics.currentRelativeHumidity + ""));
         }
     }

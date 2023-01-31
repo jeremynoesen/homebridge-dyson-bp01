@@ -306,11 +306,11 @@ class DysonBP01 implements AccessoryPlugin {
         this.homebridge.logging.info(messages.INIT_TARGET_SWING_MODE
             .replace(messages.PLACEHOLDER, this.characteristics.targetSwingMode + ""));
         this.homebridge.logging.info(messages.INIT_CURRENT_ACTIVE
-            .replace(messages.PLACEHOLDER, this.characteristics.targetActive + ""));
+            .replace(messages.PLACEHOLDER, this.characteristics.currentActive + ""));
         this.homebridge.logging.info(messages.INIT_CURRENT_ROTATION_SPEED
-            .replace(messages.PLACEHOLDER, this.characteristics.targetRotationSpeed + ""));
+            .replace(messages.PLACEHOLDER, this.characteristics.currentRotationSpeed + ""));
         this.homebridge.logging.info(messages.INIT_CURRENT_SWING_MODE
-            .replace(messages.PLACEHOLDER, this.characteristics.targetSwingMode + ""));
+            .replace(messages.PLACEHOLDER, this.characteristics.currentSwingMode + ""));
         if (this.config.exposeSensors) {
             this.homebridge.logging.info(messages.INIT_CURRENT_TEMPERATURE
                 .replace(messages.PLACEHOLDER, this.characteristics.currentTemperature + ""));

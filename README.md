@@ -61,7 +61,7 @@ It is recommended that you use the Homebridge UI to configure this plugin. Other
 - Setting `exposeSensors` is optional. Set to true if your BroadLink RM has the sensor cable to expose the sensors.
 
 After adding this, restart Homebridge for your changes to take effect.
-- If no BroadLink RM is found, the accessory will not be able to update, and will not send signals to your Dyson BP01.
+- If no BroadLink RM is found, no signals will be sent to your Dyson BP01, and its current state will not update. You can still control the target state through HomeKit.
 - If one is found, you should be able to control your fan like a native HomeKit accessory.
 
 ## Troubleshooting

@@ -4,12 +4,12 @@
 export const INTERVAL: number = 700;
 
 /**
- * Number of Active skips after updating current Active to 1
+ * Number of Active skips after updating current Active to active
  */
 export const SKIPS_UPDATE_CURRENT_ACTIVE_ACTIVE: number = 2;
 
 /**
- * Number of Active skips after updating current Active to 0
+ * Number of Active skips after updating current Active to inactive
  */
 export const SKIPS_UPDATE_CURRENT_ACTIVE_INACTIVE: number = 8;
 

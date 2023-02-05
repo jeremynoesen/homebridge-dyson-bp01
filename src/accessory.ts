@@ -232,15 +232,17 @@ class DysonBP01 implements AccessoryPlugin {
         if (this.broadLink.connected) {
             this.homebridge.logging.info(messages.IDENTIFYING);
             let i: number = 0;
-            let activeToggle: NodeJS.Timer = setInterval(() => {
+            let activeToggle: NodeJS.Timer = setInterval(async () => {
                 if (this.characteristics.targetActive == this.characteristics.currentActive) {
                     if (i < constants.IDENTIFY_ACTIVE_TOGGLE_COUNT) {
                         if (this.characteristics.targetActive ==
                             this.homebridge.hap.Characteristic.Active.ACTIVE) {
-                            this.characteristics.targetActive = this.homebridge.hap.Characteristic.Active.INACTIVE;
+                            await this.setTargetActive(this.homebridge.hap.Characteristic.Active.INACTIVE, () => {
+                            });
                         } else if (this.characteristics.targetActive ==
                             this.homebridge.hap.Characteristic.Active.INACTIVE) {
-                            this.characteristics.targetActive = this.homebridge.hap.Characteristic.Active.ACTIVE;
+                            await this.setTargetActive(this.homebridge.hap.Characteristic.Active.ACTIVE, () => {
+                            });
                         }
                     } else {
                         clearInterval(activeToggle);

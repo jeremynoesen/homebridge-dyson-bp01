@@ -187,7 +187,7 @@ class DysonBP01 implements AccessoryPlugin {
             .updateCharacteristic(this.homebridge.hap.Characteristic.Manufacturer, messages.INFO_MANUFACTURER)
             .updateCharacteristic(this.homebridge.hap.Characteristic.Model, messages.INFO_MODEL)
             .updateCharacteristic(this.homebridge.hap.Characteristic.SerialNumber,
-                this.config.serialNumber.toUpperCase());
+                this.config.serialNumber == undefined ? null : this.config.serialNumber.toUpperCase());
         this.services.fanV2.getCharacteristic(this.homebridge.hap.Characteristic.Active)
             .on(CharacteristicEventTypes.GET, this.getTargetActive.bind(this))
             .on(CharacteristicEventTypes.SET, this.setTargetActive.bind(this));
@@ -261,7 +261,7 @@ class DysonBP01 implements AccessoryPlugin {
             let macAddress: string = device.mac.toString("hex").replace(/(.{2})/g, "$1:").slice(0, -1).toUpperCase();
             this.homebridge.logging.info(messages.DEVICE_DISCOVERED.replace(messages.PLACEHOLDER, macAddress));
             if (this.broadLink.device == null &&
-                (!this.config.macAddress || this.config.macAddress.toUpperCase() == macAddress)) {
+                (this.config.macAddress == undefined || this.config.macAddress.toUpperCase() == macAddress)) {
                 this.broadLink.device = device;
                 if (this.config.exposeSensors) {
                     this.broadLink.device.on("temperature", async (temp, humidity) => {

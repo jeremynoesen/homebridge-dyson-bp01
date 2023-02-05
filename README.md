@@ -60,9 +60,7 @@ It is recommended that you use the Homebridge UI to configure this plugin. Other
 - Setting `macAddress` is optional, but recommended if you have multiple BroadLink RMs, so the plugin can use the right one.
 - Setting `exposeSensors` is optional. Set to true if your BroadLink RM has the sensor cable to expose the sensors.
 
-After adding this, restart Homebridge for your changes to take effect.
-- If no BroadLink RM is found, no signals will be sent to your Dyson BP01, and its current state will not update. You can still control the target state through HomeKit.
-- If one is found, you should be able to control your fan like a native HomeKit accessory.
+Restart Homebridge after changing any of the settings for them to take effect.
 
 ## Troubleshooting
 - If your BroadLink RM randomly stops working or does not reconnect after power loss, try assigning it a static IP address.

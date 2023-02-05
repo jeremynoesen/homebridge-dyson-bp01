@@ -120,7 +120,7 @@ class DysonBP01 implements AccessoryPlugin {
         };
         this.services = {
             accessoryInformation: new this.homebridge.hap.Service.AccessoryInformation(),
-            fanV2: new this.homebridge.hap.Service.Fanv2(accessoryConfig.name),
+            fanV2: new this.homebridge.hap.Service.Fanv2(this.config.name),
             temperatureSensor: new this.homebridge.hap.Service.TemperatureSensor(),
             humiditySensor: new this.homebridge.hap.Service.HumiditySensor()
         };
@@ -187,7 +187,7 @@ class DysonBP01 implements AccessoryPlugin {
             .updateCharacteristic(this.homebridge.hap.Characteristic.Manufacturer, messages.INFO_MANUFACTURER)
             .updateCharacteristic(this.homebridge.hap.Characteristic.Model, messages.INFO_MODEL)
             .updateCharacteristic(this.homebridge.hap.Characteristic.SerialNumber,
-                this.config.serialNumber ? this.config.serialNumber.toUpperCase() : messages.INFO_SERIAL_NUMBER);
+                this.config.serialNumber.toUpperCase());
         this.services.fanV2.getCharacteristic(this.homebridge.hap.Characteristic.Active)
             .on(CharacteristicEventTypes.GET, this.getTargetActive.bind(this))
             .on(CharacteristicEventTypes.SET, this.setTargetActive.bind(this));

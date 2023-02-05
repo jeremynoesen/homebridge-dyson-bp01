@@ -14,11 +14,6 @@ export const INFO_MANUFACTURER: string = "Dyson";
 export const INFO_MODEL: string = "BP01";
 
 /**
- * Information service Serial Number field
- */
-export const INFO_SERIAL_NUMBER: string = "Printed Under Machine";
-
-/**
  * Message shown when identifying starts
  */
 export const IDENTIFYING: string = "Identifying accessory...";

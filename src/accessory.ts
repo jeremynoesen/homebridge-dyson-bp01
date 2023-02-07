@@ -47,7 +47,7 @@ class DysonBP01 implements AccessoryPlugin {
     private readonly broadLink: {
         readonly broadLinkJS: BroadLinkJS,
         device: any,
-        connected: boolean
+        deviceConnected: boolean
     };
 
     /**
@@ -112,7 +112,7 @@ class DysonBP01 implements AccessoryPlugin {
         this.broadLink = {
             broadLinkJS: new BroadLinkJS(),
             device: null,
-            connected: false
+            deviceConnected: false
         };
         this.config = {
             name: accessoryConfig.name,
@@ -162,7 +162,7 @@ class DysonBP01 implements AccessoryPlugin {
             if (this.broadLink.device == null) {
                 this.broadLink.broadLinkJS.discover();
             } else {
-                this.broadLink.connected = await this.isDeviceConnected();
+                this.broadLink.deviceConnected = await this.isDeviceConnected();
                 if (this.canUpdateCurrentActive()) {
                     await this.updateCurrentActive();
                 } else if (this.canUpdateCurrentRotationSpeed()) {
@@ -173,7 +173,7 @@ class DysonBP01 implements AccessoryPlugin {
                 this.doUpdateCurrentActiveSkip();
                 this.doUpdateCurrentSwingModeSkip();
                 this.doDeviceReconnectSkip();
-                if (this.broadLink.connected && this.config.exposeSensors) {
+                if (this.broadLink.deviceConnected && this.config.exposeSensors) {
                     this.broadLink.device.checkTemperature();
                 }
             }
@@ -231,7 +231,7 @@ class DysonBP01 implements AccessoryPlugin {
      * Identify accessory by toggling Active
      */
     identify(): void {
-        if (this.broadLink.connected) {
+        if (this.broadLink.deviceConnected) {
             this.homebridge.logging.info(messages.IDENTIFYING);
             let i: number = 0;
             let activeToggle: NodeJS.Timer = setInterval(async () => {
@@ -284,8 +284,8 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async isDeviceConnected(): Promise<boolean> {
-        let alive: boolean = await ping.promise.probe(this.broadLink.device.host.address).then((res) => {
-            return res.alive;
+        let alive: boolean = await ping.promise.probe(this.broadLink.device.host.address).then((pingResponse) => {
+            return pingResponse.alive;
         });
         if (!alive) {
             if (this.skips.deviceReconnect == 0) {
@@ -346,7 +346,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private getTargetActive(characteristicGetCallback: CharacteristicGetCallback): void {
-        characteristicGetCallback(this.broadLink.connected ? null : new Error(messages.DEVICE_DISCONNECTED),
+        characteristicGetCallback(this.broadLink.deviceConnected ? null : new Error(messages.DEVICE_DISCONNECTED),
             this.characteristics.targetActive);
     }
 
@@ -358,7 +358,7 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private async setTargetActive(characteristicValue: CharacteristicValue,
                                   characteristicSetCallback: CharacteristicSetCallback): Promise<void> {
-        if (this.broadLink.connected) {
+        if (this.broadLink.deviceConnected) {
             if (characteristicValue as number != this.characteristics.targetActive) {
                 this.characteristics.targetActive = characteristicValue as number;
                 await this.localStorage.setItem(this.config.name, this.characteristics);
@@ -376,7 +376,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private canUpdateCurrentActive(): boolean {
-        return this.broadLink.connected &&
+        return this.broadLink.deviceConnected &&
             this.characteristics.currentActive != this.characteristics.targetActive &&
             this.skips.updateCurrentActive == 0;
     }
@@ -415,7 +415,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private getTargetRotationSpeed(characteristicGetCallback: CharacteristicGetCallback): void {
-        characteristicGetCallback(this.broadLink.connected ? null : new Error(messages.DEVICE_DISCONNECTED),
+        characteristicGetCallback(this.broadLink.deviceConnected ? null : new Error(messages.DEVICE_DISCONNECTED),
             this.characteristics.targetRotationSpeed);
     }
 
@@ -427,7 +427,7 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private async setTargetRotationSpeed(characteristicValue: CharacteristicValue,
                                          characteristicSetCallback: CharacteristicSetCallback): Promise<void> {
-        if (this.broadLink.connected) {
+        if (this.broadLink.deviceConnected) {
             let clampedCharacteristicValue: number = characteristicValue as number;
             if (clampedCharacteristicValue < constants.ROTATION_SPEED_STEP_SIZE) {
                 clampedCharacteristicValue = constants.ROTATION_SPEED_STEP_SIZE;
@@ -451,7 +451,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private canUpdateCurrentRotationSpeed(): boolean {
-        return this.broadLink.connected &&
+        return this.broadLink.deviceConnected &&
             this.characteristics.currentRotationSpeed != this.characteristics.targetRotationSpeed &&
             this.characteristics.currentActive == this.homebridge.hap.Characteristic.Active.ACTIVE &&
             this.skips.updateCurrentActive == 0 &&
@@ -481,7 +481,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private getTargetSwingMode(characteristicGetCallback: CharacteristicGetCallback): void {
-        characteristicGetCallback(this.broadLink.connected ? null : new Error(messages.DEVICE_DISCONNECTED),
+        characteristicGetCallback(this.broadLink.deviceConnected ? null : new Error(messages.DEVICE_DISCONNECTED),
             this.characteristics.targetSwingMode);
     }
 
@@ -493,7 +493,7 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private async setTargetSwingMode(characteristicValue: CharacteristicValue,
                                      characteristicSetCallback: CharacteristicSetCallback): Promise<void> {
-        if (this.broadLink.connected) {
+        if (this.broadLink.deviceConnected) {
             if (characteristicValue as number != this.characteristics.targetSwingMode) {
                 this.characteristics.targetSwingMode = characteristicValue as number;
                 await this.localStorage.setItem(this.config.name, this.characteristics);
@@ -511,7 +511,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private canUpdateCurrentSwingMode(): boolean {
-        return this.broadLink.connected &&
+        return this.broadLink.deviceConnected &&
             this.characteristics.currentSwingMode != this.characteristics.targetSwingMode &&
             this.characteristics.currentActive == this.homebridge.hap.Characteristic.Active.ACTIVE &&
             this.skips.updateCurrentActive == 0;
@@ -546,7 +546,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private getCurrentTemperature(characteristicGetCallback: CharacteristicGetCallback): void {
-        characteristicGetCallback(this.broadLink.connected ? null : new Error(messages.DEVICE_DISCONNECTED),
+        characteristicGetCallback(this.broadLink.deviceConnected ? null : new Error(messages.DEVICE_DISCONNECTED),
             this.characteristics.currentTemperature);
     }
 
@@ -570,7 +570,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private getCurrentRelativeHumidity(characteristicGetCallback: CharacteristicGetCallback): void {
-        characteristicGetCallback(this.broadLink.connected ? null : new Error(messages.DEVICE_DISCONNECTED),
+        characteristicGetCallback(this.broadLink.deviceConnected ? null : new Error(messages.DEVICE_DISCONNECTED),
             this.characteristics.currentRelativeHumidity);
     }
 

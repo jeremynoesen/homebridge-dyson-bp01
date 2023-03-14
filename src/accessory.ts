@@ -22,6 +22,8 @@ export = (api: API) => {
 
 /**
  * Dyson BP01 accessory for Homebridge
+ *
+ * @author Jeremy Noesen
  */
 class DysonBP01 implements AccessoryPlugin {
 

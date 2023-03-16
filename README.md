@@ -63,6 +63,10 @@ It is recommended that you use the Homebridge UI to configure this plugin. Other
 
 Restart Homebridge after changing any of the settings for them to take effect.
 
+## Demonstration
+
+<div align="center"><img src="img/Demo.gif" alt="Demonstration" title="Demonstration" /></div>
+
 ## Troubleshooting
 - If your BroadLink RM randomly stops working or does not reconnect after power loss, try assigning it a static IP address.
 - If not all signals are sending, check the position of your BroadLink RM and ensure it has a direct line of sight to the fan's display.

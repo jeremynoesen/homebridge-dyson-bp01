@@ -380,7 +380,8 @@ class DysonBP01 implements AccessoryPlugin {
     private canUpdateCurrentActive(): boolean {
         return this.broadLink.deviceConnected &&
             this.characteristics.currentActive != this.characteristics.targetActive &&
-            this.skips.updateCurrentActive == 0;
+            this.skips.updateCurrentActive == 0 &&
+            this.skips.updateCurrentSwingMode == 0;
     }
 
     /**
@@ -395,7 +396,6 @@ class DysonBP01 implements AccessoryPlugin {
         } else if (this.characteristics.currentActive == this.homebridge.hap.Characteristic.Active.INACTIVE) {
             this.skips.updateCurrentActive = constants.SKIPS_UPDATE_CURRENT_ACTIVE_INACTIVE;
         }
-        this.skips.updateCurrentSwingMode = 0;
         await this.localStorage.setItem(this.config.name, this.characteristics);
         this.homebridge.logging.info(messages.UPDATED_CURRENT_ACTIVE
             .replace(messages.PLACEHOLDER, this.characteristics.currentActive + ""));

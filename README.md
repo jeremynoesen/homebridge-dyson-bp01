@@ -27,8 +27,8 @@ Using the remote provided with the fan:
 3. Turn off the fan.
 
 ## Required Software
-- Node.js 18.14.0
-- Homebridge 1.6.0
+- Node.js 14.0.0 or higher
+- Homebridge 1.3.0 or higher
 
 ## Building
 You can build the project by doing the following:

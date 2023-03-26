@@ -143,7 +143,6 @@ class DysonBP01 implements AccessoryPlugin {
             updateCurrentSwingMode: 0,
             deviceReconnect: 0
         };
-        this.initServices();
         this.localStorage.init({
             dir: api.user.persistPath(),
             forgiveParseErrors: true
@@ -153,6 +152,7 @@ class DysonBP01 implements AccessoryPlugin {
                 this.initInterval();
             });
         });
+        this.initServices();
     }
 
     /**
@@ -165,19 +165,21 @@ class DysonBP01 implements AccessoryPlugin {
                 this.broadLink.broadLinkJS.discover();
             } else {
                 this.broadLink.deviceConnected = await this.isDeviceConnected();
-                if (this.canUpdateCurrentActive()) {
-                    await this.updateCurrentActive();
-                } else if (this.canUpdateCurrentRotationSpeed()) {
-                    await this.updateCurrentRotationSpeed();
-                } else if (this.canUpdateCurrentSwingMode()) {
-                    await this.updateCurrentSwingMode();
+                if (this.broadLink.deviceConnected) {
+                    if (this.canUpdateCurrentActive()) {
+                        await this.updateCurrentActive();
+                    } else if (this.canUpdateCurrentRotationSpeed()) {
+                        await this.updateCurrentRotationSpeed();
+                    } else if (this.canUpdateCurrentSwingMode()) {
+                        await this.updateCurrentSwingMode();
+                    }
+                    if (this.config.exposeSensors) {
+                        this.broadLink.device.checkTemperature();
+                    }
                 }
                 this.doUpdateCurrentActiveSkip();
                 this.doUpdateCurrentSwingModeSkip();
                 this.doDeviceReconnectSkip();
-                if (this.broadLink.deviceConnected && this.config.exposeSensors) {
-                    this.broadLink.device.checkTemperature();
-                }
             }
         }, constants.INTERVAL);
     }
@@ -378,8 +380,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private canUpdateCurrentActive(): boolean {
-        return this.broadLink.deviceConnected &&
-            this.characteristics.currentActive != this.characteristics.targetActive &&
+        return this.characteristics.currentActive != this.characteristics.targetActive &&
             this.skips.updateCurrentActive == 0 &&
             this.skips.updateCurrentSwingMode == 0;
     }
@@ -453,8 +454,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private canUpdateCurrentRotationSpeed(): boolean {
-        return this.broadLink.deviceConnected &&
-            this.characteristics.currentRotationSpeed != this.characteristics.targetRotationSpeed &&
+        return this.characteristics.currentRotationSpeed != this.characteristics.targetRotationSpeed &&
             this.characteristics.currentActive == this.homebridge.hap.Characteristic.Active.ACTIVE &&
             this.skips.updateCurrentActive == 0 &&
             this.skips.updateCurrentSwingMode == 0;
@@ -513,8 +513,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private canUpdateCurrentSwingMode(): boolean {
-        return this.broadLink.deviceConnected &&
-            this.characteristics.currentSwingMode != this.characteristics.targetSwingMode &&
+        return this.characteristics.currentSwingMode != this.characteristics.targetSwingMode &&
             this.characteristics.currentActive == this.homebridge.hap.Characteristic.Active.ACTIVE &&
             this.skips.updateCurrentActive == 0;
     }

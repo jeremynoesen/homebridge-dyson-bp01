@@ -156,6 +156,35 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
+     * Identify accessory by toggling Active
+     */
+    identify(): void {
+        if (this.broadLink.deviceConnected) {
+            this.homebridge.logging.info(messages.IDENTIFYING);
+            let i: number = 0;
+            let activeToggle: NodeJS.Timer = setInterval(async () => {
+                if (this.characteristics.targetActive == this.characteristics.currentActive) {
+                    if (i < constants.IDENTIFY_ACTIVE_TOGGLE_COUNT) {
+                        if (this.characteristics.targetActive ==
+                            this.homebridge.hap.Characteristic.Active.ACTIVE) {
+                            await this.setTargetActive(this.homebridge.hap.Characteristic.Active.INACTIVE, () => {
+                            });
+                        } else if (this.characteristics.targetActive ==
+                            this.homebridge.hap.Characteristic.Active.INACTIVE) {
+                            await this.setTargetActive(this.homebridge.hap.Characteristic.Active.ACTIVE, () => {
+                            });
+                        }
+                    } else {
+                        clearInterval(activeToggle);
+                        this.homebridge.logging.info(messages.IDENTIFIED);
+                    }
+                    i++;
+                }
+            }, constants.INTERVAL);
+        }
+    }
+
+    /**
      * Set interval that updates accessory states
      * @private
      */
@@ -229,35 +258,6 @@ class DysonBP01 implements AccessoryPlugin {
             );
         }
         return services;
-    }
-
-    /**
-     * Identify accessory by toggling Active
-     */
-    identify(): void {
-        if (this.broadLink.deviceConnected) {
-            this.homebridge.logging.info(messages.IDENTIFYING);
-            let i: number = 0;
-            let activeToggle: NodeJS.Timer = setInterval(async () => {
-                if (this.characteristics.targetActive == this.characteristics.currentActive) {
-                    if (i < constants.IDENTIFY_ACTIVE_TOGGLE_COUNT) {
-                        if (this.characteristics.targetActive ==
-                            this.homebridge.hap.Characteristic.Active.ACTIVE) {
-                            await this.setTargetActive(this.homebridge.hap.Characteristic.Active.INACTIVE, () => {
-                            });
-                        } else if (this.characteristics.targetActive ==
-                            this.homebridge.hap.Characteristic.Active.INACTIVE) {
-                            await this.setTargetActive(this.homebridge.hap.Characteristic.Active.ACTIVE, () => {
-                            });
-                        }
-                    } else {
-                        clearInterval(activeToggle);
-                        this.homebridge.logging.info(messages.IDENTIFIED);
-                    }
-                    i++;
-                }
-            }, constants.INTERVAL);
-        }
     }
 
     /**

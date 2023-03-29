@@ -32,7 +32,7 @@
       "exposeSensors": {
         "title": "Expose Sensors",
         "type": "boolean",
-        "description": "Check this to expose sensors if you have the sensor cable for your BroadLink RM.",
+        "description": "Check this to expose temperature and humidity sensors if you have the sensor cable for your BroadLink RM.",
         "required": true
       }
     }

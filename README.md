@@ -61,7 +61,7 @@ It is recommended that you use the Homebridge UI to configure this plugin. Other
 - `macAddress` is optional, but recommended if you have multiple BroadLink RMs, so the plugin can use the right one.
 - `exposeSensors` is required. Set to true if your BroadLink RM has the sensor cable to expose the temperature and humidity sensors.
 
-Restart Homebridge after changing any of the settings for them to take effect.
+Restart Homebridge after changing any of these settings for them to take effect.
 
 ## Demonstration
 

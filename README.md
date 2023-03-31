@@ -1,6 +1,8 @@
 <img src="img/Logo.svg" alt="Logo" title = "Logo" align="right" width="200" height="200" />
 
-# homebridge-dyson-bp01 [![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)
+# homebridge-dyson-bp01 
+
+[![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)
 
 ## About
 

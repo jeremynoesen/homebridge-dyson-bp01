@@ -170,24 +170,22 @@ class DysonBP01 implements AccessoryPlugin {
     identify(): void {
         if (this.broadLink.deviceConnected) {
             this.homebridge.logging.info(messages.IDENTIFYING);
-            let i: number = 0;
+            let toggleCount: number = 0;
             let activeToggle: NodeJS.Timer = setInterval(async () => {
-                if (this.fanV2Characteristics.targetActive == this.fanV2Characteristics.currentActive) {
-                    if (i < constants.IDENTIFY_ACTIVE_TOGGLE_COUNT) {
-                        if (this.fanV2Characteristics.targetActive ==
-                            this.homebridge.hap.Characteristic.Active.ACTIVE) {
-                            await this.setTargetActive(this.homebridge.hap.Characteristic.Active.INACTIVE, () => {
-                            });
-                        } else if (this.fanV2Characteristics.targetActive ==
-                            this.homebridge.hap.Characteristic.Active.INACTIVE) {
-                            await this.setTargetActive(this.homebridge.hap.Characteristic.Active.ACTIVE, () => {
-                            });
-                        }
-                    } else {
-                        clearInterval(activeToggle);
-                        this.homebridge.logging.info(messages.IDENTIFIED);
+                if (toggleCount < constants.IDENTIFY_ACTIVE_TOGGLE_COUNT) {
+                    if (this.fanV2Characteristics.targetActive ==
+                        this.homebridge.hap.Characteristic.Active.ACTIVE) {
+                        await this.setTargetActive(this.homebridge.hap.Characteristic.Active.INACTIVE, () => {
+                        });
+                    } else if (this.fanV2Characteristics.targetActive ==
+                        this.homebridge.hap.Characteristic.Active.INACTIVE) {
+                        await this.setTargetActive(this.homebridge.hap.Characteristic.Active.ACTIVE, () => {
+                        });
                     }
-                    i++;
+                    toggleCount++;
+                } else if (this.fanV2Characteristics.targetActive == this.fanV2Characteristics.currentActive) {
+                    clearInterval(activeToggle);
+                    this.homebridge.logging.info(messages.IDENTIFIED);
                 }
             }, constants.INTERVAL);
         }

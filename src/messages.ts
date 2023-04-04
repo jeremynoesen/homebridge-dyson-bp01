@@ -84,16 +84,6 @@ export const INIT_CURRENT_ROTATION_SPEED: string = "Initialized current Rotation
 export const INIT_CURRENT_SWING_MODE: string = "Initialized current Swing Mode to " + PLACEHOLDER;
 
 /**
- * Message shown when initializing Current Temperature
- */
-export const INIT_CURRENT_TEMPERATURE: string = "Initialized Current Temperature to " + PLACEHOLDER + "˚C";
-
-/**
- * Message shown when initializing Current Relative Humidity
- */
-export const INIT_CURRENT_RELATIVE_HUMIDITY: string = "Initialized Current Relative Humidity to " + PLACEHOLDER + "%";
-
-/**
  * Message shown when target Active is set
  */
 export const SET_TARGET_ACTIVE: string = "Set target Active to " + PLACEHOLDER;

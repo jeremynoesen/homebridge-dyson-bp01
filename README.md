@@ -1,6 +1,6 @@
 <img src="img/Logo.svg" alt="Logo" title = "Logo" align="right" width="200" height="200" />
 
-# homebridge-dyson-bp01 
+# homebridge-dyson-bp01
 
 [![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)
 
@@ -26,10 +26,10 @@ This plugin is designed to be used with the following devices:
 ### BroadLink RM Setup
 
 1. Set up your BroadLink RM with the BroadLink app.
-    1. For standard setup, follow the full setup process within the app. Then, in device properties,
-       disable `Lock device`.
-    2. For local network setup, follow the in-app setup, but stop at the "Add Devices" page. Do not continue the setup
-       process, and close the app.
+    - For standard setup, follow the full setup process within the app. Then, in device properties,
+      disable `Lock device`.
+    - For local network setup, follow the in-app setup, but stop at the "Add Devices" page. Do not continue the setup
+      process, and close the app.
 2. Place the device so that it has a direct line of sight to the fan's display.
 
 ### Dyson BP01 Setup
@@ -70,11 +70,11 @@ under `accessories` in the Homebridge config:
 
 ```json
 {
-    "accessory": "DysonBP01",
-    "name": "Dyson Pure Cool Me",
-    "serialNumber": "XXX-XX-XXXXXXXX",
-    "macAddress": "XX:XX:XX:XX:XX:XX",
-    "exposeSensors": false
+  "accessory": "DysonBP01",
+  "name": "Dyson Pure Cool Me",
+  "serialNumber": "XXX-XX-XXXXXXXX",
+  "macAddress": "XX:XX:XX:XX:XX:XX",
+  "exposeSensors": false
 }
 ```
 
@@ -97,4 +97,4 @@ Restart Homebridge after changing any of these settings for them to take effect.
   address.
 - If not all signals are sending, check the position of your BroadLink RM and ensure it has a direct line of sight to
   the fan's display.
-- If the fan ever de-syncs from Homebridge/HomeKit, use the physical remote to change its state to re-sync it.
+- If the fan ever de-syncs from the plugin, use the physical remote to change its state to re-sync it.

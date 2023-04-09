@@ -299,7 +299,9 @@ class DysonBP01 implements AccessoryPlugin {
             }
             this.skips.deviceReconnect = constants.SKIPS_DEVICE_RECONNECT;
         } else if (this.skips.deviceReconnect > 0) {
-            this.logging.info(messages.DEVICE_RECONNECTING);
+            if (this.skips.deviceReconnect == constants.SKIPS_DEVICE_RECONNECT - 1) {
+                this.logging.info(messages.DEVICE_RECONNECTING);
+            }
             alive = false;
         }
         return alive;

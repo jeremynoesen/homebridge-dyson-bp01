@@ -1,9 +1,4 @@
 /**
- * Placeholder string used by messages to insert values
- */
-export const PLACEHOLDER: string = "$VAL$";
-
-/**
  * Information service Manufacturer field
  */
 export const INFO_MANUFACTURER: string = "Dyson";
@@ -31,12 +26,12 @@ export const DEVICE_DISCOVERING: string = "Discovering BroadLink RMs...";
 /**
  * Message shown when BroadLink RM is discovered
  */
-export const DEVICE_DISCOVERED: string = "Discovered BroadLink RM at " + PLACEHOLDER;
+export const DEVICE_DISCOVERED: string = "Discovered BroadLink RM at %s";
 
 /**
  * Message shown when BroadLink RM is set to be used
  */
-export const DEVICE_USING: string = "Using BroadLink RM at " + PLACEHOLDER;
+export const DEVICE_USING: string = "Using BroadLink RM at %s";
 
 /**
  * Message shown when connected to BroadLink RM is lost
@@ -56,69 +51,69 @@ export const DEVICE_RECONNECTED: string = "Reconnected to BroadLink RM";
 /**
  * Message shown when initializing target Active
  */
-export const INIT_TARGET_ACTIVE: string = "Initialized target Active to " + PLACEHOLDER;
-
-/**
- * Message shown when initializing target Rotation Speed
- */
-export const INIT_TARGET_ROTATION_SPEED: string = "Initialized target Rotation Speed to " + PLACEHOLDER + "%";
-
-/**
- * Message shown when initializing target Swing Mode
- */
-export const INIT_TARGET_SWING_MODE: string = "Initialized target Swing Mode to " + PLACEHOLDER;
+export const INIT_TARGET_ACTIVE: string = "Initialized target Active to %s";
 
 /**
  * Message shown when initializing current Active
  */
-export const INIT_CURRENT_ACTIVE: string = "Initialized current Active to " + PLACEHOLDER;
+export const INIT_CURRENT_ACTIVE: string = "Initialized current Active to %s";
+
+/**
+ * Message shown when initializing target Rotation Speed
+ */
+export const INIT_TARGET_ROTATION_SPEED: string = "Initialized target Rotation Speed to %s%";
 
 /**
  * Message shown when initializing current Rotation Speed
  */
-export const INIT_CURRENT_ROTATION_SPEED: string = "Initialized current Rotation Speed to " + PLACEHOLDER + "%";
+export const INIT_CURRENT_ROTATION_SPEED: string = "Initialized current Rotation Speed to %s%";
+
+/**
+ * Message shown when initializing target Swing Mode
+ */
+export const INIT_TARGET_SWING_MODE: string = "Initialized target Swing Mode to %s";
 
 /**
  * Message shown when initializing current Swing Mode
  */
-export const INIT_CURRENT_SWING_MODE: string = "Initialized current Swing Mode to " + PLACEHOLDER;
+export const INIT_CURRENT_SWING_MODE: string = "Initialized current Swing Mode to %s";
 
 /**
  * Message shown when target Active is set
  */
-export const SET_TARGET_ACTIVE: string = "Set target Active to " + PLACEHOLDER;
+export const SET_TARGET_ACTIVE: string = "Set target Active to %s";
 
 /**
  * Message shown when target Rotation Speed is set
  */
-export const SET_TARGET_ROTATION_SPEED: string = "Set target Rotation Speed to " + PLACEHOLDER + "%";
+export const SET_TARGET_ROTATION_SPEED: string = "Set target Rotation Speed to %s%";
 
 /**
  * Message shown when target Swing Mode is set
  */
-export const SET_TARGET_SWING_MODE: string = "Set target Swing Mode to " + PLACEHOLDER;
+export const SET_TARGET_SWING_MODE: string = "Set target Swing Mode to %s";
 
 /**
  * Message shown when setting Current Temperature
  */
-export const SET_CURRENT_TEMPERATURE: string = "Set Current Temperature to " + PLACEHOLDER + "˚C";
+export const SET_CURRENT_TEMPERATURE: string = "Set Current Temperature to %s˚C";
 
 /**
  * Message shown when setting Current Relative Humidity
  */
-export const SET_CURRENT_RELATIVE_HUMIDITY: string = "Set Current Relative Humidity to " + PLACEHOLDER + "%";
+export const SET_CURRENT_RELATIVE_HUMIDITY: string = "Set Current Relative Humidity to %s%";
 
 /**
  * Message shown when current Active is updated
  */
-export const UPDATED_CURRENT_ACTIVE: string = "Updated current Active to " + PLACEHOLDER;
+export const UPDATED_CURRENT_ACTIVE: string = "Updated current Active to %s";
 
 /**
  * Message shown when current Rotation Speed is updated
  */
-export const UPDATED_CURRENT_ROTATION_SPEED: string = "Updated current Rotation Speed to " + PLACEHOLDER + "%";
+export const UPDATED_CURRENT_ROTATION_SPEED: string = "Updated current Rotation Speed to %s%";
 
 /**
  * Message shown when current Swing Mode is updated
  */
-export const UPDATED_CURRENT_SWING_MODE: string = "Updated current Swing Mode to " + PLACEHOLDER;
+export const UPDATED_CURRENT_SWING_MODE: string = "Updated current Swing Mode to %s";

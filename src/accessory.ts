@@ -58,10 +58,10 @@ class DysonBP01 implements AccessoryPlugin {
     private device: any;
 
     /**
-     * Whether the BroadLink RM (and the accessory itself) is connected
+     * Last ping status of the BroadLink RM
      * @private
      */
-    private connected: boolean;
+    private alive: boolean;
 
     /**
      * Node-persist storage
@@ -109,7 +109,7 @@ class DysonBP01 implements AccessoryPlugin {
     private readonly skips: {
         updateCurrentActive: number,
         updateCurrentSwingMode: number,
-        deviceReconnect: number
+        devicePingFail: number
     };
 
     /**
@@ -124,7 +124,7 @@ class DysonBP01 implements AccessoryPlugin {
         this.accessoryConfig = accessoryConfig;
         this.broadLinkJS = new BroadLinkJS();
         this.device = null;
-        this.connected = false;
+        this.alive = false;
         this.localStorage = nodePersist.create();
         this.services = {
             accessoryInformation: new this.hap.Service.AccessoryInformation(),
@@ -147,7 +147,7 @@ class DysonBP01 implements AccessoryPlugin {
         this.skips = {
             updateCurrentActive: 0,
             updateCurrentSwingMode: 0,
-            deviceReconnect: 0
+            devicePingFail: 0
         };
         this.localStorage.init({
             dir: api.user.persistPath(),
@@ -165,7 +165,7 @@ class DysonBP01 implements AccessoryPlugin {
      * Identify accessory by toggling Active
      */
     identify(): void {
-        if (this.connected) {
+        if (this.alive) {
             this.logging.info(messages.IDENTIFYING);
             let toggleCount: number = 0;
             let activeToggle: NodeJS.Timer = setInterval(async () => {
@@ -195,8 +195,8 @@ class DysonBP01 implements AccessoryPlugin {
             if (this.device == null) {
                 this.broadLinkJS.discover();
             } else {
-                this.connected = await this.isDeviceConnected();
-                if (this.connected) {
+                await this.pingDevice();
+                if (this.alive) {
                     if (this.canUpdateCurrentActive()) {
                         await this.updateCurrentActive();
                     } else if (this.canUpdateCurrentRotationSpeed()) {
@@ -210,7 +210,7 @@ class DysonBP01 implements AccessoryPlugin {
                 }
                 this.doUpdateCurrentActiveSkip();
                 this.doUpdateCurrentSwingModeSkip();
-                this.doDeviceReconnectSkip();
+                this.doDevicePingFailSkip();
             }
         }, constants.INTERVAL);
     }
@@ -286,36 +286,35 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Check if BroadLink RM is connected
+     * Ping the BroadLink RM to check if it is connected
      * @private
      */
-    private async isDeviceConnected(): Promise<boolean> {
-        let alive: boolean = await ping.promise.probe(this.device.host.address).then((pingResponse) => {
+    private async pingDevice(): Promise<void> {
+        this.alive = await ping.promise.probe(this.device.host.address).then((pingResponse) => {
             return pingResponse.alive;
         });
-        if (!alive) {
-            if (this.skips.deviceReconnect == 0) {
-                this.logging.info(messages.DEVICE_DISCONNECTED);
+        if (!this.alive) {
+            if (this.skips.devicePingFail == 0) {
+                this.logging.info(messages.DEVICE_PING_FAILED);
             }
-            this.skips.deviceReconnect = constants.SKIPS_DEVICE_RECONNECT;
-        } else if (this.skips.deviceReconnect > 0) {
-            if (this.skips.deviceReconnect == constants.SKIPS_DEVICE_RECONNECT - 1) {
-                this.logging.info(messages.DEVICE_RECONNECTING);
+            this.skips.devicePingFail = constants.SKIPS_DEVICE_PING_FAIL;
+        } else if (this.skips.devicePingFail > 0) {
+            if (this.skips.devicePingFail == constants.SKIPS_DEVICE_PING_FAIL - 1) {
+                this.logging.info(messages.DEVICE_PING_STABILIZING);
             }
-            alive = false;
+            this.alive = false;
         }
-        return alive;
     }
 
     /**
-     * Decrement device skips
+     * Decrement device ping fail skips
      * @private
      */
-    private doDeviceReconnectSkip(): void {
-        if (this.skips.deviceReconnect > 0) {
-            this.skips.deviceReconnect--;
-            if (this.skips.deviceReconnect == 0) {
-                this.logging.info(messages.DEVICE_RECONNECTED);
+    private doDevicePingFailSkip(): void {
+        if (this.skips.devicePingFail > 0) {
+            this.skips.devicePingFail--;
+            if (this.skips.devicePingFail == 0) {
+                this.logging.info(messages.DEVICE_PING_STABILIZED);
             }
         }
     }
@@ -341,7 +340,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private getTargetActive(characteristicGetCallback: CharacteristicGetCallback): void {
-        characteristicGetCallback(this.connected ? null : new Error(messages.DEVICE_DISCONNECTED),
+        characteristicGetCallback(this.alive ? null : new Error(messages.DEVICE_PING_FAILED),
             this.fanV2Characteristics.targetActive);
     }
 
@@ -353,7 +352,7 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private async setTargetActive(characteristicValue: CharacteristicValue,
                                   characteristicSetCallback: CharacteristicSetCallback): Promise<void> {
-        if (this.connected) {
+        if (this.alive) {
             if (characteristicValue as number != this.fanV2Characteristics.targetActive) {
                 this.fanV2Characteristics.targetActive = characteristicValue as number;
                 await this.localStorage.setItem(this.accessoryConfig.name, this.fanV2Characteristics);
@@ -361,7 +360,7 @@ class DysonBP01 implements AccessoryPlugin {
             }
             characteristicSetCallback();
         } else {
-            characteristicSetCallback(new Error(messages.DEVICE_DISCONNECTED));
+            characteristicSetCallback(new Error(messages.DEVICE_PING_FAILED));
         }
     }
 
@@ -392,7 +391,7 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Decrement Active skips
+     * Decrement update current Active skips
      * @private
      */
     private doUpdateCurrentActiveSkip(): void {
@@ -407,7 +406,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private getTargetRotationSpeed(characteristicGetCallback: CharacteristicGetCallback): void {
-        characteristicGetCallback(this.connected ? null : new Error(messages.DEVICE_DISCONNECTED),
+        characteristicGetCallback(this.alive ? null : new Error(messages.DEVICE_PING_FAILED),
             this.fanV2Characteristics.targetRotationSpeed);
     }
 
@@ -419,7 +418,7 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private async setTargetRotationSpeed(characteristicValue: CharacteristicValue,
                                          characteristicSetCallback: CharacteristicSetCallback): Promise<void> {
-        if (this.connected) {
+        if (this.alive) {
             let clampedCharacteristicValue: number = characteristicValue as number;
             if (clampedCharacteristicValue < constants.ROTATION_SPEED_STEP_SIZE) {
                 clampedCharacteristicValue = constants.ROTATION_SPEED_STEP_SIZE;
@@ -433,7 +432,7 @@ class DysonBP01 implements AccessoryPlugin {
             }
             characteristicSetCallback();
         } else {
-            characteristicSetCallback(new Error(messages.DEVICE_DISCONNECTED));
+            characteristicSetCallback(new Error(messages.DEVICE_PING_FAILED));
         }
     }
 
@@ -470,7 +469,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private getTargetSwingMode(characteristicGetCallback: CharacteristicGetCallback): void {
-        characteristicGetCallback(this.connected ? null : new Error(messages.DEVICE_DISCONNECTED),
+        characteristicGetCallback(this.alive ? null : new Error(messages.DEVICE_PING_FAILED),
             this.fanV2Characteristics.targetSwingMode);
     }
 
@@ -482,7 +481,7 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private async setTargetSwingMode(characteristicValue: CharacteristicValue,
                                      characteristicSetCallback: CharacteristicSetCallback): Promise<void> {
-        if (this.connected) {
+        if (this.alive) {
             if (characteristicValue as number != this.fanV2Characteristics.targetSwingMode) {
                 this.fanV2Characteristics.targetSwingMode = characteristicValue as number;
                 await this.localStorage.setItem(this.accessoryConfig.name, this.fanV2Characteristics);
@@ -490,7 +489,7 @@ class DysonBP01 implements AccessoryPlugin {
             }
             characteristicSetCallback();
         } else {
-            characteristicSetCallback(new Error(messages.DEVICE_DISCONNECTED));
+            characteristicSetCallback(new Error(messages.DEVICE_PING_FAILED));
         }
     }
 
@@ -517,7 +516,7 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Decrement Swing Mode skips
+     * Decrement update current Swing Mode skips
      * @private
      */
     private doUpdateCurrentSwingModeSkip(): void {
@@ -532,7 +531,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private getCurrentTemperature(characteristicGetCallback: CharacteristicGetCallback): void {
-        characteristicGetCallback(this.connected ? null : new Error(messages.DEVICE_DISCONNECTED),
+        characteristicGetCallback(this.alive ? null : new Error(messages.DEVICE_PING_FAILED),
             this.sensorCharacteristics.currentTemperature);
     }
 
@@ -554,7 +553,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private getCurrentRelativeHumidity(characteristicGetCallback: CharacteristicGetCallback): void {
-        characteristicGetCallback(this.connected ? null : new Error(messages.DEVICE_DISCONNECTED),
+        characteristicGetCallback(this.alive ? null : new Error(messages.DEVICE_PING_FAILED),
             this.sensorCharacteristics.currentRelativeHumidity);
     }
 

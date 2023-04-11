@@ -34,19 +34,19 @@ export const DEVICE_DISCOVERED: string = "Discovered BroadLink RM at %s";
 export const DEVICE_USING: string = "Using BroadLink RM at %s";
 
 /**
- * Message shown when connected to BroadLink RM is lost
+ * Message shown when BroadLink RM ping fails
  */
-export const DEVICE_DISCONNECTED: string = "Disconnected from BroadLink RM";
+export const DEVICE_PING_FAILED: string = "Failed to ping BroadLink RM";
 
 /**
- * Message shown when attempting to reconnect to BroadLink RM
+ * Message shown when waiting for BroadLink RM ping to stabilize
  */
-export const DEVICE_RECONNECTING: string = "Reconnecting to BroadLink RM...";
+export const DEVICE_PING_STABILIZING: string = "Stabilizing ping to BroadLink RM...";
 
 /**
- * Message shown when BroadLink RM is reconnected
+ * Message shown when BroadLink RM ping has stabilized
  */
-export const DEVICE_RECONNECTED: string = "Reconnected to BroadLink RM";
+export const DEVICE_PING_STABILIZED: string = "Stabilized ping to BroadLink RM";
 
 /**
  * Message shown when initializing target Active

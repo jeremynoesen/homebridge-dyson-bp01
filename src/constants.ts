@@ -19,9 +19,9 @@ export const SKIPS_UPDATE_CURRENT_ACTIVE_INACTIVE: number = 8;
 export const SKIPS_UPDATE_CURRENT_SWING_MODE: number = 6;
 
 /**
- * Number of skips when BroadLink RM is reconnecting
+ * Number of skips when BroadLink RM ping failed
  */
-export const SKIPS_DEVICE_RECONNECT: number = 4;
+export const SKIPS_DEVICE_PING_FAIL: number = 4;
 
 /**
  * IR hex code used to toggle Active

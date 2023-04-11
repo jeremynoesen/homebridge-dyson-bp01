@@ -307,6 +307,15 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
+     * Send IR data to the BroadLink RM
+     * @param data IR data as a hex string
+     * @private
+     */
+    private sendDeviceData(data: string): void {
+        this.device.sendData(Buffer.from(data, "hex"));
+    }
+
+    /**
      * Decrement device ping fail skips
      * @private
      */
@@ -335,6 +344,14 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
+     * Update fanV2 characteristics in persist storage
+     * @private
+     */
+    private async updateFanV2Characteristics(): Promise<void> {
+        await this.localStorage.setItem(this.accessoryConfig.name, this.fanV2Characteristics);
+    }
+
+    /**
      * Get target Active
      * @param characteristicGetCallback Characteristic get callback
      * @private
@@ -355,7 +372,7 @@ class DysonBP01 implements AccessoryPlugin {
         if (this.alive) {
             if (characteristicValue as number != this.fanV2Characteristics.targetActive) {
                 this.fanV2Characteristics.targetActive = characteristicValue as number;
-                await this.localStorage.setItem(this.accessoryConfig.name, this.fanV2Characteristics);
+                await this.updateFanV2Characteristics();
                 this.logging.info(messages.SET_TARGET_ACTIVE, this.fanV2Characteristics.targetActive);
             }
             characteristicSetCallback();
@@ -379,14 +396,14 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async updateCurrentActive(): Promise<void> {
-        this.device.sendData(Buffer.from(constants.IR_DATA_ACTIVE, "hex"));
+        this.sendDeviceData(constants.IR_DATA_ACTIVE);
         this.fanV2Characteristics.currentActive = this.fanV2Characteristics.targetActive;
         if (this.fanV2Characteristics.currentActive == this.hap.Characteristic.Active.ACTIVE) {
             this.skips.updateCurrentActive = constants.SKIPS_UPDATE_CURRENT_ACTIVE_ACTIVE;
         } else if (this.fanV2Characteristics.currentActive == this.hap.Characteristic.Active.INACTIVE) {
             this.skips.updateCurrentActive = constants.SKIPS_UPDATE_CURRENT_ACTIVE_INACTIVE;
         }
-        await this.localStorage.setItem(this.accessoryConfig.name, this.fanV2Characteristics);
+        await this.updateFanV2Characteristics();
         this.logging.info(messages.UPDATED_CURRENT_ACTIVE, this.fanV2Characteristics.currentActive);
     }
 
@@ -427,7 +444,7 @@ class DysonBP01 implements AccessoryPlugin {
             }
             if (clampedCharacteristicValue != this.fanV2Characteristics.targetRotationSpeed) {
                 this.fanV2Characteristics.targetRotationSpeed = clampedCharacteristicValue;
-                await this.localStorage.setItem(this.accessoryConfig.name, this.fanV2Characteristics);
+                await this.updateFanV2Characteristics();
                 this.logging.info(messages.SET_TARGET_ROTATION_SPEED, this.fanV2Characteristics.targetRotationSpeed);
             }
             characteristicSetCallback();
@@ -453,13 +470,13 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private async updateCurrentRotationSpeed(): Promise<void> {
         if (this.fanV2Characteristics.currentRotationSpeed < this.fanV2Characteristics.targetRotationSpeed) {
-            this.device.sendData(Buffer.from(constants.IR_DATA_ROTATION_SPEED_UP, "hex"));
+            this.sendDeviceData(constants.IR_DATA_ROTATION_SPEED_UP);
             this.fanV2Characteristics.currentRotationSpeed += constants.ROTATION_SPEED_STEP_SIZE;
         } else if (this.fanV2Characteristics.currentRotationSpeed > this.fanV2Characteristics.targetRotationSpeed) {
-            this.device.sendData(Buffer.from(constants.IR_DATA_ROTATION_SPEED_DOWN, "hex"));
+            this.sendDeviceData(constants.IR_DATA_ROTATION_SPEED_DOWN);
             this.fanV2Characteristics.currentRotationSpeed -= constants.ROTATION_SPEED_STEP_SIZE;
         }
-        await this.localStorage.setItem(this.accessoryConfig.name, this.fanV2Characteristics);
+        await this.updateFanV2Characteristics();
         this.logging.info(messages.UPDATED_CURRENT_ROTATION_SPEED, this.fanV2Characteristics.currentRotationSpeed);
     }
 
@@ -484,7 +501,7 @@ class DysonBP01 implements AccessoryPlugin {
         if (this.alive) {
             if (characteristicValue as number != this.fanV2Characteristics.targetSwingMode) {
                 this.fanV2Characteristics.targetSwingMode = characteristicValue as number;
-                await this.localStorage.setItem(this.accessoryConfig.name, this.fanV2Characteristics);
+                await this.updateFanV2Characteristics();
                 this.logging.info(messages.SET_TARGET_SWING_MODE, this.fanV2Characteristics.targetSwingMode);
             }
             characteristicSetCallback();
@@ -508,10 +525,10 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async updateCurrentSwingMode(): Promise<void> {
-        this.device.sendData(Buffer.from(constants.IR_DATA_SWING_MODE, "hex"));
+        this.sendDeviceData(constants.IR_DATA_SWING_MODE);
         this.fanV2Characteristics.currentSwingMode = this.fanV2Characteristics.targetSwingMode;
         this.skips.updateCurrentSwingMode = constants.SKIPS_UPDATE_CURRENT_SWING_MODE;
-        await this.localStorage.setItem(this.accessoryConfig.name, this.fanV2Characteristics);
+        await this.updateFanV2Characteristics();
         this.logging.info(messages.UPDATED_CURRENT_SWING_MODE, this.fanV2Characteristics.currentSwingMode);
     }
 

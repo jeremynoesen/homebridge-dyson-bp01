@@ -19,9 +19,14 @@ export const SKIPS_UPDATE_CURRENT_ACTIVE_INACTIVE: number = 8;
 export const SKIPS_UPDATE_CURRENT_SWING_MODE: number = 6;
 
 /**
+ * Number of skips after updating sensor characteristics
+ */
+export const SKIPS_UPDATE_SENSOR_CHARACTERISTICS: number = 86;
+
+/**
  * Number of skips when BroadLink RM ping failed
  */
-export const SKIPS_DEVICE_PING_FAIL: number = 4;
+export const SKIPS_PING_DEVICE_FAIL: number = 4;
 
 /**
  * IR hex code used to toggle active

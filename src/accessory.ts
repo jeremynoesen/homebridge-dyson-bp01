@@ -109,7 +109,8 @@ class DysonBP01 implements AccessoryPlugin {
     private readonly skips: {
         updateCurrentActive: number,
         updateCurrentSwingMode: number,
-        devicePingFail: number
+        updateSensorCharacteristics: number,
+        pingDeviceFail: number
     };
 
     /**
@@ -147,7 +148,8 @@ class DysonBP01 implements AccessoryPlugin {
         this.skips = {
             updateCurrentActive: 0,
             updateCurrentSwingMode: 0,
-            devicePingFail: 0
+            updateSensorCharacteristics: 0,
+            pingDeviceFail: 0
         };
         this.init(api);
     }
@@ -223,7 +225,8 @@ class DysonBP01 implements AccessoryPlugin {
     private doSkips(): void {
         this.doUpdateCurrentActiveSkip();
         this.doUpdateCurrentSwingModeSkip();
-        this.doDevicePingFailSkip();
+        this.doUpdateSensorCharacteristicsSkip();
+        this.doPingDeviceFailSkip();
     }
 
     /**
@@ -304,12 +307,12 @@ class DysonBP01 implements AccessoryPlugin {
             return pingResponse.alive;
         });
         if (!this.alive) {
-            if (this.skips.devicePingFail == 0) {
+            if (this.skips.pingDeviceFail == 0) {
                 this.logging.info(messages.DEVICE_PING_FAILED);
             }
-            this.skips.devicePingFail = constants.SKIPS_DEVICE_PING_FAIL;
-        } else if (this.skips.devicePingFail > 0) {
-            if (this.skips.devicePingFail == constants.SKIPS_DEVICE_PING_FAIL - 1) {
+            this.skips.pingDeviceFail = constants.SKIPS_PING_DEVICE_FAIL;
+        } else if (this.skips.pingDeviceFail > 0) {
+            if (this.skips.pingDeviceFail == constants.SKIPS_PING_DEVICE_FAIL - 1) {
                 this.logging.info(messages.DEVICE_PING_STABILIZING);
             }
             this.alive = false;
@@ -317,13 +320,13 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Decrement device ping fail skips
+     * Decrement ping device fail skips
      * @private
      */
-    private doDevicePingFailSkip(): void {
-        if (this.skips.devicePingFail > 0) {
-            this.skips.devicePingFail--;
-            if (this.skips.devicePingFail == 0) {
+    private doPingDeviceFailSkip(): void {
+        if (this.skips.pingDeviceFail > 0) {
+            this.skips.pingDeviceFail--;
+            if (this.skips.pingDeviceFail == 0) {
                 this.logging.info(messages.DEVICE_PING_STABILIZED);
             }
         }
@@ -608,11 +611,30 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
+     * Check if sensor characteristics can be updated
+     */
+    private canUpdateSensorCharacteristics(): boolean {
+        return this.skips.updateSensorCharacteristics == 0;
+    }
+
+    /**
      * Update sensor characteristics from BroadLink RM
      * @private
      */
     private updateSensorCharacteristics(): void {
-        this.device.checkTemperature();
+        if (this.canUpdateSensorCharacteristics()) {
+            this.device.checkTemperature();
+            this.skips.updateSensorCharacteristics = constants.SKIPS_UPDATE_SENSOR_CHARACTERISTICS;
+        }
+    }
+
+    /**
+     * Decrement update sensor characteristics skips
+     */
+    private doUpdateSensorCharacteristicsSkip(): void {
+        if (this.skips.updateSensorCharacteristics > 0) {
+            this.skips.updateSensorCharacteristics--;
+        }
     }
 
     /**

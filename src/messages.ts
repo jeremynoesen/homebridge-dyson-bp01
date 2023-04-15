@@ -49,71 +49,71 @@ export const DEVICE_PING_STABILIZING: string = "Stabilizing ping to BroadLink RM
 export const DEVICE_PING_STABILIZED: string = "Stabilized ping to BroadLink RM";
 
 /**
- * Message shown when initializing target Active
+ * Message shown when initializing target active
  */
-export const INIT_TARGET_ACTIVE: string = "Initialized target Active to %s";
+export const INIT_TARGET_ACTIVE: string = "Initialized target active to %s";
 
 /**
- * Message shown when initializing current Active
+ * Message shown when initializing current active
  */
-export const INIT_CURRENT_ACTIVE: string = "Initialized current Active to %s";
+export const INIT_CURRENT_ACTIVE: string = "Initialized current active to %s";
 
 /**
- * Message shown when initializing target Rotation Speed
+ * Message shown when initializing target rotation speed
  */
-export const INIT_TARGET_ROTATION_SPEED: string = "Initialized target Rotation Speed to %s%";
+export const INIT_TARGET_ROTATION_SPEED: string = "Initialized target rotation speed to %s%";
 
 /**
- * Message shown when initializing current Rotation Speed
+ * Message shown when initializing current rotation speed
  */
-export const INIT_CURRENT_ROTATION_SPEED: string = "Initialized current Rotation Speed to %s%";
+export const INIT_CURRENT_ROTATION_SPEED: string = "Initialized current rotation speed to %s%";
 
 /**
- * Message shown when initializing target Swing Mode
+ * Message shown when initializing target swing mode
  */
-export const INIT_TARGET_SWING_MODE: string = "Initialized target Swing Mode to %s";
+export const INIT_TARGET_SWING_MODE: string = "Initialized target swing mode to %s";
 
 /**
- * Message shown when initializing current Swing Mode
+ * Message shown when initializing current swing mode
  */
-export const INIT_CURRENT_SWING_MODE: string = "Initialized current Swing Mode to %s";
+export const INIT_CURRENT_SWING_MODE: string = "Initialized current swing mode to %s";
 
 /**
- * Message shown when target Active is set
+ * Message shown when target active is set
  */
-export const SET_TARGET_ACTIVE: string = "Set target Active to %s";
+export const SET_TARGET_ACTIVE: string = "Set target active to %s";
 
 /**
- * Message shown when target Rotation Speed is set
+ * Message shown when target rotation speed is set
  */
-export const SET_TARGET_ROTATION_SPEED: string = "Set target Rotation Speed to %s%";
+export const SET_TARGET_ROTATION_SPEED: string = "Set target rotation speed to %s%";
 
 /**
- * Message shown when target Swing Mode is set
+ * Message shown when target swing mode is set
  */
-export const SET_TARGET_SWING_MODE: string = "Set target Swing Mode to %s";
+export const SET_TARGET_SWING_MODE: string = "Set target swing mode to %s";
 
 /**
- * Message shown when setting Current Temperature
+ * Message shown when setting current temperature
  */
-export const SET_CURRENT_TEMPERATURE: string = "Set Current Temperature to %s˚C";
+export const SET_CURRENT_TEMPERATURE: string = "Set current temperature to %s˚C";
 
 /**
- * Message shown when setting Current Relative Humidity
+ * Message shown when setting current relative humidity
  */
-export const SET_CURRENT_RELATIVE_HUMIDITY: string = "Set Current Relative Humidity to %s%";
+export const SET_CURRENT_RELATIVE_HUMIDITY: string = "Set current relative humidity to %s%";
 
 /**
- * Message shown when current Active is updated
+ * Message shown when current active is updated
  */
-export const UPDATED_CURRENT_ACTIVE: string = "Updated current Active to %s";
+export const UPDATED_CURRENT_ACTIVE: string = "Updated current active to %s";
 
 /**
- * Message shown when current Rotation Speed is updated
+ * Message shown when current rotation speed is updated
  */
-export const UPDATED_CURRENT_ROTATION_SPEED: string = "Updated current Rotation Speed to %s%";
+export const UPDATED_CURRENT_ROTATION_SPEED: string = "Updated current rotation speed to %s%";
 
 /**
- * Message shown when current Swing Mode is updated
+ * Message shown when current swing mode is updated
  */
-export const UPDATED_CURRENT_SWING_MODE: string = "Updated current Swing Mode to %s";
+export const UPDATED_CURRENT_SWING_MODE: string = "Updated current swing mode to %s";

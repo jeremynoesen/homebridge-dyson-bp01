@@ -57,7 +57,7 @@ export const DATA_SWING_MODE: string = "260058004716191517191917192c161917181619
 /**
  * How many times the identify function should toggle active
  */
-export const IDENTIFY_ACTIVE_TOGGLE_COUNT: number = 2;
+export const TOGGLES_IDENTIFY_ACTIVE: number = 2;
 
 /**
  * Sensor decimal precision

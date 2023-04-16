@@ -41,12 +41,12 @@ export const DEVICE_PING_FAILED: string = "Failed to ping BroadLink RM";
 /**
  * Message shown when waiting for BroadLink RM ping to stabilize
  */
-export const DEVICE_PING_STABILIZING: string = "Stabilizing ping to BroadLink RM...";
+export const DEVICE_PING_STABILIZING: string = "Stabilizing BroadLink RM ping...";
 
 /**
  * Message shown when BroadLink RM ping has stabilized
  */
-export const DEVICE_PING_STABILIZED: string = "Stabilized ping to BroadLink RM";
+export const DEVICE_PING_STABILIZED: string = "Stabilized BroadLink RM ping";
 
 /**
  * Message shown when initializing target active

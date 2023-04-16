@@ -62,16 +62,16 @@ export const IDENTIFY_ACTIVE_TOGGLE_COUNT: number = 2;
 /**
  * Sensor decimal precision
  */
-export const SENSOR_MIN_STEP: number = 0.01;
+export const MIN_STEP_SENSOR: number = 0.01;
 
 /**
  * How much to increase or decrease rotation speed by
  * You must clear persist storage for this plugin after changing this!
  */
-export const ROTATION_SPEED_MIN_STEP: number = 10;
+export const MIN_STEP_ROTATION_SPEED: number = 10;
 
 /**
  * Accessory identifier used by Homebridge to assign accessories to plugins
  * You must edit your Homebridge config after changing this!
  */
-export const ACCESSORY_NAME: string = "DysonBP01";
+export const ACCESSORY: string = "DysonBP01";

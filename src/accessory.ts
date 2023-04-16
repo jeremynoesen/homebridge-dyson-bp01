@@ -203,7 +203,7 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private initInterval(): void {
         setInterval(async () => {
-            if (this.device == null) {
+            if (!this.device) {
                 this.discoverDevices();
             } else {
                 await this.pingDevice();
@@ -278,7 +278,7 @@ class DysonBP01 implements AccessoryPlugin {
         this.broadLinkJS.on("deviceReady", device => {
             let macAddress: string = device.mac.toString("hex").replace(/(.{2})/g, "$1:").slice(0, -1).toUpperCase();
             this.logging.info(messages.DEVICE_DISCOVERED, macAddress);
-            if (this.device == null && (this.accessoryConfig.macAddress == undefined ||
+            if (!this.device && (!this.accessoryConfig.macAddress ||
                 this.accessoryConfig.macAddress.toUpperCase() == macAddress)) {
                 this.device = device;
                 if (this.accessoryConfig.exposeSensors) {

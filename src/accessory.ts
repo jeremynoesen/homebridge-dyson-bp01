@@ -203,9 +203,7 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private initInterval(): void {
         setInterval(async () => {
-            if (!this.device) {
-                this.discoverDevices();
-            } else {
+            if (this.device) {
                 await this.pingDevice();
                 if (this.alive) {
                     await this.updateFanV2Characteristics();
@@ -214,6 +212,8 @@ class DysonBP01 implements AccessoryPlugin {
                     }
                 }
                 this.doSkips();
+            } else {
+                this.discoverDevices();
             }
         }, constants.INTERVAL);
     }

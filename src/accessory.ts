@@ -617,18 +617,11 @@ class DysonBP01 implements AccessoryPlugin {
     }
 
     /**
-     * Check if sensor characteristics can be updated
-     */
-    private canUpdateSensorCharacteristics(): boolean {
-        return this.skips.updateSensorCharacteristics == 0;
-    }
-
-    /**
      * Update sensor characteristics from BroadLink RM
      * @private
      */
     private updateSensorCharacteristics(): void {
-        if (this.canUpdateSensorCharacteristics()) {
+        if (this.skips.updateSensorCharacteristics == 0) {
             this.device.checkTemperature();
             this.skips.updateSensorCharacteristics = constants.SKIPS_UPDATE_SENSOR_CHARACTERISTICS;
         }

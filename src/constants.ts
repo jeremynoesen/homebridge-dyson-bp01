@@ -1,7 +1,7 @@
 /**
  * Interval in milliseconds
  */
-export const INTERVAL: number = 700;
+export const INTERVAL: number = 750;
 
 /**
  * Number of active skips after updating current active to active
@@ -21,7 +21,7 @@ export const SKIPS_UPDATE_CURRENT_SWING_MODE: number = 6;
 /**
  * Number of skips after updating sensor characteristics
  */
-export const SKIPS_UPDATE_SENSOR_CHARACTERISTICS: number = 86;
+export const SKIPS_UPDATE_SENSOR_CHARACTERISTICS: number = 80;
 
 /**
  * Number of skips when BroadLink RM ping failed

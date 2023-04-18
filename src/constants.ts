@@ -60,9 +60,14 @@ export const DATA_SWING_MODE: string = "260058004716191517191917192c161917181619
 export const TOGGLES_IDENTIFY_ACTIVE: number = 2;
 
 /**
- * Sensor decimal precision
+ * Current temperature decimal precision
  */
-export const MIN_STEP_SENSOR: number = 0.01;
+export const MIN_STEP_CURRENT_TEMPERATURE: number = 0.01;
+
+/**
+ * Current relative humidity decimal precision
+ */
+export const MIN_STEP_CURRENT_RELATIVE_HUMIDITY: number = 0.01;
 
 /**
  * How much to increase or decrease rotation speed by

@@ -607,12 +607,12 @@ class DysonBP01 implements AccessoryPlugin {
         this.services.temperatureSensor.getCharacteristic(this.hap.Characteristic.CurrentTemperature)
             .on(CharacteristicEventTypes.GET, this.getCurrentTemperature.bind(this))
             .setProps({
-                minStep: constants.MIN_STEP_SENSOR
+                minStep: constants.MIN_STEP_CURRENT_TEMPERATURE
             });
         this.services.humiditySensor.getCharacteristic(this.hap.Characteristic.CurrentRelativeHumidity)
             .on(CharacteristicEventTypes.GET, this.getCurrentRelativeHumidity.bind(this))
             .setProps({
-                minStep: constants.MIN_STEP_SENSOR
+                minStep: constants.MIN_STEP_CURRENT_RELATIVE_HUMIDITY
             });
     }
 

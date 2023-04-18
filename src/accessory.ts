@@ -213,7 +213,7 @@ class DysonBP01 implements AccessoryPlugin {
                 }
                 this.doSkips();
             } else {
-                this.discoverDevices();
+                this.broadLinkJS.discover();
             }
         }, constants.INTERVAL);
     }
@@ -288,14 +288,6 @@ class DysonBP01 implements AccessoryPlugin {
             }
         });
         this.logging.info(messages.DEVICE_DISCOVERING);
-    }
-
-    /**
-     * Discover BroadLink RM devices
-     * @private
-     */
-    private discoverDevices(): void {
-        this.broadLinkJS.discover();
     }
 
     /**

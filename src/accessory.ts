@@ -536,7 +536,7 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private async setTargetSwingMode(characteristicValue: CharacteristicValue,
                                      characteristicSetCallback: CharacteristicSetCallback): Promise<void> {
-        if (this.alive) {
+        if (this.alive && this.fanV2Characteristics.targetActive == this.hap.Characteristic.Active.ACTIVE) {
             if (characteristicValue as number != this.fanV2Characteristics.targetSwingMode) {
                 this.fanV2Characteristics.targetSwingMode = characteristicValue as number;
                 await this.saveFanV2Characteristics();

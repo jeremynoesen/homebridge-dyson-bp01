@@ -128,8 +128,8 @@ class DysonBP01 implements AccessoryPlugin {
         this.alive = false;
         this.localStorage = nodePersist.create();
         this.services = {
-            accessoryInformation: new this.hap.Service.AccessoryInformation(),
-            fanV2: new this.hap.Service.Fanv2(this.accessoryConfig.name),
+            accessoryInformation: new this.hap.Service.AccessoryInformation(this.accessoryConfig.name),
+            fanV2: new this.hap.Service.Fanv2(),
             temperatureSensor: new this.hap.Service.TemperatureSensor(),
             humiditySensor: new this.hap.Service.HumiditySensor()
         };

@@ -537,13 +537,19 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private async setTargetSwingMode(characteristicValue: CharacteristicValue,
                                      characteristicSetCallback: CharacteristicSetCallback): Promise<void> {
-        if (this.alive && this.fanV2Characteristics.targetActive == this.hap.Characteristic.Active.ACTIVE) {
+        if (this.alive) {
             if (characteristicValue as number != this.fanV2Characteristics.targetSwingMode) {
-                this.fanV2Characteristics.targetSwingMode = characteristicValue as number;
-                await this.saveFanV2Characteristics();
-                this.logging.info(messages.SET_TARGET_SWING_MODE, this.fanV2Characteristics.targetSwingMode);
+                if (this.fanV2Characteristics.targetActive == this.hap.Characteristic.Active.ACTIVE) {
+                    this.fanV2Characteristics.targetSwingMode = characteristicValue as number;
+                    await this.saveFanV2Characteristics();
+                    this.logging.info(messages.SET_TARGET_SWING_MODE, this.fanV2Characteristics.targetSwingMode);
+                    characteristicSetCallback();
+                } else if (this.fanV2Characteristics.targetActive == this.hap.Characteristic.Active.INACTIVE) {
+                    characteristicSetCallback(new Error());
+                }
+            } else {
+                characteristicSetCallback();
             }
-            characteristicSetCallback();
         } else {
             characteristicSetCallback(new Error());
         }

@@ -99,3 +99,4 @@ Restart Homebridge after changing any of these settings for them to take effect.
 - If not all signals are sending, check the position of your BroadLink RM and ensure it has a direct line of sight to
   the fan's display.
 - If the fan ever de-syncs from the plugin, use the physical remote to change its state to re-sync it.
+- If the previous two events happen often, try running the plugin in a child bridge.

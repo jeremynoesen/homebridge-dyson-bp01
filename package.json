@@ -11,7 +11,7 @@
     "postpublish": "npm run clean",
     "test": "echo \"Error: no test specified\" && exit 0"
   },
-  "author": "Jeremy Noesen <mail@jeremynoesen.xyz>",
+  "author": "Jeremy Noesen <jeremynoesen@gmail.com>",
   "funding": [
     {
       "type": "kofi",

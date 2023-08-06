@@ -18,8 +18,8 @@
         "type": "string",
         "placeholder": "XXX-XX-XXXXXXXX",
         "pattern": "^([A-Za-z0-9]{3})-([A-Za-z0-9]{2})-([A-Za-z0-9]{8})$",
-        "description": "Enter the serial number of your Dyson BP01 to display it as part of the accessory information.",
-        "required": true
+        "description": "Enter the serial number of your Dyson BP01 to display it as part of the accessory information. Leave this blank to use a placeholder.",
+        "required": false
       },
       "macAddress": {
         "title": "MAC Address",
@@ -33,7 +33,7 @@
         "title": "Expose Sensors",
         "type": "boolean",
         "description": "Check this to expose temperature and humidity sensors if you have the sensor cable for your BroadLink RM.",
-        "required": true
+        "required": false
       }
     }
   }

@@ -1,12 +1,17 @@
 /**
- * Information service Manufacturer field
+ * Information service manufacturer field
  */
 export const INFO_MANUFACTURER: string = "Dyson";
 
 /**
- * Information service Model field
+ * Information service model field
  */
 export const INFO_MODEL: string = "BP01";
+
+/**
+ * Information service serial number field
+ */
+export const INFO_SERIAL_NUMBER: string = "Check under machine";
 
 /**
  * Message shown when identifying starts

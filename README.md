@@ -81,9 +81,9 @@ under `accessories` in the Homebridge config:
 
 - `accessory` is required. This must be set to "DysonBP01" for the plugin to work.
 - `name` is required. You will need to redo the Dyson BP01 hardware setup if you change this later.
-- `serialNumber` is required. Set this to the serial number of your Dyson BP01 to include it in accessory information.
+- `serialNumber` is optional. Set this to the serial number of your Dyson BP01 to include it in accessory information.
 - `macAddress` is optional, but recommended if you have multiple BroadLink RMs, so the plugin can use the right one.
-- `exposeSensors` is required. Set to true if your BroadLink RM has the sensor cable to expose the temperature and
+- `exposeSensors` is optional. Set to true if your BroadLink RM has the sensor cable to expose the temperature and
   humidity sensors.
 
 Restart Homebridge after changing any of these settings for them to take effect.

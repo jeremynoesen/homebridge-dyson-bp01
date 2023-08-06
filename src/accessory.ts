@@ -249,8 +249,8 @@ class DysonBP01 implements AccessoryPlugin {
         this.services.accessoryInformation
             .updateCharacteristic(this.hap.Characteristic.Manufacturer, messages.INFO_MANUFACTURER)
             .updateCharacteristic(this.hap.Characteristic.Model, messages.INFO_MODEL)
-            .updateCharacteristic(this.hap.Characteristic.SerialNumber,
-                this.accessoryConfig.serialNumber.toUpperCase());
+            .updateCharacteristic(this.hap.Characteristic.SerialNumber, this.accessoryConfig.serialNumber ?
+                this.accessoryConfig.serialNumber.toUpperCase() : messages.INFO_SERIAL_NUMBER);
     }
 
     /**

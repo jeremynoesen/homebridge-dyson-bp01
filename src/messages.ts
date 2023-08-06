@@ -11,7 +11,7 @@ export const INFO_MODEL: string = "BP01";
 /**
  * Information service serial number field
  */
-export const INFO_SERIAL_NUMBER: string = "Check under machine";
+export const INFO_SERIAL_NUMBER: string = "Check Under Machine";
 
 /**
  * Message shown when identifying starts

@@ -1,8 +1,8 @@
 {
   "name": "homebridge-dyson-bp01",
   "displayName": "Homebridge Dyson BP01",
-  "version": "1.9.2",
-  "description": "Homebridge plugin to add a Dyson BP01 to HomeKit using a BroadLink RM",
+  "version": "1.9.3",
+  "description": "A Homebridge plugin that adds a Dyson BP01 to HomeKit using a BroadLink RM",
   "main": "dist/accessory.js",
   "scripts": {
     "clean": "rimraf ./dist",
@@ -12,20 +12,7 @@
     "test": "echo \"Error: no test specified\" && exit 0"
   },
   "author": "Jeremy Noesen <jeremynoesen@gmail.com>",
-  "funding": [
-    {
-      "type": "kofi",
-      "url": "https://ko-fi.com/jeremynoesen"
-    },
-    {
-      "type": "paypal",
-      "url": "https://paypal.me/jeremynoesen"
-    },
-    {
-      "type": "github",
-      "url": "https://github.com/jeremynoesen"
-    }
-  ],
+  "funding": "https://github.com/sponsors/jeremynoesen",
   "engines": {
     "node": ">=16.0.0",
     "homebridge": ">=1.6.1"

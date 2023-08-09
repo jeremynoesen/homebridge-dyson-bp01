@@ -16,7 +16,7 @@ import ping from "ping";
 import * as constants from "./constants";
 import * as messages from "./messages";
 
-export = (api: API) => {
+export default (api: API): void => {
     api.registerAccessory(constants.ACCESSORY, DysonBP01);
 };
 

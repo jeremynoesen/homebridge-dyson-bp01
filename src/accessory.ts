@@ -161,13 +161,13 @@ class DysonBP01 implements AccessoryPlugin {
         if (this.alive) {
             this.logging.info(messages.IDENTIFYING);
             let toggleCount: number = 0;
-            let activeToggle: NodeJS.Timer = setInterval(async () => {
+            let activeToggle: NodeJS.Timer = setInterval(async (): Promise<void> => {
                 if (toggleCount < constants.TOGGLES_IDENTIFY_ACTIVE) {
                     if (this.fanV2Characteristics.targetActive == this.hap.Characteristic.Active.ACTIVE) {
-                        await this.setTargetActive(this.hap.Characteristic.Active.INACTIVE, () => {
+                        await this.setTargetActive(this.hap.Characteristic.Active.INACTIVE, (): void => {
                         });
                     } else if (this.fanV2Characteristics.targetActive == this.hap.Characteristic.Active.INACTIVE) {
-                        await this.setTargetActive(this.hap.Characteristic.Active.ACTIVE, () => {
+                        await this.setTargetActive(this.hap.Characteristic.Active.ACTIVE, (): void => {
                         });
                     }
                     toggleCount++;
@@ -188,8 +188,8 @@ class DysonBP01 implements AccessoryPlugin {
         this.localStorage.init({
             dir: api.user.persistPath(),
             forgiveParseErrors: true
-        }).then(() => {
-            this.initFanV2Characteristics().then(() => {
+        }).then((): void => {
+            this.initFanV2Characteristics().then((): void => {
                 this.initDevice();
                 this.initInterval();
             });
@@ -202,7 +202,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private initInterval(): void {
-        setInterval(async () => {
+        setInterval(async (): Promise<void> => {
             if (this.device) {
                 await this.pingDevice();
                 if (this.alive) {
@@ -275,7 +275,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private initDevice(): void {
-        this.broadLinkJS.on("deviceReady", device => {
+        this.broadLinkJS.on("deviceReady", (device: any): void => {
             let macAddress: string = device.mac.toString("hex").replace(/(.{2})/g, "$1:").slice(0, -1).toUpperCase();
             this.logging.info(messages.DEVICE_DISCOVERED, macAddress);
             if (!this.device && (!this.accessoryConfig.macAddress ||
@@ -295,7 +295,8 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async pingDevice(): Promise<void> {
-        this.alive = await ping.promise.probe(this.device.host.address).then((pingResponse) => {
+        this.alive = await ping.promise.probe(this.device.host.address).then((pingResponse: ping.PingResponse):
+        boolean => {
             return pingResponse.alive;
         });
         if (!this.alive) {
@@ -595,7 +596,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private initSensors(): void {
-        this.device.on("temperature", (temp, humidity) => {
+        this.device.on("temperature", (temp: any, humidity: any): void => {
             this.setCurrentTemperature(temp);
             this.setCurrentRelativeHumidity(humidity);
         });

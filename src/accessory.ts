@@ -13,8 +13,8 @@ import {
 import BroadLinkJS from "kiwicam-broadlinkjs-rm";
 import nodePersist from "node-persist";
 import ping from "ping";
-import * as constants from "./constants";
-import * as messages from "./messages";
+import * as constants from "./constants.js";
+import * as messages from "./messages.js";
 
 export default (api: API): void => {
     api.registerAccessory(constants.ACCESSORY, DysonBP01);

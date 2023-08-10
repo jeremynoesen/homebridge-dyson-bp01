@@ -1,4 +1,4 @@
-<img src="img/Logo.svg" alt="Logo" title = "Logo" align="right" width="200" height="200" />
+<img src="https://github.com/jeremynoesen/homebridge-dyson-bp01/blob/main/img/Logo.svg" alt="Logo" title = "Logo" align="right" width="200" height="200" />
 
 # homebridge-dyson-bp01
 
@@ -43,8 +43,8 @@ Using the remote provided with the fan:
 
 ## Required Software
 
-- Node.js 14.0.0 or higher
-- Homebridge 1.3.0 or higher
+- Node.js 16.0.0 or higher
+- Homebridge 1.6.1 or higher
 
 ## Building
 
@@ -90,7 +90,7 @@ Restart Homebridge after changing any of these settings for them to take effect.
 
 ## Demonstration
 
-<div align="center"><img src="img/Demo.gif" alt="Demonstration" title="Demonstration" /></div>
+<div align="center"><img src="https://github.com/jeremynoesen/homebridge-dyson-bp01/blob/main/img/Demo.gif" alt="Demonstration" title="Demonstration" /></div>
 
 ## Troubleshooting
 

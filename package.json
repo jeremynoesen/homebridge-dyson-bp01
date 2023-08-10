@@ -1,7 +1,7 @@
 {
   "name": "homebridge-dyson-bp01",
   "displayName": "Homebridge Dyson BP01",
-  "version": "1.9.5",
+  "version": "1.9.6",
   "description": "A Homebridge plugin that adds a Dyson BP01 to HomeKit using a BroadLink RM",
   "type": "module",
   "main": "dist/accessory.js",
@@ -50,5 +50,12 @@
     "ping": "^0.4.4"
   },
   "homepage": "https://github.com/jeremynoesen/homebridge-dyson-bp01",
-  "license": "GPL-3.0"
+  "license": "GPL-3.0",
+  "files": [
+    "dist",
+    "config.schema.json",
+    "README.md",
+    "LICENSE",
+    "package.json"
+  ]
 }

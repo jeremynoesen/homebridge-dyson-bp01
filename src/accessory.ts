@@ -208,12 +208,12 @@ class DysonBP01 implements AccessoryPlugin {
                 if (this.alive) {
                     await this.updateFanV2Characteristics();
                     if (this.accessoryConfig.exposeSensors) {
-                        this.updateSensorCharacteristics();
+                        await this.updateSensorCharacteristics();
                     }
                 }
                 this.doSkips();
             } else {
-                this.broadLinkJS.discover();
+                await this.broadLinkJS.discover();
             }
         }, constants.INTERVAL);
     }
@@ -330,8 +330,8 @@ class DysonBP01 implements AccessoryPlugin {
      * @param data IR data as a hex string
      * @private
      */
-    private sendDeviceData(data: string): void {
-        this.device.sendData(Buffer.from(data, "hex"));
+    private async sendDeviceData(data: string): Promise<void> {
+        await this.device.sendData(Buffer.from(data, "hex"));
     }
 
     /**
@@ -439,7 +439,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async updateCurrentActive(): Promise<void> {
-        this.sendDeviceData(constants.DATA_ACTIVE);
+        await this.sendDeviceData(constants.DATA_ACTIVE);
         this.fanV2Characteristics.currentActive = this.fanV2Characteristics.targetActive;
         if (this.fanV2Characteristics.currentActive == this.hap.Characteristic.Active.ACTIVE) {
             this.skips.updateCurrentActive = constants.SKIPS_UPDATE_CURRENT_ACTIVE_ACTIVE;
@@ -513,10 +513,10 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private async updateCurrentRotationSpeed(): Promise<void> {
         if (this.fanV2Characteristics.currentRotationSpeed < this.fanV2Characteristics.targetRotationSpeed) {
-            this.sendDeviceData(constants.DATA_ROTATION_SPEED_INCREASE);
+            await this.sendDeviceData(constants.DATA_ROTATION_SPEED_INCREASE);
             this.fanV2Characteristics.currentRotationSpeed += constants.MIN_STEP_ROTATION_SPEED;
         } else if (this.fanV2Characteristics.currentRotationSpeed > this.fanV2Characteristics.targetRotationSpeed) {
-            this.sendDeviceData(constants.DATA_ROTATION_SPEED_DECREASE);
+            await this.sendDeviceData(constants.DATA_ROTATION_SPEED_DECREASE);
             this.fanV2Characteristics.currentRotationSpeed -= constants.MIN_STEP_ROTATION_SPEED;
         }
         await this.saveFanV2Characteristics();
@@ -574,7 +574,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async updateCurrentSwingMode(): Promise<void> {
-        this.sendDeviceData(constants.DATA_SWING_MODE);
+        await this.sendDeviceData(constants.DATA_SWING_MODE);
         this.fanV2Characteristics.currentSwingMode = this.fanV2Characteristics.targetSwingMode;
         this.skips.updateCurrentSwingMode = constants.SKIPS_UPDATE_CURRENT_SWING_MODE;
         await this.saveFanV2Characteristics();
@@ -623,9 +623,9 @@ class DysonBP01 implements AccessoryPlugin {
      * Update sensor characteristics from BroadLink RM
      * @private
      */
-    private updateSensorCharacteristics(): void {
+    private async updateSensorCharacteristics(): Promise<void> {
         if (this.skips.updateSensorCharacteristics == 0) {
-            this.device.checkTemperature();
+            await this.device.checkTemperature();
             this.skips.updateSensorCharacteristics = constants.SKIPS_UPDATE_SENSOR_CHARACTERISTICS;
         }
     }

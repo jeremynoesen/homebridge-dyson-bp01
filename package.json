@@ -12,7 +12,11 @@
     "postpublish": "npm run clean",
     "test": "echo \"Error: no test specified\" && exit 0"
   },
-  "author": "Jeremy Noesen <jeremynoesen@gmail.com>",
+  "author": {
+    "name": "Jeremy Noesen",
+    "email": "mail@jeremynoesen.xyz",
+    "url": "https://jeremynoesen.xyz"
+  },
   "funding": "https://github.com/sponsors/jeremynoesen",
   "engines": {
     "node": ">=16.0.0",

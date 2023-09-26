@@ -401,7 +401,7 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private getTargetActive(characteristicGetCallback: CharacteristicGetCallback): void {
         if (this.alive) {
-            characteristicGetCallback(this.fanV2Characteristics.targetActive);
+            characteristicGetCallback(null, this.fanV2Characteristics.targetActive);
         } else {
             this.logging.error(messages.DEVICE_NOT_CONNECTED);
             characteristicGetCallback(new Error(messages.DEVICE_NOT_CONNECTED));
@@ -472,7 +472,7 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private getTargetRotationSpeed(characteristicGetCallback: CharacteristicGetCallback): void {
         if (this.alive) {
-            characteristicGetCallback(this.fanV2Characteristics.targetRotationSpeed);
+            characteristicGetCallback(null, this.fanV2Characteristics.targetRotationSpeed);
         } else {
             this.logging.error(messages.DEVICE_NOT_CONNECTED);
             characteristicGetCallback(new Error(messages.DEVICE_NOT_CONNECTED));
@@ -541,7 +541,7 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private getTargetSwingMode(characteristicGetCallback: CharacteristicGetCallback): void {
         if (this.alive) {
-            characteristicGetCallback(this.fanV2Characteristics.targetSwingMode);
+            characteristicGetCallback(null, this.fanV2Characteristics.targetSwingMode);
         } else {
             this.logging.error(messages.DEVICE_NOT_CONNECTED);
             characteristicGetCallback(new Error(messages.DEVICE_NOT_CONNECTED));
@@ -663,7 +663,7 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private getCurrentTemperature(characteristicGetCallback: CharacteristicGetCallback): void {
         if (this.alive) {
-            characteristicGetCallback(this.sensorCharacteristics.currentTemperature);
+            characteristicGetCallback(null, this.sensorCharacteristics.currentTemperature);
         } else {
             this.logging.error(messages.DEVICE_NOT_CONNECTED);
             characteristicGetCallback(new Error(messages.DEVICE_NOT_CONNECTED));
@@ -689,7 +689,7 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private getCurrentRelativeHumidity(characteristicGetCallback: CharacteristicGetCallback): void {
         if (this.alive) {
-            characteristicGetCallback(this.sensorCharacteristics.currentRelativeHumidity);
+            characteristicGetCallback(null, this.sensorCharacteristics.currentRelativeHumidity);
         } else {
             this.logging.error(messages.DEVICE_NOT_CONNECTED);
             characteristicGetCallback(new Error(messages.DEVICE_NOT_CONNECTED));

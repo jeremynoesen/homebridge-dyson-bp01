@@ -301,12 +301,12 @@ class DysonBP01 implements AccessoryPlugin {
         });
         if (!this.alive) {
             if (this.skips.pingDeviceFail == 0) {
-                this.logging.info(messages.DEVICE_PING_FAILED);
+                this.logging.error(messages.DEVICE_CONNECTION_LOST);
             }
             this.skips.pingDeviceFail = constants.SKIPS_PING_DEVICE_FAIL;
         } else if (this.skips.pingDeviceFail > 0) {
             if (this.skips.pingDeviceFail == constants.SKIPS_PING_DEVICE_FAIL - 1) {
-                this.logging.info(messages.DEVICE_PING_STABILIZING);
+                this.logging.info(messages.DEVICE_RECONNECTING);
             }
             this.alive = false;
         }
@@ -320,7 +320,7 @@ class DysonBP01 implements AccessoryPlugin {
         if (this.skips.pingDeviceFail > 0) {
             this.skips.pingDeviceFail--;
             if (this.skips.pingDeviceFail == 0) {
-                this.logging.info(messages.DEVICE_PING_STABILIZED);
+                this.logging.info(messages.DEVICE_RECONNECTED);
             }
         }
     }
@@ -400,8 +400,12 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private getTargetActive(characteristicGetCallback: CharacteristicGetCallback): void {
-        characteristicGetCallback(this.alive ? null : new Error(messages.DEVICE_PING_FAILED),
-            this.fanV2Characteristics.targetActive);
+        if (this.alive) {
+            characteristicGetCallback(this.fanV2Characteristics.targetActive);
+        } else {
+            this.logging.error(messages.DEVICE_NOT_CONNECTED);
+            characteristicGetCallback(new Error(messages.DEVICE_NOT_CONNECTED));
+        }
     }
 
     /**
@@ -420,7 +424,8 @@ class DysonBP01 implements AccessoryPlugin {
             }
             characteristicSetCallback();
         } else {
-            characteristicSetCallback(new Error(messages.DEVICE_PING_FAILED));
+            this.logging.error(messages.DEVICE_NOT_CONNECTED);
+            characteristicSetCallback(new Error(messages.DEVICE_NOT_CONNECTED));
         }
     }
 
@@ -466,8 +471,12 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private getTargetRotationSpeed(characteristicGetCallback: CharacteristicGetCallback): void {
-        characteristicGetCallback(this.alive ? null : new Error(messages.DEVICE_PING_FAILED),
-            this.fanV2Characteristics.targetRotationSpeed);
+        if (this.alive) {
+            characteristicGetCallback(this.fanV2Characteristics.targetRotationSpeed);
+        } else {
+            this.logging.error(messages.DEVICE_NOT_CONNECTED);
+            characteristicGetCallback(new Error(messages.DEVICE_NOT_CONNECTED));
+        }
     }
 
     /**
@@ -484,6 +493,7 @@ class DysonBP01 implements AccessoryPlugin {
                 clampedCharacteristicValue = constants.MIN_STEP_ROTATION_SPEED;
                 this.services.fanV2.updateCharacteristic(this.hap.Characteristic.RotationSpeed,
                     clampedCharacteristicValue);
+                this.logging.warn(messages.CLAMPED_TARGET_ROTATION_SPEED);
             }
             if (clampedCharacteristicValue != this.fanV2Characteristics.targetRotationSpeed) {
                 this.fanV2Characteristics.targetRotationSpeed = clampedCharacteristicValue;
@@ -492,7 +502,8 @@ class DysonBP01 implements AccessoryPlugin {
             }
             characteristicSetCallback();
         } else {
-            characteristicSetCallback(new Error(messages.DEVICE_PING_FAILED));
+            this.logging.error(messages.DEVICE_NOT_CONNECTED);
+            characteristicSetCallback(new Error(messages.DEVICE_NOT_CONNECTED));
         }
     }
 
@@ -529,8 +540,12 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private getTargetSwingMode(characteristicGetCallback: CharacteristicGetCallback): void {
-        characteristicGetCallback(this.alive ? null : new Error(messages.DEVICE_PING_FAILED),
-            this.fanV2Characteristics.targetSwingMode);
+        if (this.alive) {
+            characteristicGetCallback(this.fanV2Characteristics.targetSwingMode);
+        } else {
+            this.logging.error(messages.DEVICE_NOT_CONNECTED);
+            characteristicGetCallback(new Error(messages.DEVICE_NOT_CONNECTED));
+        }
     }
 
     /**
@@ -546,16 +561,18 @@ class DysonBP01 implements AccessoryPlugin {
                 if (this.fanV2Characteristics.targetActive == this.hap.Characteristic.Active.ACTIVE) {
                     this.fanV2Characteristics.targetSwingMode = characteristicValue as number;
                     await this.saveFanV2Characteristics();
-                    this.logging.info(messages.SET_TARGET_SWING_MODE, this.fanV2Characteristics.targetSwingMode);
+                    this.logging.info(messages.SET_TARGET_SWING_MODE_ACTIVE, this.fanV2Characteristics.targetSwingMode);
                     characteristicSetCallback();
                 } else if (this.fanV2Characteristics.targetActive == this.hap.Characteristic.Active.INACTIVE) {
-                    characteristicSetCallback(new Error(messages.DEVICE_PING_FAILED));
+                    this.logging.warn(messages.SET_TARGET_SWING_MODE_INACTIVE);
+                    characteristicSetCallback(new Error(messages.SET_TARGET_SWING_MODE_INACTIVE));
                 }
             } else {
                 characteristicSetCallback();
             }
         } else {
-            characteristicSetCallback(new Error(messages.DEVICE_PING_FAILED));
+            this.logging.error(messages.DEVICE_NOT_CONNECTED);
+            characteristicSetCallback(new Error(messages.DEVICE_NOT_CONNECTED));
         }
     }
 
@@ -645,8 +662,12 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private getCurrentTemperature(characteristicGetCallback: CharacteristicGetCallback): void {
-        characteristicGetCallback(this.alive ? null : new Error(messages.DEVICE_PING_FAILED),
-            this.sensorCharacteristics.currentTemperature);
+        if (this.alive) {
+            characteristicGetCallback(this.sensorCharacteristics.currentTemperature);
+        } else {
+            this.logging.error(messages.DEVICE_NOT_CONNECTED);
+            characteristicGetCallback(new Error(messages.DEVICE_NOT_CONNECTED));
+        }
     }
 
     /**
@@ -667,8 +688,12 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private getCurrentRelativeHumidity(characteristicGetCallback: CharacteristicGetCallback): void {
-        characteristicGetCallback(this.alive ? null : new Error(messages.DEVICE_PING_FAILED),
-            this.sensorCharacteristics.currentRelativeHumidity);
+        if (this.alive) {
+            characteristicGetCallback(this.sensorCharacteristics.currentRelativeHumidity);
+        } else {
+            this.logging.error(messages.DEVICE_NOT_CONNECTED);
+            characteristicGetCallback(new Error(messages.DEVICE_NOT_CONNECTED));
+        }
     }
 
     /**

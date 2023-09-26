@@ -39,19 +39,24 @@ export const DEVICE_DISCOVERED: string = "Discovered BroadLink RM at %s";
 export const DEVICE_USING: string = "Using BroadLink RM at %s";
 
 /**
- * Message shown when BroadLink RM ping fails
+ * Message shown when connection to BroadLink RM is lost
  */
-export const DEVICE_PING_FAILED: string = "Failed to ping BroadLink RM";
+export const DEVICE_CONNECTION_LOST: string = "Connection to BroadLink RM lost";
 
 /**
- * Message shown when waiting for BroadLink RM ping to stabilize
+ * Message shown when not connected to BroadLink RM
  */
-export const DEVICE_PING_STABILIZING: string = "Stabilizing BroadLink RM ping...";
+export const DEVICE_NOT_CONNECTED: string = "Not connected to BroadLink RM";
 
 /**
- * Message shown when BroadLink RM ping has stabilized
+ * Message shown when reconnecting to BroadLink RM
  */
-export const DEVICE_PING_STABILIZED: string = "Stabilized BroadLink RM ping";
+export const DEVICE_RECONNECTING: string = "Reconnecting to BroadLink RM...";
+
+/**
+ * Message shown when reconnected to BroadLink RM
+ */
+export const DEVICE_RECONNECTED: string = "Reconnected to BroadLink RM";
 
 /**
  * Message shown when initializing target active
@@ -94,9 +99,14 @@ export const SET_TARGET_ACTIVE: string = "Set target active to %s";
 export const SET_TARGET_ROTATION_SPEED: string = "Set target rotation speed to %s%";
 
 /**
- * Message shown when target swing mode is set
+ * Message shown when target swing mode is set and current active is 1
  */
-export const SET_TARGET_SWING_MODE: string = "Set target swing mode to %s";
+export const SET_TARGET_SWING_MODE_ACTIVE: string = "Set target swing mode to %s";
+
+/**
+ * Message shown when attempting to set target swing mode when current active is 0
+ */
+export const SET_TARGET_SWING_MODE_INACTIVE: string = "Unable to set target swing mode when current active is 0";
 
 /**
  * Message shown when setting current temperature
@@ -122,3 +132,8 @@ export const UPDATED_CURRENT_ROTATION_SPEED: string = "Updated current rotation 
  * Message shown when current swing mode is updated
  */
 export const UPDATED_CURRENT_SWING_MODE: string = "Updated current swing mode to %s";
+
+/**
+ * Message shown when target rotation speed is set to 0%
+ */
+export const CLAMPED_TARGET_ROTATION_SPEED: string = "Clamped target rotation speed to 10%";

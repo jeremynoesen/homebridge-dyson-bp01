@@ -11,17 +11,17 @@ export const INFO_MODEL: string = "BP01";
 /**
  * Information service serial number field
  */
-export const INFO_SERIAL_NUMBER: string = "Check Under Machine";
+export const INFO_SERIAL_NUMBER: string = "See bottom of machine";
 
 /**
  * Message shown when identifying starts
  */
-export const IDENTIFYING: string = "Identifying accessory...";
+export const IDENTIFYING: string = "Identifying Dyson BP01 and BroadLink RM...";
 
 /**
  * Message shown when identifying completes
  */
-export const IDENTIFIED: string = "Identified accessory";
+export const IDENTIFIED: string = "Identified Dyson BP01 and BroadLink RM";
 
 /**
  * Message shown when searching for BroadLink RMs
@@ -136,4 +136,4 @@ export const UPDATED_CURRENT_SWING_MODE: string = "Updated current swing mode to
 /**
  * Message shown when target rotation speed is set to 0%
  */
-export const CLAMPED_TARGET_ROTATION_SPEED: string = "Clamped target rotation speed to 10%";
+export const CLAMPED_TARGET_ROTATION_SPEED: string = "Clamped target rotation speed to minimum of 10%";

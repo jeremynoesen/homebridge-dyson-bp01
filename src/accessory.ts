@@ -400,12 +400,8 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private getTargetActive(characteristicGetCallback: CharacteristicGetCallback): void {
-        if (this.alive) {
-            characteristicGetCallback(null, this.fanV2Characteristics.targetActive);
-        } else {
-            this.logging.error(messages.DEVICE_NOT_CONNECTED);
-            characteristicGetCallback(new Error(messages.DEVICE_NOT_CONNECTED));
-        }
+        characteristicGetCallback(this.alive ? null : new Error(messages.DEVICE_NOT_CONNECTED),
+            this.fanV2Characteristics.targetActive);
     }
 
     /**
@@ -471,12 +467,8 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private getTargetRotationSpeed(characteristicGetCallback: CharacteristicGetCallback): void {
-        if (this.alive) {
-            characteristicGetCallback(null, this.fanV2Characteristics.targetRotationSpeed);
-        } else {
-            this.logging.error(messages.DEVICE_NOT_CONNECTED);
-            characteristicGetCallback(new Error(messages.DEVICE_NOT_CONNECTED));
-        }
+        characteristicGetCallback(this.alive ? null : new Error(messages.DEVICE_NOT_CONNECTED),
+            this.fanV2Characteristics.targetRotationSpeed);
     }
 
     /**
@@ -540,12 +532,8 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private getTargetSwingMode(characteristicGetCallback: CharacteristicGetCallback): void {
-        if (this.alive) {
-            characteristicGetCallback(null, this.fanV2Characteristics.targetSwingMode);
-        } else {
-            this.logging.error(messages.DEVICE_NOT_CONNECTED);
-            characteristicGetCallback(new Error(messages.DEVICE_NOT_CONNECTED));
-        }
+        characteristicGetCallback(this.alive ? null : new Error(messages.DEVICE_NOT_CONNECTED),
+            this.fanV2Characteristics.targetSwingMode);
     }
 
     /**
@@ -662,12 +650,8 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private getCurrentTemperature(characteristicGetCallback: CharacteristicGetCallback): void {
-        if (this.alive) {
-            characteristicGetCallback(null, this.sensorCharacteristics.currentTemperature);
-        } else {
-            this.logging.error(messages.DEVICE_NOT_CONNECTED);
-            characteristicGetCallback(new Error(messages.DEVICE_NOT_CONNECTED));
-        }
+        characteristicGetCallback(this.alive ? null : new Error(messages.DEVICE_NOT_CONNECTED),
+            this.sensorCharacteristics.currentTemperature);
     }
 
     /**
@@ -688,12 +672,8 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private getCurrentRelativeHumidity(characteristicGetCallback: CharacteristicGetCallback): void {
-        if (this.alive) {
-            characteristicGetCallback(null, this.sensorCharacteristics.currentRelativeHumidity);
-        } else {
-            this.logging.error(messages.DEVICE_NOT_CONNECTED);
-            characteristicGetCallback(new Error(messages.DEVICE_NOT_CONNECTED));
-        }
+        characteristicGetCallback(this.alive ? null : new Error(messages.DEVICE_NOT_CONNECTED),
+            this.sensorCharacteristics.currentRelativeHumidity);
     }
 
     /**

@@ -6,14 +6,11 @@
 
 ## About
 
-This Homebridge plugin adds a Dyson BP01 fan to HomeKit using a BroadLink RM. This plugin was designed with the Apple
-Home app in mind, but it should still be usable in third-party HomeKit apps.
+This Homebridge plugin adds a Dyson BP01 fan to HomeKit using a BroadLink RM. This plugin was designed with the Apple Home app in mind, but it should still be usable in third-party HomeKit apps.
 
 ## Purpose
 
-There are currently plugins out there that can use a BroadLink RM to control many other devices; however, they break if
-you try to change more than one characteristic of an accessory at once. This plugin aims to fix this issue to bring a
-more native HomeKit experience to the IR-controlled Dyson BP01.
+There are currently plugins out there that can use a BroadLink RM to control many other devices; however, they break if you try to change more than one characteristic of an accessory at once. This plugin aims to fix this issue to bring a more native HomeKit experience to the IR-controlled Dyson BP01.
 
 ## Required Hardware
 
@@ -27,10 +24,8 @@ This plugin is designed to be used with the following devices:
 ### BroadLink RM Setup
 
 1. Set up your BroadLink RM with the BroadLink app.
-    - For standard setup, follow the full setup process within the app. Then, in device properties,
-      disable `Lock device`.
-    - For local network setup, follow the in-app setup, but stop at the "Add Devices" page. Do not continue the setup
-      process, and close the app.
+    - For standard setup, follow the full setup process within the app. Then, in device properties, disable `Lock device`.
+    - For local network setup, follow the in-app setup, but stop at the "Add Devices" page. Do not continue the setup process, and close the app.
 2. Place the device so that it has a direct line of sight to the fan's display.
 
 ### Dyson BP01 Setup
@@ -66,8 +61,7 @@ After any of these, restart Homebridge.
 
 ## Configuration
 
-It is recommended that you use the Homebridge UI to configure this plugin. Otherwise, add the following
-under `accessories` in the Homebridge config:
+It is recommended that you use the Homebridge UI to configure this plugin. Otherwise, add the following under `accessories` in the Homebridge config:
 
 ```json
 {
@@ -83,8 +77,7 @@ under `accessories` in the Homebridge config:
 - `name` is required. You will need to redo the Dyson BP01 hardware setup if you change this later.
 - `serialNumber` is optional. Set this to the serial number of your Dyson BP01 to include it in accessory information.
 - `macAddress` is optional, but recommended if you have multiple BroadLink RMs, so the plugin can use the right one.
-- `exposeSensors` is optional. Set to true if your BroadLink RM has the sensor cable to expose the temperature and
-  humidity sensors.
+- `exposeSensors` is optional. Set to true if your BroadLink RM has the sensor cable to expose the temperature and humidity sensors.
 
 Restart Homebridge after changing any of these settings for them to take effect.
 
@@ -94,9 +87,7 @@ Restart Homebridge after changing any of these settings for them to take effect.
 
 ## Troubleshooting
 
-- If your BroadLink RM randomly stops working or does not reconnect after power loss, try assigning it a static IP
-  address.
-- If not all signals are sending, check the position of your BroadLink RM and ensure it has a direct line of sight to
-  the fan's display.
+- If your BroadLink RM randomly stops working or does not reconnect after power loss, try assigning it a static IP address.
+- If not all signals are sending, check the position of your BroadLink RM and ensure it has a direct line of sight to the fan's display.
 - If the fan ever de-syncs from the plugin, use the physical remote to change its state to re-sync it.
 - If the previous two events happen often, try running the plugin in a child bridge.

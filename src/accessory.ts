@@ -530,16 +530,11 @@ class DysonBP01 implements AccessoryPlugin {
     private async setTargetSwingMode(characteristicValue: CharacteristicValue, characteristicSetCallback: CharacteristicSetCallback): Promise<void> {
         if (this.alive) {
             if (characteristicValue as number != this.fanV2Characteristics.targetSwingMode) {
-                if (this.fanV2Characteristics.targetActive == this.hap.Characteristic.Active.ACTIVE) {
-                    this.fanV2Characteristics.targetSwingMode = characteristicValue as number;
-                    await this.saveFanV2Characteristics();
-                    this.logging.info(messages.SET_TARGET_SWING_MODE_ACTIVE, this.fanV2Characteristics.targetSwingMode);
-                } else if (this.fanV2Characteristics.targetActive == this.hap.Characteristic.Active.INACTIVE) {
-                    this.services.fanV2.updateCharacteristic(this.hap.Characteristic.SwingMode, this.fanV2Characteristics.targetSwingMode);
-                    this.logging.warn(messages.SET_TARGET_SWING_MODE_INACTIVE);
-                }
-                characteristicSetCallback();
+                this.fanV2Characteristics.targetSwingMode = characteristicValue as number;
+                await this.saveFanV2Characteristics();
+                this.logging.info(messages.SET_TARGET_SWING_MODE, this.fanV2Characteristics.targetSwingMode);
             }
+            characteristicSetCallback();
         } else {
             this.logging.error(messages.DEVICE_NOT_CONNECTED);
             characteristicSetCallback(new Error(messages.DEVICE_NOT_CONNECTED));

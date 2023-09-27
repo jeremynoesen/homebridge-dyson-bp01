@@ -99,14 +99,9 @@ export const SET_TARGET_ACTIVE: string = "Set target active to %s";
 export const SET_TARGET_ROTATION_SPEED: string = "Set target rotation speed to %s%";
 
 /**
- * Message shown when target swing mode is set and current active is 1
+ * Message shown when target swing mode is set
  */
-export const SET_TARGET_SWING_MODE_ACTIVE: string = "Set target swing mode to %s";
-
-/**
- * Message shown when attempting to set target swing mode when current active is 0
- */
-export const SET_TARGET_SWING_MODE_INACTIVE: string = "Unable to set target swing mode when target active is 0";
+export const SET_TARGET_SWING_MODE: string = "Set target swing mode to %s";
 
 /**
  * Message shown when setting current temperature

@@ -6,7 +6,7 @@
 
 ## About
 
-This Homebridge plugin adds a Dyson BP01 fan to HomeKit using a BroadLink RM. This plugin was designed with the Apple Home app in mind, but it should still be usable in third-party HomeKit apps.
+This Homebridge plugin adds a Dyson BP01 fan to HomeKit using a BroadLink RM.
 
 ## Purpose
 

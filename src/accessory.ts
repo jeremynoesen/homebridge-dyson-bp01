@@ -401,16 +401,18 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async setTargetActive(characteristicValue: CharacteristicValue, characteristicSetCallback: CharacteristicSetCallback): Promise<void> {
-        if (this.alive) {
-            if (characteristicValue as number != this.fanV2Characteristics.targetActive) {
+        if (characteristicValue as number != this.fanV2Characteristics.targetActive) {
+            if (this.alive) {
                 this.fanV2Characteristics.targetActive = characteristicValue as number;
                 await this.saveFanV2Characteristics();
                 this.logging.info(messages.SET_TARGET_ACTIVE, this.fanV2Characteristics.targetActive);
+                characteristicSetCallback();
+            } else {
+                this.logging.error(messages.DEVICE_NOT_CONNECTED);
+                characteristicSetCallback(new Error(messages.DEVICE_NOT_CONNECTED));
             }
-            characteristicSetCallback();
         } else {
-            this.logging.error(messages.DEVICE_NOT_CONNECTED);
-            characteristicSetCallback(new Error(messages.DEVICE_NOT_CONNECTED));
+            characteristicSetCallback();
         }
     }
 
@@ -466,22 +468,24 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async setTargetRotationSpeed(characteristicValue: CharacteristicValue, characteristicSetCallback: CharacteristicSetCallback): Promise<void> {
-        if (this.alive) {
-            let clampedCharacteristicValue: number = characteristicValue as number;
-            if (clampedCharacteristicValue < constants.MIN_STEP_ROTATION_SPEED) {
-                clampedCharacteristicValue = constants.MIN_STEP_ROTATION_SPEED;
-                this.services.fanV2.updateCharacteristic(this.hap.Characteristic.RotationSpeed, clampedCharacteristicValue);
-                this.logging.warn(messages.CLAMPED_TARGET_ROTATION_SPEED);
-            }
-            if (clampedCharacteristicValue != this.fanV2Characteristics.targetRotationSpeed) {
+        let clampedCharacteristicValue: number = characteristicValue as number;
+        if (clampedCharacteristicValue < constants.MIN_STEP_ROTATION_SPEED) {
+            clampedCharacteristicValue = constants.MIN_STEP_ROTATION_SPEED;
+            this.services.fanV2.updateCharacteristic(this.hap.Characteristic.RotationSpeed, clampedCharacteristicValue);
+            this.logging.warn(messages.CLAMPED_TARGET_ROTATION_SPEED);
+        }
+        if (clampedCharacteristicValue != this.fanV2Characteristics.targetRotationSpeed) {
+            if (this.alive) {
                 this.fanV2Characteristics.targetRotationSpeed = clampedCharacteristicValue;
                 await this.saveFanV2Characteristics();
                 this.logging.info(messages.SET_TARGET_ROTATION_SPEED, this.fanV2Characteristics.targetRotationSpeed);
+                characteristicSetCallback();
+            } else {
+                this.logging.error(messages.DEVICE_NOT_CONNECTED);
+                characteristicSetCallback(new Error(messages.DEVICE_NOT_CONNECTED));
             }
-            characteristicSetCallback();
         } else {
-            this.logging.error(messages.DEVICE_NOT_CONNECTED);
-            characteristicSetCallback(new Error(messages.DEVICE_NOT_CONNECTED));
+            characteristicSetCallback();
         }
     }
 
@@ -528,16 +532,18 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async setTargetSwingMode(characteristicValue: CharacteristicValue, characteristicSetCallback: CharacteristicSetCallback): Promise<void> {
-        if (this.alive) {
-            if (characteristicValue as number != this.fanV2Characteristics.targetSwingMode) {
+        if (characteristicValue as number != this.fanV2Characteristics.targetSwingMode) {
+            if (this.alive) {
                 this.fanV2Characteristics.targetSwingMode = characteristicValue as number;
                 await this.saveFanV2Characteristics();
                 this.logging.info(messages.SET_TARGET_SWING_MODE, this.fanV2Characteristics.targetSwingMode);
+                characteristicSetCallback();
+            } else {
+                this.logging.error(messages.DEVICE_NOT_CONNECTED);
+                characteristicSetCallback(new Error(messages.DEVICE_NOT_CONNECTED));
             }
-            characteristicSetCallback();
         } else {
-            this.logging.error(messages.DEVICE_NOT_CONNECTED);
-            characteristicSetCallback(new Error(messages.DEVICE_NOT_CONNECTED));
+            characteristicSetCallback();
         }
     }
 

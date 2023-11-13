@@ -161,7 +161,7 @@ class DysonBP01 implements AccessoryPlugin {
         if (this.alive) {
             this.logging.info(messages.IDENTIFYING);
             let toggleCount: number = 0;
-            let activeToggle: NodeJS.Timer = setInterval(async (): Promise<void> => {
+            let activeToggle: NodeJS.Timeout = setInterval(async (): Promise<void> => {
                 if (toggleCount < constants.TOGGLES_IDENTIFY_ACTIVE) {
                     if (this.fanV2Characteristics.targetActive == this.hap.Characteristic.Active.ACTIVE) {
                         await this.setTargetActive(this.hap.Characteristic.Active.INACTIVE, (): void => {});

@@ -19,8 +19,8 @@
   },
   "funding": "https://github.com/sponsors/jeremynoesen",
   "engines": {
-    "node": ">=16.0.0",
-    "homebridge": ">=1.6.1"
+    "node": "^20.9.0",
+    "homebridge": "^1.7.0"
   },
   "keywords": [
     "homebridge-plugin",
@@ -41,10 +41,10 @@
     "url": "https://github.com/jeremynoesen/homebridge-dyson-bp01/issues"
   },
   "devDependencies": {
-    "@types/node": "^16.0.0",
-    "@types/node-persist": "^3.1.5",
-    "@types/ping": "^0.4.3",
-    "homebridge": "^1.6.1",
+    "@types/node": "^20.9.0",
+    "@types/node-persist": "^3.1.6",
+    "@types/ping": "^0.4.4",
+    "homebridge": "^1.7.0",
     "rimraf": "^5.0.5",
     "typescript": "^5.2.2"
   },

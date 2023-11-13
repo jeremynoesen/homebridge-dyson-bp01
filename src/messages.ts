@@ -26,7 +26,7 @@ export const IDENTIFIED: string = "Identified Dyson BP01 and BroadLink RM";
 /**
  * Message shown when searching for BroadLink RMs
  */
-export const DEVICE_DISCOVERING: string = "Discovering BroadLink RMs...";
+export const DEVICE_SEARCHING: string = "Searching for BroadLink RMs...";
 
 /**
  * Message shown when BroadLink RM is discovered

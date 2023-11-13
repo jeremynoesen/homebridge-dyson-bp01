@@ -284,7 +284,7 @@ class DysonBP01 implements AccessoryPlugin {
                 this.logging.info(messages.DEVICE_USING, macAddress);
             }
         });
-        this.logging.info(messages.DEVICE_DISCOVERING);
+        this.logging.info(messages.DEVICE_SEARCHING);
     }
 
     /**

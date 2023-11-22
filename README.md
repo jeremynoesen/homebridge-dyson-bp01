@@ -38,7 +38,7 @@ Using the remote provided with the fan:
 
 ## Required Software
 
-- Node.js 20.9.0 or higher
+- Node.js 20.9.4 or higher
 - Homebridge 1.7.0 or higher
 
 ## Building

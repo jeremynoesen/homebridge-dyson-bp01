@@ -11,10 +11,6 @@
     "rootDir": "src",
     "outDir": "dist",
     "noImplicitAny": false,
-    "removeComments": true,
-    "sourceMap": true
-  },
-  "include": [
-    "src"
-  ]
+    "removeComments": true
+  }
 }

@@ -174,6 +174,8 @@ class DysonBP01 implements AccessoryPlugin {
                     this.logging.info(messages.IDENTIFIED);
                 }
             }, constants.INTERVAL);
+        } else {
+            this.logging.error(messages.DEVICE_NOT_CONNECTED);
         }
     }
 

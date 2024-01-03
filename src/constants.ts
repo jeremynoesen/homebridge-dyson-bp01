@@ -64,6 +64,11 @@ export const MIN_STEP_CURRENT_TEMPERATURE: number = 0.01;
 export const MIN_STEP_CURRENT_RELATIVE_HUMIDITY: number = 0.01;
 
 /**
+ * RegExp used to validate serial number
+ */
+export const SERIAL_NUMBER_REGEX: RegExp = /^([A-Za-z0-9]{3})-([A-Za-z]{2})-([A-Za-z0-9]{8})$/;
+
+/**
  * How much to increase or decrease rotation speed by
  * You must clear persist storage for this plugin after changing this!
  */

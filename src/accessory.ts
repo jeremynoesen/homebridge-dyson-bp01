@@ -207,7 +207,7 @@ class DysonBP01 implements AccessoryPlugin {
                 await this.pingDevice();
                 if (this.alive) {
                     await this.updateFanV2Characteristics();
-                    if (this.accessoryConfig.exposeSensors) {
+                    if (this.accessoryConfig.exposeSensors === true) {
                         await this.updateSensorCharacteristics();
                     }
                 }
@@ -236,7 +236,7 @@ class DysonBP01 implements AccessoryPlugin {
     private initServices(): void {
         this.initAccessoryInformationService();
         this.initFanV2Service();
-        if (this.accessoryConfig.exposeSensors) {
+        if (this.accessoryConfig.exposeSensors === true) {
             this.initSensorServices();
         }
     }
@@ -249,7 +249,9 @@ class DysonBP01 implements AccessoryPlugin {
         this.services.accessoryInformation
             .updateCharacteristic(this.hap.Characteristic.Manufacturer, messages.INFO_MANUFACTURER)
             .updateCharacteristic(this.hap.Characteristic.Model, messages.INFO_MODEL)
-            .updateCharacteristic(this.hap.Characteristic.SerialNumber, this.accessoryConfig.serialNumber ? this.accessoryConfig.serialNumber.toUpperCase() : messages.INFO_SERIAL_NUMBER);
+            .updateCharacteristic(this.hap.Characteristic.SerialNumber, 
+                (this.accessoryConfig.serialNumber && constants.SERIAL_NUMBER_REGEX.test(this.accessoryConfig.serialNumber)) ? 
+                this.accessoryConfig.serialNumber.toUpperCase() : messages.INFO_SERIAL_NUMBER);
     }
 
     /**
@@ -260,7 +262,7 @@ class DysonBP01 implements AccessoryPlugin {
             this.services.accessoryInformation,
             this.services.fanV2
         ];
-        if (this.accessoryConfig.exposeSensors) {
+        if (this.accessoryConfig.exposeSensors === true) {
             services.push(
                 this.services.temperatureSensor,
                 this.services.humiditySensor
@@ -277,10 +279,9 @@ class DysonBP01 implements AccessoryPlugin {
         this.broadLinkJS.on("deviceReady", (device: any): void => {
             let macAddress: string = device.mac.toString("hex").replace(/(.{2})/g, "$1:").slice(0, -1).toUpperCase();
             this.logging.info(messages.DEVICE_DISCOVERED, macAddress);
-            if (!this.device && (!this.accessoryConfig.macAddress ||
-                this.accessoryConfig.macAddress.toUpperCase() == macAddress)) {
+            if (!this.device && (!this.accessoryConfig.macAddress || this.accessoryConfig.macAddress.toUpperCase() == macAddress)) {
                 this.device = device;
-                if (this.accessoryConfig.exposeSensors) {
+                if (this.accessoryConfig.exposeSensors === true) {
                     this.initSensors();
                 }
                 this.logging.info(messages.DEVICE_USING, macAddress);

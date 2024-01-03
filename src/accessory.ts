@@ -163,13 +163,13 @@ class DysonBP01 implements AccessoryPlugin {
             let toggleCount: number = 0;
             let activeToggle: NodeJS.Timeout = setInterval(async (): Promise<void> => {
                 if (toggleCount < constants.TOGGLES_IDENTIFY_ACTIVE) {
-                    if (this.fanV2Characteristics.targetActive == this.hap.Characteristic.Active.ACTIVE) {
+                    if (this.fanV2Characteristics.targetActive === this.hap.Characteristic.Active.ACTIVE) {
                         await this.setTargetActive(this.hap.Characteristic.Active.INACTIVE, (): void => {});
-                    } else if (this.fanV2Characteristics.targetActive == this.hap.Characteristic.Active.INACTIVE) {
+                    } else if (this.fanV2Characteristics.targetActive === this.hap.Characteristic.Active.INACTIVE) {
                         await this.setTargetActive(this.hap.Characteristic.Active.ACTIVE, (): void => {});
                     }
                     toggleCount++;
-                } else if (this.fanV2Characteristics.targetActive == this.fanV2Characteristics.currentActive) {
+                } else if (this.fanV2Characteristics.targetActive === this.fanV2Characteristics.currentActive) {
                     clearInterval(activeToggle);
                     this.logging.info(messages.IDENTIFIED);
                 }
@@ -279,7 +279,7 @@ class DysonBP01 implements AccessoryPlugin {
         this.broadLinkJS.on("deviceReady", (device: any): void => {
             let macAddress: string = device.mac.toString("hex").replace(/(.{2})/g, "$1:").slice(0, -1).toUpperCase();
             this.logging.info(messages.DEVICE_DISCOVERED, macAddress);
-            if (!this.device && (!this.accessoryConfig.macAddress || this.accessoryConfig.macAddress.toUpperCase() == macAddress)) {
+            if (!this.device && (!this.accessoryConfig.macAddress || this.accessoryConfig.macAddress.toUpperCase() === macAddress)) {
                 this.device = device;
                 if (this.accessoryConfig.exposeSensors === true) {
                     this.initSensors();
@@ -299,12 +299,12 @@ class DysonBP01 implements AccessoryPlugin {
             return pingResponse.alive;
         });
         if (!this.alive) {
-            if (this.skips.pingDeviceFail == 0) {
+            if (this.skips.pingDeviceFail === 0) {
                 this.logging.error(messages.DEVICE_CONNECTION_LOST);
             }
             this.skips.pingDeviceFail = constants.SKIPS_PING_DEVICE_FAIL;
         } else if (this.skips.pingDeviceFail > 0) {
-            if (this.skips.pingDeviceFail == constants.SKIPS_PING_DEVICE_FAIL - 1) {
+            if (this.skips.pingDeviceFail === constants.SKIPS_PING_DEVICE_FAIL - 1) {
                 this.logging.info(messages.DEVICE_RECONNECTING);
             }
             this.alive = false;
@@ -318,7 +318,7 @@ class DysonBP01 implements AccessoryPlugin {
     private doPingDeviceFailSkip(): void {
         if (this.skips.pingDeviceFail > 0) {
             this.skips.pingDeviceFail--;
-            if (this.skips.pingDeviceFail == 0) {
+            if (this.skips.pingDeviceFail === 0) {
                 this.logging.info(messages.DEVICE_RECONNECTED);
             }
         }
@@ -425,8 +425,8 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private canUpdateCurrentActive(): boolean {
         return this.fanV2Characteristics.currentActive != this.fanV2Characteristics.targetActive &&
-            this.skips.updateCurrentActive == 0 &&
-            this.skips.updateCurrentSwingMode == 0;
+            this.skips.updateCurrentActive === 0 &&
+            this.skips.updateCurrentSwingMode === 0;
     }
 
     /**
@@ -436,9 +436,9 @@ class DysonBP01 implements AccessoryPlugin {
     private async updateCurrentActive(): Promise<void> {
         await this.sendDeviceData(constants.DATA_ACTIVE);
         this.fanV2Characteristics.currentActive = this.fanV2Characteristics.targetActive;
-        if (this.fanV2Characteristics.currentActive == this.hap.Characteristic.Active.ACTIVE) {
+        if (this.fanV2Characteristics.currentActive === this.hap.Characteristic.Active.ACTIVE) {
             this.skips.updateCurrentActive = constants.SKIPS_UPDATE_CURRENT_ACTIVE_ACTIVE;
-        } else if (this.fanV2Characteristics.currentActive == this.hap.Characteristic.Active.INACTIVE) {
+        } else if (this.fanV2Characteristics.currentActive === this.hap.Characteristic.Active.INACTIVE) {
             this.skips.updateCurrentActive = constants.SKIPS_UPDATE_CURRENT_ACTIVE_INACTIVE;
         }
         await this.saveFanV2Characteristics();
@@ -498,9 +498,9 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private canUpdateCurrentRotationSpeed(): boolean {
         return this.fanV2Characteristics.currentRotationSpeed != this.fanV2Characteristics.targetRotationSpeed &&
-            this.fanV2Characteristics.currentActive == this.hap.Characteristic.Active.ACTIVE &&
-            this.skips.updateCurrentActive == 0 &&
-            this.skips.updateCurrentSwingMode == 0;
+            this.fanV2Characteristics.currentActive === this.hap.Characteristic.Active.ACTIVE &&
+            this.skips.updateCurrentActive === 0 &&
+            this.skips.updateCurrentSwingMode === 0;
     }
 
     /**
@@ -556,8 +556,8 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private canUpdateCurrentSwingMode(): boolean {
         return this.fanV2Characteristics.currentSwingMode != this.fanV2Characteristics.targetSwingMode &&
-            this.fanV2Characteristics.currentActive == this.hap.Characteristic.Active.ACTIVE &&
-            this.skips.updateCurrentActive == 0;
+            this.fanV2Characteristics.currentActive === this.hap.Characteristic.Active.ACTIVE &&
+            this.skips.updateCurrentActive === 0;
     }
 
     /**
@@ -615,7 +615,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async updateSensorCharacteristics(): Promise<void> {
-        if (this.skips.updateSensorCharacteristics == 0) {
+        if (this.skips.updateSensorCharacteristics === 0) {
             await this.device.checkTemperature();
             this.skips.updateSensorCharacteristics = constants.SKIPS_UPDATE_SENSOR_CHARACTERISTICS;
         }

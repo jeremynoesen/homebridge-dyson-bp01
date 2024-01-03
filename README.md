@@ -77,7 +77,7 @@ It is recommended that you use the Homebridge UI to configure this plugin. Other
 - `name` is required. You will need to redo the Dyson BP01 hardware setup if you change this later.
 - `serialNumber` is optional. Set this to the serial number of your Dyson BP01 to include it in accessory information.
 - `macAddress` is optional, but recommended if you have multiple BroadLink RMs, so the plugin can use the right one.
-- `exposeSensors` is optional. Set to true if your BroadLink RM has the sensor cable to expose the temperature and humidity sensors.
+- `exposeSensors` is optional. Set to `true` if your BroadLink RM has the sensor cable to expose the temperature and humidity sensors.
 
 Restart Homebridge after changing any of these settings for them to take effect.
 
@@ -87,6 +87,7 @@ Restart Homebridge after changing any of these settings for them to take effect.
 
 ## Troubleshooting
 
+- Make sure your BroadLink RM is allowed through your firewall.
 - If your BroadLink RM randomly stops working or does not reconnect after power loss, try assigning it a static IP address.
 - If not all signals are sending, check the position of your BroadLink RM and ensure it has a direct line of sight to the fan's display.
 - If the fan ever de-syncs from the plugin, use the physical remote to change its state to re-sync it.

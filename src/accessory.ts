@@ -404,7 +404,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async setTargetActive(characteristicValue: CharacteristicValue, characteristicSetCallback: CharacteristicSetCallback): Promise<void> {
-        if (characteristicValue as number != this.fanV2Characteristics.targetActive) {
+        if (characteristicValue as number !== this.fanV2Characteristics.targetActive) {
             if (this.alive) {
                 this.fanV2Characteristics.targetActive = characteristicValue as number;
                 await this.saveFanV2Characteristics();
@@ -424,7 +424,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private canUpdateCurrentActive(): boolean {
-        return this.fanV2Characteristics.currentActive != this.fanV2Characteristics.targetActive &&
+        return this.fanV2Characteristics.currentActive !== this.fanV2Characteristics.targetActive &&
             this.skips.updateCurrentActive === 0 &&
             this.skips.updateCurrentSwingMode === 0;
     }
@@ -477,7 +477,7 @@ class DysonBP01 implements AccessoryPlugin {
             this.services.fanV2.updateCharacteristic(this.hap.Characteristic.RotationSpeed, clampedCharacteristicValue);
             this.logging.warn(messages.CLAMPED_TARGET_ROTATION_SPEED);
         }
-        if (clampedCharacteristicValue != this.fanV2Characteristics.targetRotationSpeed) {
+        if (clampedCharacteristicValue !== this.fanV2Characteristics.targetRotationSpeed) {
             if (this.alive) {
                 this.fanV2Characteristics.targetRotationSpeed = clampedCharacteristicValue;
                 await this.saveFanV2Characteristics();
@@ -497,7 +497,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private canUpdateCurrentRotationSpeed(): boolean {
-        return this.fanV2Characteristics.currentRotationSpeed != this.fanV2Characteristics.targetRotationSpeed &&
+        return this.fanV2Characteristics.currentRotationSpeed !== this.fanV2Characteristics.targetRotationSpeed &&
             this.fanV2Characteristics.currentActive === this.hap.Characteristic.Active.ACTIVE &&
             this.skips.updateCurrentActive === 0 &&
             this.skips.updateCurrentSwingMode === 0;
@@ -535,7 +535,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private async setTargetSwingMode(characteristicValue: CharacteristicValue, characteristicSetCallback: CharacteristicSetCallback): Promise<void> {
-        if (characteristicValue as number != this.fanV2Characteristics.targetSwingMode) {
+        if (characteristicValue as number !== this.fanV2Characteristics.targetSwingMode) {
             if (this.alive) {
                 this.fanV2Characteristics.targetSwingMode = characteristicValue as number;
                 await this.saveFanV2Characteristics();
@@ -555,7 +555,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private canUpdateCurrentSwingMode(): boolean {
-        return this.fanV2Characteristics.currentSwingMode != this.fanV2Characteristics.targetSwingMode &&
+        return this.fanV2Characteristics.currentSwingMode !== this.fanV2Characteristics.targetSwingMode &&
             this.fanV2Characteristics.currentActive === this.hap.Characteristic.Active.ACTIVE &&
             this.skips.updateCurrentActive === 0;
     }
@@ -645,7 +645,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private setCurrentTemperature(characteristicValue: CharacteristicValue): void {
-        if (characteristicValue as number != this.sensorCharacteristics.currentTemperature) {
+        if (characteristicValue as number !== this.sensorCharacteristics.currentTemperature) {
             this.sensorCharacteristics.currentTemperature = characteristicValue as number;
             this.logging.info(messages.SET_CURRENT_TEMPERATURE, this.sensorCharacteristics.currentTemperature);
         }
@@ -666,7 +666,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private setCurrentRelativeHumidity(characteristicValue: CharacteristicValue): void {
-        if (characteristicValue as number != this.sensorCharacteristics.currentRelativeHumidity) {
+        if (characteristicValue as number !== this.sensorCharacteristics.currentRelativeHumidity) {
             this.sensorCharacteristics.currentRelativeHumidity = characteristicValue as number;
             this.logging.info(messages.SET_CURRENT_RELATIVE_HUMIDITY, this.sensorCharacteristics.currentRelativeHumidity);
         }

@@ -22,7 +22,7 @@
     "url": "https://github.com/sponsors/jeremynoesen"
   },
   "engines": {
-    "node": "^20.10.0",
+    "node": "^20.11.0",
     "homebridge": "^1.7.0"
   },
   "keywords": [
@@ -44,7 +44,7 @@
     "url": "https://github.com/jeremynoesen/homebridge-dyson-bp01/issues"
   },
   "devDependencies": {
-    "@types/node": "^20.10.6",
+    "@types/node": "^20.11.2",
     "@types/node-persist": "^3.1.8",
     "@types/ping": "^0.4.4",
     "homebridge": "^1.7.0",

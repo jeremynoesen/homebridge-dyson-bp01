@@ -38,7 +38,7 @@ Using the remote provided with the fan:
 
 ## Required Software
 
-- Node.js 20.10.0 or higher
+- Node.js 20.11.0 or higher
 - Homebridge 1.7.0 or higher
 
 ## Building
@@ -75,9 +75,9 @@ It is recommended that you use the Homebridge UI to configure this plugin. Other
 
 - `accessory` is required. This must be set to "DysonBP01" for the plugin to work.
 - `name` is required. You will need to redo the Dyson BP01 hardware setup if you change this later.
-- `serialNumber` is optional. Set this to the serial number of your Dyson BP01 to include it in accessory information.
-- `macAddress` is optional, but recommended if you have multiple BroadLink RMs, so the plugin can use the right one.
-- `exposeSensors` is optional. Set to `true` if your BroadLink RM has the sensor cable to expose the temperature and humidity sensors.
+- `serialNumber` is optional. Set this to the serial number of your Dyson BP01 to include it in accessory information. If formatted incorrectly, this option will be ignored.
+- `macAddress` is optional, but recommended if you have multiple BroadLink RMs, so the plugin can use the right one. If formatted incorrectly, the plugin will not find any BroadLink RMs.
+- `exposeSensors` is optional. Set to `true` if your BroadLink RM has the sensor cable to expose the temperature and humidity sensors. Setting to any other value will be treated as `false`. If you do not have the sensor cable, the sensors will show `0` as their values.
 
 Restart Homebridge after changing any of these settings for them to take effect.
 

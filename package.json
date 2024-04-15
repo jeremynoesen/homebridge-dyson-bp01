@@ -22,7 +22,7 @@
     "url": "https://github.com/sponsors/jeremynoesen"
   },
   "engines": {
-    "node": "^20.11.0",
+    "node": "^20.12.7",
     "homebridge": "^1.7.0"
   },
   "keywords": [
@@ -44,12 +44,12 @@
     "url": "https://github.com/jeremynoesen/homebridge-dyson-bp01/issues"
   },
   "devDependencies": {
-    "@types/node": "^20.11.2",
+    "@types/node": "^20.12.7",
     "@types/node-persist": "^3.1.8",
     "@types/ping": "^0.4.4",
     "homebridge": "^1.7.0",
     "rimraf": "^5.0.5",
-    "typescript": "^5.3.3"
+    "typescript": "^5.4.5"
   },
   "dependencies": {
     "kiwicam-broadlinkjs-rm": "^0.9.19",

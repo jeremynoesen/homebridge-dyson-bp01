@@ -25,7 +25,7 @@ export default (api: API): void => {
  *
  * @author Jeremy Noesen
  */
-class DysonBP01 implements AccessoryPlugin { //todo messages for incorrect config
+class DysonBP01 implements AccessoryPlugin {
 
     /**
      * Homebridge logging instance

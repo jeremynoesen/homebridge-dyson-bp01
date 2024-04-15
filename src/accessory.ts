@@ -159,13 +159,13 @@ class DysonBP01 implements AccessoryPlugin {
      * Check config values for errors
      */
     private checkConfig(): void {
-        if (!constants.SERIAL_NUMBER_REGEX.test(this.accessoryConfig.serialNumber)) {
+        if (this.accessoryConfig.serialNumber && !constants.SERIAL_NUMBER_REGEX.test(this.accessoryConfig.serialNumber)) {
             this.logging.warn(messages.WARN_SERIAL_NUMBER);
         }
-        if (!constants.MAC_ADDRESS_REGEX.test(this.accessoryConfig.macAddress)) {
+        if (this.accessoryConfig.macAddress && !constants.MAC_ADDRESS_REGEX.test(this.accessoryConfig.macAddress)) {
             this.logging.warn(messages.WARN_MAC_ADDRESS);
         }
-        if (this.accessoryConfig.exposeSensors !== true && this.accessoryConfig.exposeSensors !== false) {
+        if (this.accessoryConfig.exposeSensors && this.accessoryConfig.exposeSensors !== true && this.accessoryConfig.exposeSensors !== false) {
             this.logging.warn(messages.WARN_EXPOSE_SENSORS);
         }
     }

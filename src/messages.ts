@@ -14,6 +14,21 @@ export const INFO_MODEL: string = "BP01";
 export const INFO_SERIAL_NUMBER: string = "See bottom of machine";
 
 /**
+ * Warning to show if serial number is malformed
+ */
+export const WARN_SERIAL_NUMBER: string = "Serial number malformed, defaulting to placeholder";
+
+/**
+ * Warning to show if MAC address is malformed
+ */
+export const WARN_MAC_ADDRESS: string = "MAC address malformed, ignoring value";
+
+/**
+ * Warning to show if expose sensors is not set to 'true' or 'false'
+ */
+export const WARN_EXPOSE_SENSORS: string = "Expose sensors neither 'true' nor 'false', defaulting to 'false'";
+
+/**
  * Message shown when identifying starts
  */
 export const IDENTIFYING: string = "Identifying Dyson BP01 and BroadLink RM...";

@@ -69,6 +69,11 @@ export const MIN_STEP_CURRENT_RELATIVE_HUMIDITY: number = 0.01;
 export const SERIAL_NUMBER_REGEX: RegExp = /^([A-Za-z0-9]{3})-([A-Za-z]{2})-([A-Za-z0-9]{8})$/;
 
 /**
+ * RegExp used to validate MAC address
+ */
+export const MAC_ADDRESS_REGEX: RegExp = /^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/;
+
+/**
  * How much to increase or decrease rotation speed by
  * You must clear persist storage for this plugin after changing this!
  */

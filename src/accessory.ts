@@ -25,7 +25,7 @@ export default (api: API): void => {
  *
  * @author Jeremy Noesen
  */
-class DysonBP01 implements AccessoryPlugin {
+class DysonBP01 implements AccessoryPlugin { //todo messages for incorrect config
 
     /**
      * Homebridge logging instance
@@ -151,7 +151,23 @@ class DysonBP01 implements AccessoryPlugin {
             updateSensorCharacteristics: 0,
             pingDeviceFail: 0
         };
+        this.checkConfig();
         this.init(api);
+    }
+
+    /**
+     * Check config values for errors
+     */
+    private checkConfig(): void {
+        if (!constants.SERIAL_NUMBER_REGEX.test(this.accessoryConfig.serialNumber)) {
+            this.logging.warn(messages.WARN_SERIAL_NUMBER);
+        }
+        if (!constants.MAC_ADDRESS_REGEX.test(this.accessoryConfig.macAddress)) {
+            this.logging.warn(messages.WARN_MAC_ADDRESS);
+        }
+        if (this.accessoryConfig.exposeSensors !== true && this.accessoryConfig.exposeSensors !== false) {
+            this.logging.warn(messages.WARN_EXPOSE_SENSORS);
+        }
     }
 
     /**

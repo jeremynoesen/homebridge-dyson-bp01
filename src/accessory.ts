@@ -160,13 +160,13 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private checkConfig(): void {
         if (this.accessoryConfig.serialNumber && !constants.SERIAL_NUMBER_REGEX.test(this.accessoryConfig.serialNumber)) {
-            this.logging.warn(messages.WARN_SERIAL_NUMBER);
+            this.logging.warn(messages.SERIAL_NUMBER_MALFORMED);
         }
         if (this.accessoryConfig.macAddress && !constants.MAC_ADDRESS_REGEX.test(this.accessoryConfig.macAddress)) {
-            this.logging.warn(messages.WARN_MAC_ADDRESS);
+            this.logging.warn(messages.MAC_ADDRESS_MALFORMED);
         }
         if (this.accessoryConfig.exposeSensors && this.accessoryConfig.exposeSensors !== true && this.accessoryConfig.exposeSensors !== false) {
-            this.logging.warn(messages.WARN_EXPOSE_SENSORS);
+            this.logging.warn(messages.EXPOSE_SENSORS_MALFORMED);
         }
     }
 
@@ -187,7 +187,7 @@ class DysonBP01 implements AccessoryPlugin {
                     toggleCount++;
                 } else if (this.fanV2Characteristics.targetActive === this.fanV2Characteristics.currentActive) {
                     clearInterval(activeToggle);
-                    this.logging.info(messages.IDENTIFIED);
+                    this.logging.success(messages.IDENTIFIED);
                 }
             }, constants.INTERVAL);
         } else {
@@ -263,11 +263,11 @@ class DysonBP01 implements AccessoryPlugin {
      */
     private initAccessoryInformationService(): void {
         this.services.accessoryInformation
-            .updateCharacteristic(this.hap.Characteristic.Manufacturer, messages.INFO_MANUFACTURER)
-            .updateCharacteristic(this.hap.Characteristic.Model, messages.INFO_MODEL)
+            .updateCharacteristic(this.hap.Characteristic.Manufacturer, messages.MANUFACTURER)
+            .updateCharacteristic(this.hap.Characteristic.Model, messages.MODEL)
             .updateCharacteristic(this.hap.Characteristic.SerialNumber, 
                 (this.accessoryConfig.serialNumber !== undefined && constants.SERIAL_NUMBER_REGEX.test(this.accessoryConfig.serialNumber) === true) ? 
-                this.accessoryConfig.serialNumber.toUpperCase() : messages.INFO_SERIAL_NUMBER);
+                this.accessoryConfig.serialNumber.toUpperCase() : messages.SERIAL_NUMBER);
     }
 
     /**
@@ -300,7 +300,7 @@ class DysonBP01 implements AccessoryPlugin {
                 if (this.accessoryConfig.exposeSensors === true) {
                     this.initSensors();
                 }
-                this.logging.info(messages.DEVICE_USING, macAddress);
+                this.logging.success(messages.DEVICE_USING, macAddress);
             }
         });
         this.logging.info(messages.DEVICE_SEARCHING);
@@ -335,7 +335,7 @@ class DysonBP01 implements AccessoryPlugin {
         if (this.skips.pingDeviceFail > 0) {
             this.skips.pingDeviceFail--;
             if (this.skips.pingDeviceFail === 0) {
-                this.logging.info(messages.DEVICE_RECONNECTED);
+                this.logging.success(messages.DEVICE_RECONNECTED);
             }
         }
     }

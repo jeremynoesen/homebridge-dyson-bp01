@@ -1,32 +1,32 @@
 /**
  * Information service manufacturer field
  */
-export const INFO_MANUFACTURER: string = "Dyson";
+export const MANUFACTURER: string = "Dyson";
 
 /**
  * Information service model field
  */
-export const INFO_MODEL: string = "BP01";
+export const MODEL: string = "BP01";
 
 /**
  * Information service serial number field
  */
-export const INFO_SERIAL_NUMBER: string = "See bottom of machine";
+export const SERIAL_NUMBER: string = "See bottom of machine";
 
 /**
  * Warning to show if serial number is malformed
  */
-export const WARN_SERIAL_NUMBER: string = "Serial number malformed, defaulting to placeholder";
+export const SERIAL_NUMBER_MALFORMED: string = "Serial number malformed, defaulting to placeholder";
 
 /**
  * Warning to show if MAC address is malformed
  */
-export const WARN_MAC_ADDRESS: string = "MAC address malformed, ignoring value";
+export const MAC_ADDRESS_MALFORMED: string = "MAC address malformed, ignoring value";
 
 /**
  * Warning to show if expose sensors is not set to 'true' or 'false'
  */
-export const WARN_EXPOSE_SENSORS: string = "Expose sensors neither 'true' nor 'false', defaulting to 'false'";
+export const EXPOSE_SENSORS_MALFORMED: string = "Expose sensors neither 'true' nor 'false', defaulting to 'false'";
 
 /**
  * Message shown when identifying starts

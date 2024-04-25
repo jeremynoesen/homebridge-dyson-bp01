@@ -1,8 +1,8 @@
-<img src="https://github.com/jeremynoesen/homebridge-dyson-bp01/blob/main/img/Logo.svg" alt="Logo" title="Logo" align="right" width="200" height="200" />
-
-# homebridge-dyson-bp01
+<img src="https://github.com/jeremynoesen/homebridge-dyson-bp01/blob/main/img/Logo.svg" alt="Logo" title="Logo" align="right" width="72" height="72" />
 
 [![verified-by-homebridge](https://img.shields.io/badge/homebridge-verified-blueviolet?color=%23491F59&style=for-the-badge&logoColor=%23FFFFFF&logo=homebridge)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)
+
+# homebridge-dyson-bp01
 
 ## About
 

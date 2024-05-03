@@ -17,8 +17,7 @@ There are currently plugins out there that can use a BroadLink RM to control man
 This plugin is designed to be used with the following devices:
 
 - A BroadLink RM supported by [this library](https://github.com/kiwi-cam/broadlinkjs-rm)
-  - The RM4 Mini works with this plugin and is what I use
-  - The RM4 Pro does not work with this plugin
+  - Note: not all "supported" models are supported. My RM4 Mini works flawlessly, while my RM4 Pro does not.
 - A Dyson BP01
 
 ## Hardware Setup

@@ -130,6 +130,7 @@ class DysonBP01 implements AccessoryPlugin {
         this.hap = api.hap;
         this.accessoryConfig = accessoryConfig;
         this.broadLinkJS = new BroadLinkJS();
+        this.broadLinkJS.log = this.logging;
         this.device = undefined;
         this.model = "";
         this.alive = false;

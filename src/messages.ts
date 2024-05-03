@@ -31,12 +31,12 @@ export const EXPOSE_SENSORS_MALFORMED: string = "Expose sensors neither 'true' n
 /**
  * Message shown when identifying starts
  */
-export const IDENTIFYING: string = "Identifying Dyson BP01 and BroadLink RM...";
+export const IDENTIFYING: string = "Identifying Dyson BP01 and %s...";
 
 /**
  * Message shown when identifying completes
  */
-export const IDENTIFIED: string = "Identified Dyson BP01 and BroadLink RM";
+export const IDENTIFIED: string = "Identified Dyson BP01 and %s";
 
 /**
  * Message shown when searching for BroadLink RMs
@@ -46,32 +46,32 @@ export const DEVICE_SEARCHING: string = "Searching for BroadLink RMs...";
 /**
  * Message shown when BroadLink RM is discovered
  */
-export const DEVICE_DISCOVERED: string = "Discovered BroadLink RM at %s";
+export const DEVICE_DISCOVERED: string = "Discovered %s at %s";
 
 /**
  * Message shown when BroadLink RM is set to be used
  */
-export const DEVICE_USING: string = "Using BroadLink RM at %s";
+export const DEVICE_USING: string = "Using %s at %s";
 
 /**
  * Message shown when connection to BroadLink RM is lost
  */
-export const DEVICE_CONNECTION_LOST: string = "Connection to BroadLink RM lost";
+export const DEVICE_CONNECTION_LOST: string = "Connection to %s lost";
 
 /**
  * Message shown when not connected to BroadLink RM
  */
-export const DEVICE_NOT_CONNECTED: string = "Not connected to BroadLink RM";
+export const DEVICE_NOT_CONNECTED: string = "Not connected to %s";
 
 /**
  * Message shown when reconnecting to BroadLink RM
  */
-export const DEVICE_RECONNECTING: string = "Reconnecting to BroadLink RM...";
+export const DEVICE_RECONNECTING: string = "Reconnecting to %s...";
 
 /**
  * Message shown when reconnected to BroadLink RM
  */
-export const DEVICE_RECONNECTED: string = "Reconnected to BroadLink RM";
+export const DEVICE_RECONNECTED: string = "Reconnected to %s";
 
 /**
  * Message shown when initializing target active

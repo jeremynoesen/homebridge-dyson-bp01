@@ -58,6 +58,12 @@ class DysonBP01 implements AccessoryPlugin {
     private device: any;
 
     /**
+     * BroadLink RM model
+     * @private
+     */
+    private model: string;
+
+    /**
      * Last ping status of the BroadLink RM
      * @private
      */
@@ -125,6 +131,7 @@ class DysonBP01 implements AccessoryPlugin {
         this.accessoryConfig = accessoryConfig;
         this.broadLinkJS = new BroadLinkJS();
         this.device = undefined;
+        this.model = "";
         this.alive = false;
         this.localStorage = nodePersist.create();
         this.services = {
@@ -175,7 +182,7 @@ class DysonBP01 implements AccessoryPlugin {
      */
     identify(): void {
         if (this.alive === true) {
-            this.logging.info(messages.IDENTIFYING);
+            this.logging.info(messages.IDENTIFYING, this.model);
             let toggleCount: number = 0;
             let activeToggle: NodeJS.Timeout = setInterval(async (): Promise<void> => {
                 if (toggleCount < constants.TOGGLES_IDENTIFY_ACTIVE) {
@@ -187,11 +194,11 @@ class DysonBP01 implements AccessoryPlugin {
                     toggleCount++;
                 } else if (this.fanV2Characteristics.targetActive === this.fanV2Characteristics.currentActive) {
                     clearInterval(activeToggle);
-                    this.logging.success(messages.IDENTIFIED);
+                    this.logging.success(messages.IDENTIFIED, this.model);
                 }
             }, constants.INTERVAL);
         } else {
-            this.logging.error(messages.DEVICE_NOT_CONNECTED);
+            this.logging.error(messages.DEVICE_NOT_CONNECTED, this.model);
         }
     }
 
@@ -294,13 +301,14 @@ class DysonBP01 implements AccessoryPlugin {
     private initDevice(): void {
         this.broadLinkJS.on("deviceReady", (device: any): void => {
             let macAddress: string = device.mac.toString("hex").replace(/(.{2})/g, "$1:").slice(0, -1).toUpperCase();
-            this.logging.info(messages.DEVICE_DISCOVERED, macAddress);
+            this.logging.info(messages.DEVICE_DISCOVERED, this.device.model.replace("Broadlink", "BroadLink"), macAddress);
             if (this.device === undefined && (this.accessoryConfig.macAddress === undefined || this.accessoryConfig.macAddress.toUpperCase() === macAddress)) {
                 this.device = device;
+                this.model = this.device.model.replace("Broadlink", "BroadLink");
                 if (this.accessoryConfig.exposeSensors === true) {
                     this.initSensors();
                 }
-                this.logging.success(messages.DEVICE_USING, macAddress);
+                this.logging.success(messages.DEVICE_USING, this.model, macAddress);
             }
         });
         this.logging.info(messages.DEVICE_SEARCHING);
@@ -316,12 +324,12 @@ class DysonBP01 implements AccessoryPlugin {
         });
         if (this.alive === false) {
             if (this.skips.pingDeviceFail === 0) {
-                this.logging.error(messages.DEVICE_CONNECTION_LOST);
+                this.logging.error(messages.DEVICE_CONNECTION_LOST, this.model);
             }
             this.skips.pingDeviceFail = constants.SKIPS_PING_DEVICE_FAIL;
         } else if (this.skips.pingDeviceFail > 0) {
             if (this.skips.pingDeviceFail === constants.SKIPS_PING_DEVICE_FAIL - 1) {
-                this.logging.info(messages.DEVICE_RECONNECTING);
+                this.logging.info(messages.DEVICE_RECONNECTING, this.model);
             }
             this.alive = false;
         }
@@ -335,7 +343,7 @@ class DysonBP01 implements AccessoryPlugin {
         if (this.skips.pingDeviceFail > 0) {
             this.skips.pingDeviceFail--;
             if (this.skips.pingDeviceFail === 0) {
-                this.logging.success(messages.DEVICE_RECONNECTED);
+                this.logging.success(messages.DEVICE_RECONNECTED, this.model);
             }
         }
     }
@@ -410,7 +418,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private getTargetActive(characteristicGetCallback: CharacteristicGetCallback): void {
-        characteristicGetCallback(this.alive !== undefined ? undefined : new Error(messages.DEVICE_NOT_CONNECTED), this.fanV2Characteristics.targetActive);
+        characteristicGetCallback(this.alive !== undefined ? undefined : new Error(), this.fanV2Characteristics.targetActive);
     }
 
     /**
@@ -427,8 +435,8 @@ class DysonBP01 implements AccessoryPlugin {
                 this.logging.info(messages.SET_TARGET_ACTIVE, this.fanV2Characteristics.targetActive);
                 characteristicSetCallback();
             } else {
-                this.logging.error(messages.DEVICE_NOT_CONNECTED);
-                characteristicSetCallback(new Error(messages.DEVICE_NOT_CONNECTED));
+                this.logging.error(messages.DEVICE_NOT_CONNECTED, this.model);
+                characteristicSetCallback(new Error());
             }
         } else {
             characteristicSetCallback();
@@ -477,7 +485,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private getTargetRotationSpeed(characteristicGetCallback: CharacteristicGetCallback): void {
-        characteristicGetCallback(this.alive !== undefined ? undefined : new Error(messages.DEVICE_NOT_CONNECTED), this.fanV2Characteristics.targetRotationSpeed);
+        characteristicGetCallback(this.alive !== undefined ? undefined : new Error(), this.fanV2Characteristics.targetRotationSpeed);
     }
 
     /**
@@ -500,8 +508,8 @@ class DysonBP01 implements AccessoryPlugin {
                 this.logging.info(messages.SET_TARGET_ROTATION_SPEED, this.fanV2Characteristics.targetRotationSpeed);
                 characteristicSetCallback();
             } else {
-                this.logging.error(messages.DEVICE_NOT_CONNECTED);
-                characteristicSetCallback(new Error(messages.DEVICE_NOT_CONNECTED));
+                this.logging.error(messages.DEVICE_NOT_CONNECTED, this.model);
+                characteristicSetCallback(new Error());
             }
         } else {
             characteristicSetCallback();
@@ -541,7 +549,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private getTargetSwingMode(characteristicGetCallback: CharacteristicGetCallback): void {
-        characteristicGetCallback(this.alive !== undefined ? undefined : new Error(messages.DEVICE_NOT_CONNECTED), this.fanV2Characteristics.targetSwingMode);
+        characteristicGetCallback(this.alive !== undefined ? undefined : new Error(), this.fanV2Characteristics.targetSwingMode);
     }
 
     /**
@@ -558,8 +566,8 @@ class DysonBP01 implements AccessoryPlugin {
                 this.logging.info(messages.SET_TARGET_SWING_MODE, this.fanV2Characteristics.targetSwingMode);
                 characteristicSetCallback();
             } else {
-                this.logging.error(messages.DEVICE_NOT_CONNECTED);
-                characteristicSetCallback(new Error(messages.DEVICE_NOT_CONNECTED));
+                this.logging.error(messages.DEVICE_NOT_CONNECTED, this.model);
+                characteristicSetCallback(new Error());
             }
         } else {
             characteristicSetCallback();
@@ -652,7 +660,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private getCurrentTemperature(characteristicGetCallback: CharacteristicGetCallback): void {
-        characteristicGetCallback(this.alive !== undefined ? undefined : new Error(messages.DEVICE_NOT_CONNECTED), this.sensorCharacteristics.currentTemperature);
+        characteristicGetCallback(this.alive !== undefined ? undefined : new Error(), this.sensorCharacteristics.currentTemperature);
     }
 
     /**
@@ -673,7 +681,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private getCurrentRelativeHumidity(characteristicGetCallback: CharacteristicGetCallback): void {
-        characteristicGetCallback(this.alive !== undefined ? undefined : new Error(messages.DEVICE_NOT_CONNECTED), this.sensorCharacteristics.currentRelativeHumidity);
+        characteristicGetCallback(this.alive !== undefined ? undefined : new Error(), this.sensorCharacteristics.currentRelativeHumidity);
     }
 
     /**

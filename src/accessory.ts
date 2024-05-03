@@ -10,7 +10,7 @@ import {
     Logging,
     Service
 } from "homebridge";
-import BroadLinkJS from "kiwicam-broadlinkjs-rm";
+import BroadLink from "kiwicam-broadlinkjs-rm";
 import nodePersist from "node-persist";
 import ping from "ping";
 import * as parameters from "./parameters.js";
@@ -46,10 +46,10 @@ class DysonBP01 implements AccessoryPlugin {
     private readonly accessoryConfig: AccessoryConfig;
 
     /**
-     * BroadLinkJS library
+     * broadlinkjs-rm instance
      * @private
      */
-    private readonly broadLinkJS: BroadLinkJS;
+    private readonly broadLink: BroadLink;
 
     /**
      * BroadLink RM device
@@ -129,8 +129,8 @@ class DysonBP01 implements AccessoryPlugin {
         this.logging = logging;
         this.hap = api.hap;
         this.accessoryConfig = accessoryConfig;
-        this.broadLinkJS = new BroadLinkJS();
-        this.broadLinkJS.log = this.logging;
+        this.broadLink = new BroadLink();
+        this.broadLink.log = this.logging;
         this.device = undefined;
         this.model = "";
         this.alive = false;
@@ -237,7 +237,7 @@ class DysonBP01 implements AccessoryPlugin {
                 }
                 this.doSkips();
             } else {
-                await this.broadLinkJS.discover();
+                await this.broadLink.discover();
             }
         }, parameters.INTERVAL);
     }
@@ -301,7 +301,7 @@ class DysonBP01 implements AccessoryPlugin {
      * @private
      */
     private initDevice(): void {
-        this.broadLinkJS.on("deviceReady", (device: any): void => {
+        this.broadLink.on("deviceReady", (device: any): void => {
             let macAddress: string = device.mac.toString("hex").replace(/(.{2})/g, "$1:").slice(0, -1).toUpperCase();
             this.logging.info(strings.DEVICE_DISCOVERED, this.device.model.replace("Broadlink", "BroadLink"), macAddress);
             if (this.device === undefined && (this.accessoryConfig.macAddress === undefined || this.accessoryConfig.macAddress.toUpperCase() === macAddress)) {

@@ -21,7 +21,7 @@
     "url": "https://github.com/sponsors/jeremynoesen"
   },
   "engines": {
-    "node": "^20.12.8",
+    "node": "^20.12.2",
     "homebridge": "^1.8.1"
   },
   "keywords": [

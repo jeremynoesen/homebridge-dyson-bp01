@@ -303,10 +303,11 @@ class DysonBP01 implements AccessoryPlugin {
     private initDevice(): void {
         this.broadLink.on("deviceReady", (device: any): void => {
             let macAddress: string = device.mac.toString("hex").replace(/(.{2})/g, "$1:").slice(0, -1).toUpperCase();
-            this.logging.info(strings.DEVICE_DISCOVERED, this.device.model.replace("Broadlink", "BroadLink"), macAddress);
+            let model: string = device.model.replace("Broadlink", "BroadLink");
+            this.logging.info(strings.DEVICE_DISCOVERED, model, macAddress);
             if (this.device === undefined && (this.accessoryConfig.macAddress === undefined || this.accessoryConfig.macAddress.toUpperCase() === macAddress)) {
                 this.device = device;
-                this.model = this.device.model.replace("Broadlink", "BroadLink");
+                this.model = model;
                 if (this.accessoryConfig.exposeSensors === true) {
                     this.initSensors();
                 }
